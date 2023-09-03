@@ -286,10 +286,12 @@ watch(() => planeStore.triggerSave, (newValue)=> {
     if(newValue) {
         console.log("Hello there")
         planeStore.triggerSave = false
-
+        const jsonGraph = graph.toJSON()
+        console.log(jsonGraph)
         axios.get('/')
             .then(function(response) {
-                console.log("Success")
+                console.log("Success, json object is:")
+                console.log(jsonGraph)
             })
             .catch(function (err) {
                 console.log("Lately an error")
