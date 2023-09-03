@@ -1,0 +1,8 @@
+.available-magnet {
+    visibility: visible;
+}
+
+
+.available-cell rect {
+    fill: 'red';
+}

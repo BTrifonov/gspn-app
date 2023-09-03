@@ -1,0 +1,21 @@
+#docker-compose.yml
+version: '3.8'
+
+services:
+    frontend: 
+      build: 
+        context: ./services/frontend
+        dockerfile: Dockerfile
+      ports:
+        - 5173:5173
+      volumes: 
+        - .:/services/frontend:/app
+
+    backend:
+      build:
+        context: ./services/backend
+        dockerfile: Dockerfile
+      ports:
+        - 5000:5000
+      volumes:
+        - .:/services/backend:/app
