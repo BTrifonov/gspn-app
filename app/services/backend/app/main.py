@@ -1,5 +1,15 @@
 from fastapi import FastAPI, Header
+
+
 from fastapi.middleware.cors import CORSMiddleware 
+
+from pydantic import BaseModel
+
+from pathlib import Path
+import json
+
+class PetriNetModel(BaseModel):
+    model: dict
 
 
 app = FastAPI()
@@ -31,3 +41,10 @@ async def func():
     return {
         "message": "Vamos"
     }
+
+@app.post("/model")
+async def printJSONModel(req_body: PetriNetModel):
+    path = Path('./tempModels/model.json')
+    content = json.dumps(req_body.model)
+    path.write_text(content)
+    print(req_body.model)

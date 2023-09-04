@@ -284,13 +284,13 @@ watch(()=> planeStore.triggerDelete, (newValue)=> {
 
 watch(() => planeStore.triggerSave, (newValue)=> {
     if(newValue) {
-        console.log("Hello there")
         planeStore.triggerSave = false
         const jsonGraph = graph.toJSON()
-        console.log(jsonGraph)
-        axios.get('/')
+        axios.post('/model', {
+            model: jsonGraph
+        })
             .then(function(response) {
-                console.log("Success, json object is:")
+                console.log("Submitted successfully the following model:")
                 console.log(jsonGraph)
             })
             .catch(function (err) {
