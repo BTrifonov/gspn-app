@@ -1,12 +1,14 @@
 from fastapi import FastAPI, Header
 
-
 from fastapi.middleware.cors import CORSMiddleware 
 
 from pydantic import BaseModel
 
 from pathlib import Path
+
 import json
+import os
+
 
 class PetriNetModel(BaseModel):
     model: dict
@@ -44,7 +46,9 @@ async def func():
 
 @app.post("/model")
 async def printJSONModel(req_body: PetriNetModel):
-    path = Path('./tempModels/model.json')
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    relative_path = os.path.join(current_directory, "tempModels", "model.json")
+    path = Path(relative_path)
     content = json.dumps(req_body.model)
     path.write_text(content)
     print(req_body.model)
