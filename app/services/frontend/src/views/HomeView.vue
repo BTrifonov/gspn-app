@@ -1,7 +1,8 @@
 <script setup>
-import NavBar from '@/components/NavBar.vue'
+import NavBar from '@/components/NavBar.vue';
 
-import HomeSideBar from '@/components/SideBars/HomeSideBar.vue'
+import HomeSideBar from '@/components/HomeViewComponents/HomeSideBar.vue';
+import TutorialPlane from '@/components/HomeViewComponents/TutorialPlane.vue';
 </script>
 
 <template>
@@ -16,7 +17,7 @@ import HomeSideBar from '@/components/SideBars/HomeSideBar.vue'
                 </div>
 
                 <div class="grid-plane-container">
-                    <h1> Short tutorial on how to use the tool </h1>
+                    <TutorialPlane/>
                 </div>
             </div>
         </div>

@@ -2,9 +2,10 @@
 import {ref, watch} from 'vue'
 import {useElementStore} from '@/components/stores/ElementStore'
 
-import EditPlaceMenu from '@/components/EditElemMenus/EditPlaceMenu.vue'
-import EditTransitionMenu from '@/components/EditElemMenus/EditTransitionMenu.vue'
-import EditArcMenu from '@/components/EditElemMenus/EditArcMenu.vue'
+import EditPlaceMenu from '@/components/EditViewComponents/EditElemMenus/EditPlaceMenu.vue'
+import EditTransitionMenu from '@/components/EditViewComponents/EditElemMenus/EditTransitionMenu.vue'
+import EditArcMenu from '@/components/EditViewComponents/EditElemMenus/EditArcMenu.vue'
+
 
 const elementStore = useElementStore()
 

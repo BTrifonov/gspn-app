@@ -1,10 +1,11 @@
 
 <script setup>
-import {ref, onMounted} from 'vue'
-import {watch} from 'vue'
-import {reactive} from 'vue'
+import {ref, onMounted} from 'vue';
+import {watch} from 'vue';
+import {reactive} from 'vue';
+import axios from 'axios';
 
-import * as joint from 'jointjs'
+import * as joint from 'jointjs';
 
 import { useTriggerStore } from '@/components/stores/TriggerStore';
 import { useElementStore} from '@/components/stores/ElementStore';
@@ -15,10 +16,10 @@ import { drawTransition } from '@/components/utils/element-generator';
 import { drawImmediateTransition } from '@/components/utils/element-generator'
 import { drawArc } from '@/components/utils/element-generator'
 
-import { createLinkToolView } from './utils/tool-generator';
-import { createElementToolView } from './utils/tool-generator';
-import { Arc } from './utils/CustomElements/arc';
-import axios from 'axios';
+import { createLinkToolView } from '@/components/utils/tool-generator';
+import { createElementToolView } from '@/components/utils/tool-generator';
+import { Arc } from '@/components/utils/CustomElements/arc';
+
 
 //import { validateArc } from './utils/connection-validator';
 

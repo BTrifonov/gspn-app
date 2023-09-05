@@ -5,10 +5,6 @@ import ChangeViewMenu from '@/components/ChangeViewMenu.vue';
 <template>
     <div class="container">
         <ChangeViewMenu/>
-        <!--<div class="menu-container">
-            <p class="text">Change tool mode</p>
-            <ChangeViewMenu/>
-        </div>-->
     </div>
 </template>
 
