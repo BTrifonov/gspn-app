@@ -1,21 +1,34 @@
 from fastapi import FastAPI, Header
-
 from fastapi.middleware.cors import CORSMiddleware 
 
 from pydantic import BaseModel
-
 from pathlib import Path
 
-from readWriteJSON import write_model_file
+from .readWriteJSON import write_model_file, delete_model_file
 
 import json
 import os
 
+#Source/Target attribute of custom.Arc
+#TODO Does not work when the arc is created from the DrawMenu
+class SourceTarget(BaseModel):
+    id: str | None = None
+    x: int | None = None
+    y: int | None = None
 
+#Relevant attributes of (custom.Place, custom.Transition, custom.Arc)
+class Cell(BaseModel):
+    id: str
+    type: str
+    attrs: dict
+    source: SourceTarget | None = None
+    target: SourceTarget | None = None
 
-class PetriNetModel(BaseModel):
-    model: dict
+class Model(BaseModel):
+    cells: list[Cell] | None = None
 
+class ReqBody(BaseModel):
+    model: Model
 
 app = FastAPI()
 
@@ -35,24 +48,31 @@ app.add_middleware(
 
 
 
+
+#API points
+
+#GET methods
+
 @app.get("/")
 async def main():
     return {
         "message": "Hello World"
     }
 
-@app.get("/usr")
-async def func():
-    return {
-        "message": "Vamos"
-    }
+#----------------------------------------------------------------
+
+#POST methods
 
 @app.post("/model")
-async def printJSONModel(req_body: PetriNetModel):
-    #current_directory = os.path.dirname(os.path.abspath(__file__))
-    #relative_path = os.path.join(current_directory, "tempModels", "model.json")
-    #path = Path(relative_path)
-    #content = json.dumps(req_body.model)
-    #path.write_text(content)
-    #print(req_body.model)
+async def saveModel(req_body: ReqBody):
+    """Saves the model locally to the model directory as a JSON"""
     write_model_file(req_body.model)
+
+
+#----------------------------------------------------------------
+
+#DELETE methods
+
+@app.delete("/model")
+async def deleteModel():
+    delete_model_file()

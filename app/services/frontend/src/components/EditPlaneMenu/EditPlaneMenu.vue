@@ -42,15 +42,11 @@ function triggerSaveFile(event) {
             </div>
 
             <div class="btn-container">
-                <input type="file" @change="triggerSaveFile">
-                <button @click="triggerSave">
-                    <img src="../../assets/EditPlaneButtons/save.svg">
-                </button>
-            </div>
-
-            <div class="btn-container">
                 <button @click="triggerDelete">
                     <img src="../../assets/EditPlaneButtons/delete.svg">
+                </button>
+                <button @click="triggerSave">
+                    <img src="../../assets/EditPlaneButtons/save.svg">
                 </button>
             </div>
         </div>

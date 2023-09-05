@@ -1,18 +1,8 @@
 from pathlib import Path
+
 import json
 
-#Create the model dir if first save of the model
-def create_model_dir():
-    """Doc of the function"""
-    try:
-        current_dir_path = Path.cwd()
-        model_dir_path = "models"
-        new_dir = current_dir_path / model_dir_path
-
-        Path(new_dir).mkdir(parents=True, exist_ok=True)
-    except OSError as e:
-        print(f"The following error occurred: {e}")
-
+#Write the PN model to a local file model.json 
 def write_model_file(model_data):
     """Doc of the function"""
     try:
@@ -26,10 +16,64 @@ def write_model_file(model_data):
         #Now dir models should be created
         model_file_path = model_dir_path / "model.json"
 
+        json_cells = []
+
+        #Transform each cell into json format
+        for cell in model_data.cells:
+            json_cell = json.dumps(cell.dict(), indent=4)
+            json_cells.append(json_cell)
+
+        #Write the array of json cells to a file
         with open(model_file_path, "w") as file:
-            file.write(json.dumps(model_data, indent=4))
+           file.write("[\n")
+           file.write(',\n'.join(json_cells))
+           file.write("\n]")
 
     except OSError as e:
         print(f"The following error occurred: {e}")
 
 
+#Delete the model.json file and the directory if empty
+def delete_model_file():
+    try:
+        current_dir_path = Path.cwd()
+        
+        model_dir_path = current_dir_path / "models"
+        model_file_path = model_dir_path / "model.json"
+
+        Path(model_file_path).unlink()
+
+        contents = list(model_dir_path.iterdir())
+        
+        #Check if models directory is empty and delete it        
+        if not contents:
+            delete_model_dir()
+
+    except OSError as e:
+        print(f"The following error occured: {e}")
+
+
+#Create the model directory
+def create_model_dir():
+    """Doc of the function"""
+    try:
+        current_dir_path = Path.cwd()
+        model_dir_path = "models"
+        new_dir = current_dir_path / model_dir_path
+
+        Path(new_dir).mkdir(parents=True, exist_ok=True)
+
+    except OSError as e:
+        print(f"The following error occurred: {e}")
+
+#Delete the model directory 
+def delete_model_dir():
+    """Doc of the function"""
+    current_dir_path = Path.cwd()
+    model_dir_path = current_dir_path / "models"
+
+    try:
+        Path(model_dir_path).rmdir()
+
+    except OSError as e:
+        print("fThe following error occured: {e}")

@@ -277,7 +277,23 @@ watch(()=> planeStore.paperScale, (newValue)=> {
 
 watch(()=> planeStore.triggerDelete, (newValue)=> {
     if(newValue) {
+        //Delete the graph from the plane
         graph.clear()
+
+        //Delete the locally saved file in the backend
+        axios.delete('/model')
+                .then(function(response) {
+                    console.log("Deleted successfully the model!")
+                })
+                .catch(function(err) {
+                    console.log("Error occured while deleting the model")
+                })
+                .finally(function() {
+                    //
+                })
+        
+        
+        
         planeStore.triggerDelete = false
     }
 })
@@ -285,6 +301,7 @@ watch(()=> planeStore.triggerDelete, (newValue)=> {
 watch(() => planeStore.triggerSave, (newValue)=> {
     if(newValue) {
         const jsonGraph = graph.toJSON()
+
         axios.post('/model', {
             model: jsonGraph
         })
@@ -296,7 +313,7 @@ watch(() => planeStore.triggerSave, (newValue)=> {
                 console.log("Lately an error")
             })
             .finally(function() {
-                console.log("Always executed")
+                //
             })
         
         planeStore.triggerSave = false
