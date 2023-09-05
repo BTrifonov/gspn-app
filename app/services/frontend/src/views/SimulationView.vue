@@ -1,5 +1,7 @@
 <script setup>
     import NavBar from '@/components/NavBar.vue'
+
+    import SimSideBar from '@/components/SimViewComponents/SimSideBar.vue'
 </script>
 
 <template>
@@ -10,7 +12,7 @@
             </div>
             <div class="bottom-container">
                 <div class="side-bar-container">
-                    <p>This is the side bar</p>
+                    <SimSideBar/>
                 </div>
 
                 <div class="grid-plane-container">
