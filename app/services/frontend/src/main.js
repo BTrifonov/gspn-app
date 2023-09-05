@@ -1,30 +1,45 @@
 import './style.css'
 import '../node_modules/jointjs/dist/joint.css';
 
-//import 'bootstrap/dist/css/bootstrap.css';
 import { createApp } from 'vue';
-
 import axios from 'axios';
 
-//import axios from 'axios';
 import { createPinia } from 'pinia';
 
-//import {joint} from 'jointjs'
-
 import App from './App.vue';
-//import router from './router';
+
+import {createRouter, createWebHistory} from 'vue-router'
+
+import HomeView from '@/views/HomeView.vue'
+import AboutView from '@/views/AboutView.vue'
+
+import SimulationView from '@/views/SimulationView.vue'
+import EditView from '@/views/EditView.vue'
 
 
 const app = createApp(App);
 
-//TODO: Why does this approach not work and one should manually import the jointjs library in all components
-//app.use(joint)
-
 //Bind to the FastAPI backend
 axios.defaults.baseURL = 'http://localhost:5000/';
 
+//Router configuration
+//TODO: By moving it to external file the import does not work
+//------------------------------------
+const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+        {path: '/', name: 'Home', component: HomeView},
+        {path: '/about', name: 'About', component: AboutView},
+        {path: '/simulation-view', name: 'Simulation', component: SimulationView},
+        {path: '/edit-view', name: 'Edit', component: EditView}
+    ]
+})
+
+//------------------------------------
+
 //Register router
-//app.use(router);
+app.use(router);
+
 
 //Register pinia
 const store = createPinia()

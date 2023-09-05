@@ -3,9 +3,10 @@ import MainContainer from '@/components/MainContainer.vue'
 </script>
 
 <template>
-  <div id="app">
+  <!--<div id="app">
     <MainContainer/>
-  </div>
+  </div>-->
+  <router-view></router-view>
 </template>
 
 <style scoped>

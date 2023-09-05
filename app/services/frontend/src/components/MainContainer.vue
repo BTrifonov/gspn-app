@@ -22,10 +22,11 @@ import SideBar from '@/components/SideBar.vue'
 </template>
 
 <style scoped>
-/*TODO: Find another way to import the css style*/
- @import '../../node_modules/jointjs/dist/joint.css';
+  @import '../../node_modules/jointjs/dist/joint.css';
+  @import '@/assets/main-structure.css';
 
-.main-container {
+
+/* .main-container {
   height: 100%;
 
   display: flex;
@@ -53,5 +54,5 @@ import SideBar from '@/components/SideBar.vue'
 .grid-plane-container {
     width: 85%;
   }
-
+*/
 </style>
