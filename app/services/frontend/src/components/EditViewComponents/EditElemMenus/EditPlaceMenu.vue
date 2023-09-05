@@ -54,10 +54,6 @@ watch(label, (newVal) => {
 <style scoped>
 @import '@/assets/sidebar-submenu.css';
 
-.input {
-    width: inherit;
-}
-
 .btn-container {
     justify-content: center;
 }

@@ -56,7 +56,8 @@ button:active {
 /*Input styling*/
 .input {
     border-radius: 5px;
-    width: 100%;
+    width: inherit;
+    margin-top: 2px;
 }
 
 /*Text styling*/

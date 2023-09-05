@@ -30,57 +30,41 @@ watch(widthInput, (newWidth) => {
 
 <template>
     <div>
-        <div class="input-container">
+        <div class="sim-container">
             <input type="text" placeholder="Transition id" class="input">
-            <p class="text">Change transition id</p>
+            <p>Change transition id</p>
         </div>
 
-        <div class="input-container">
+        <div class="sim-container">
             <input type="range" placeholder="Transition height" v-model="heightInput" class="input">
-            <p class="text">Change transition height</p>
+            <p>Change transition height</p>
         </div>
 
-        <div class="input-container">
+        <div class="sim-container">
             <input type="range" placeholder="Transition width" v-model="widthInput" class="input">
-            <p class="text">Change transition width</p>
+            <p>Change transition width</p>
         </div>
 
-        <div class="input-container">
+        <div class="sim-container">
             <select v-model="tokenDistribution" class="input">
                 <option value="">Exponential</option>
                 <option value="">General</option>
             </select>
-            <p class="text">Change transition token distribution</p>
+            <p>Change transition token distribution</p>
         </div>
-        <div>
-            <button @click="deleteTransition">Delete</button>
+        <div class="btn-container">
+            <button @click="deleteTransition">
+                <img src="@/assets/EditPlaneButtons/delete.svg">
+            </button>
         </div>
 
     </div>
 </template>
 
 <style scoped>
-.input-container {
-    background-color: rgb(9, 147, 240);
-    border-radius: 5px;
-    margin-bottom: 4px;
-}
+@import '@/assets/sidebar-submenu.css';
 
-.input {
-    border-radius: 5px;
-}
-
-.text {
-    font-style:italic;
-    margin: 0 auto;
-}
-
-button {
-    background-color: silver;
-    border-radius: 5px;
-}
-
-button:active {
-    background-color: grey;
+.btn-container {
+    justify-content: center;
 }
 </style>
