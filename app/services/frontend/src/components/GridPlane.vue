@@ -284,7 +284,6 @@ watch(()=> planeStore.triggerDelete, (newValue)=> {
 
 watch(() => planeStore.triggerSave, (newValue)=> {
     if(newValue) {
-        planeStore.triggerSave = false
         const jsonGraph = graph.toJSON()
         axios.post('/model', {
             model: jsonGraph
@@ -299,6 +298,8 @@ watch(() => planeStore.triggerSave, (newValue)=> {
             .finally(function() {
                 console.log("Always executed")
             })
+        
+        planeStore.triggerSave = false
     }
 })
 //---------------------------------------------------------

@@ -10,6 +10,7 @@ export const usePlaneStore = defineStore('plane', {
         paperGridSize: 0, 
         paperScale: 1,
         triggerDelete: false, 
-        triggerSave: false
+        triggerSave: false,
+        selectedFile: null
     })
 })

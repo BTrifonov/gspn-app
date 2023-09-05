@@ -6,8 +6,11 @@ from pydantic import BaseModel
 
 from pathlib import Path
 
+from readWriteJSON import write_model_file
+
 import json
 import os
+
 
 
 class PetriNetModel(BaseModel):
@@ -46,9 +49,10 @@ async def func():
 
 @app.post("/model")
 async def printJSONModel(req_body: PetriNetModel):
-    current_directory = os.path.dirname(os.path.abspath(__file__))
-    relative_path = os.path.join(current_directory, "tempModels", "model.json")
-    path = Path(relative_path)
-    content = json.dumps(req_body.model)
-    path.write_text(content)
-    print(req_body.model)
+    #current_directory = os.path.dirname(os.path.abspath(__file__))
+    #relative_path = os.path.join(current_directory, "tempModels", "model.json")
+    #path = Path(relative_path)
+    #content = json.dumps(req_body.model)
+    #path.write_text(content)
+    #print(req_body.model)
+    write_model_file(req_body.model)

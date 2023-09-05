@@ -11,6 +11,10 @@ function triggerSave() {
     planeStore.triggerSave = true
 }
 
+function triggerSaveFile(event) {
+    planeStore.selectedFile = event.target.files[0]
+}
+
 </script>
 
 <template>
@@ -36,17 +40,20 @@ function triggerSave() {
                 <input type="range" min="0.5" max="2" step="0.1" class="input" v-model="planeStore.paperScale">
                 <p class="text">Plane Scale</p>
             </div>
+
             <div class="btn-container">
-                <button @click="triggerDelete">
-                    <img src="../../assets/EditPlaneButtons/delete.svg">
-                </button>
-                
+                <input type="file" @change="triggerSaveFile">
                 <button @click="triggerSave">
                     <img src="../../assets/EditPlaneButtons/save.svg">
                 </button>
             </div>
-        </div>
 
+            <div class="btn-container">
+                <button @click="triggerDelete">
+                    <img src="../../assets/EditPlaneButtons/delete.svg">
+                </button>
+            </div>
+        </div>
         <div v-else class="default-container">
             <p class="text">Click twice on the plane to edit it</p>
         </div>
@@ -80,7 +87,7 @@ function triggerSave() {
 
     background-color: rgb(9, 147, 240);
     border-radius: 5px;
-    margin-bottom: 0;
+    margin-bottom: 2px;
 }
 
 button {
