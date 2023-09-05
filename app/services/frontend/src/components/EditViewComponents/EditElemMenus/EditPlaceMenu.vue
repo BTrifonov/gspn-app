@@ -31,49 +31,34 @@ watch(label, (newVal) => {
 
 <template>
     <div>
-        <div class="input-container">
+        <div class="sim-container">
             <input type="text" placeholder="Place id" v-model="label" class="input">
-            <p class="text">Change place id</p>
+            <p>Change place id</p>
         </div>
-        <div class="input-container">
+        <div class="sim-container">
             <input type="range" v-model="radiusInput" class="input">
-            <p class="text">Change place radius</p>
+            <p>Change place radius</p>
         </div>
-        <div class="input-container">
+        <div class="sim-container">
             <input type="number" placeholder="Token number" v-model="tokenInput" class="input">
-            <p class="text">Change place token number</p>
+            <p>Change place token number</p>
         </div>
-        <div>
-            <button @click="deletePlace">Delete</button>
+        <div class="btn-container">
+            <button @click="deletePlace">
+                <img src="@/assets/EditPlaneButtons/delete.svg">
+            </button>
         </div>
     </div>
 </template>
 
 <style scoped>
-.input-container {
-    background-color: rgb(9, 147, 240);
-    border-radius: 5px;
-    margin-bottom: 4px;
-}
+@import '@/assets/sidebar-submenu.css';
 
 .input {
-    border-radius: 5px;
-    height: 100%;
-    width: 100%;
+    width: inherit;
 }
 
-.text {
-    font-style:italic;
-
-    margin: 0 auto;
-}
-
-button {
-    border-radius: 5px;
-    background-color: silver;
-}
-
-button:active {
-    background-color: gray;
+.btn-container {
+    justify-content: center;
 }
 </style>

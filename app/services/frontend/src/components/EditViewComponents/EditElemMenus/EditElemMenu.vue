@@ -30,7 +30,8 @@ watch(() => elementStore.selectedArc, (newVal) => {
 </script>
 
 <template>
-    <div class="main-container">
+    <div class="menu-container">
+        <p class="text">Edit element</p>
         <div v-if="selectedPlace != null">
             <EditPlaceMenu/>
         </div>
@@ -40,30 +41,13 @@ watch(() => elementStore.selectedArc, (newVal) => {
         <div v-if="selectedTransition != null">
             <EditTransitionMenu/>
         </div>
-        <div v-if="selectedArc==null && selectedPlace==null && selectedTransition==null" class="default-container">
-            <p class="text">Click once on an element</p>
+        <div class="sim-container" v-if="selectedArc==null && selectedPlace==null && selectedTransition==null">
+            <p>Click once on an element</p>
         </div>
     </div>
 </template>
 
 
 <style scoped>
-.main-container {
-    display: flex;
-    flex-direction: column;
-
-    justify-content: space-between;
-}
-
-.default-container {
-    background-color: rgb(9, 147, 240);
-    border-radius: 5px;
-}
-
-.text {
-    font-style:italic;
-    margin: 0 auto;
-}
-
-
+@import '@/assets/sidebar-submenu.css';
 </style>

@@ -11,15 +11,13 @@ import ChangeViewMenu from '@/components/ChangeViewMenu.vue';
 
 <template>
     <div class="container">
-        <div class="menu-container">
-            <p class="text">Edit plane</p>
+        <div>
             <EditPlaneMenu/>
         </div>
         <div>
             <CreateElemMenu/>
         </div>
-        <div class="menu-container">
-            <p class="text">Edit element</p>
+        <div>
             <EditElemMenu/>
         </div>
         <div>

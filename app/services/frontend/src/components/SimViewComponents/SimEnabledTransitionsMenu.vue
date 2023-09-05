@@ -4,7 +4,7 @@
 <template>
     <div class="menu-container">
         <p class="text">Enabled Transitions</p>
-        <div class="tr-container">
+        <div class="sim-container">
             <p>P1</p>
             <p>P2</p>
             <p>P3</p>

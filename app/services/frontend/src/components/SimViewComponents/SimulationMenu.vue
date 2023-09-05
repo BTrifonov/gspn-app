@@ -27,14 +27,10 @@
             </button>
         </div>
 
-        
-        <div class="menu-container">
-            <div class="btn-container">
-                <input type="range" min="0.5" max="2" step="0.5" class="input"> 
-            </div>
-            <p class="text">Simulation speed</p>
+        <div class="sim-container">
+            <input type="range" min="0.5" max="2" step="0.5" class="input">
+            <p>Simulation speed</p> 
         </div>
-
     </div>
 </template>
 
@@ -42,15 +38,4 @@
 
 <style scoped>
 @import '@/assets/sidebar-submenu.css';
-
-.input-container {
-    margin-top: 2px;
-    background-color: rgb(9, 147, 240);
-    border-radius: 5px;
-}
-
-.input {
-    border-radius: 5px;
-    width: 100%;
-}
 </style>

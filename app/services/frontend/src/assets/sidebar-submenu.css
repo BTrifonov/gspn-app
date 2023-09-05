@@ -11,17 +11,10 @@
     margin-top: 2px;
     margin-bottom: 2px;
 
-    overflow: auto;
+    /*overflow: auto;*/
 }
 
-.text {
-    color: white;
-    font-size: larger;
-    font-style:italic;
-
-    margin: 0 auto;
-}
-
+/*Styling of all button containers*/
 .btn-container {
     display: flex;
     flex-direction: row;
@@ -29,9 +22,27 @@
 
     background-color: rgb(9, 147, 240);
     border-radius: 5px;
+    
+    margin-top: 2px;
+    margin-bottom: 0;
+
+    overflow: scroll;
+}
+
+/*Styling of traceback, enabledTransition containers */
+.sim-container {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+
+    background-color: rgb(9, 147, 240);
+    border-radius: 5px;
+    
+    margin-top: 2px;
     margin-bottom: 0;
 }
 
+/*Button styling*/
 button {
     border-radius: 5px;
     background-color: silver;
@@ -39,4 +50,20 @@ button {
 
 button:active {
     background-color: grey;
+    cursor: pointer;
+}
+
+/*Input styling*/
+.input {
+    border-radius: 5px;
+    width: 100%;
+}
+
+/*Text styling*/
+.text {
+    color: white;
+    font-size: larger;
+    font-style:italic;
+
+    margin: 0 auto;
 }
