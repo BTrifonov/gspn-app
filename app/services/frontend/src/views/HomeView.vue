@@ -1,6 +1,7 @@
 <script setup>
 import NavBar from '@/components/NavBar.vue'
-import ChangeViewMenu from '../components/ChangeViewMenu.vue';
+
+import HomeSideBar from '@/components/SideBars/HomeSideBar.vue'
 </script>
 
 <template>
@@ -11,7 +12,7 @@ import ChangeViewMenu from '../components/ChangeViewMenu.vue';
             </div>
             <div class="bottom-container">
                 <div class="side-bar-container">
-                    <ChangeViewMenu/>
+                    <HomeSideBar/>
                 </div>
 
                 <div class="grid-plane-container">

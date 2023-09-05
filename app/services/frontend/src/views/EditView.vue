@@ -1,6 +1,8 @@
 <script setup>
 import NavBar from '@/components/NavBar.vue'
-import SideBar from '@/components/SideBar.vue'
+
+import EditSideBar from '@/components/SideBars/EditSideBar.vue';
+
 import GridPlane from '@/components/GridPlane.vue'
 </script>
 
@@ -12,7 +14,7 @@ import GridPlane from '@/components/GridPlane.vue'
             </div>
             <div class="bottom-container">
                 <div class="side-bar-container">
-                    <SideBar/>
+                    <EditSideBar/>
                 </div>
 
                 <div class="grid-plane-container">

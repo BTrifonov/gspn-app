@@ -22,7 +22,10 @@ function triggerArc() {
 </script>
 
 <template>
-    <div class="btn-container">
+    <div class="menu-container">
+        <p class="text">Create Element</p>
+
+        <div class="btn-container">
             <button @click="triggerPlace">
                 <img src="../../assets/BasicElements/place.svg">
             </button> 
@@ -39,11 +42,14 @@ function triggerArc() {
             <button @click="triggerArc">
                 <img src="../../assets/MenuIcons/arrow-right.png">
             </button> 
+        </div>
     </div>
 </template>
 
 
 <style scoped>
+@import '@/assets/sidebar-submenu.css';
+
 .btn-container {
     display: flex;
     flex-direction: row;
