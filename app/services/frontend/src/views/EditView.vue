@@ -26,5 +26,5 @@ import GridPlane from '@/components/GridPlane.vue'
 </template>
 
 <style scoped>
-    @import '@/assets/main-structure.css'
+    @import '@/assets/main-structure.css';
 </style>

@@ -1,10 +1,12 @@
 <script setup>
-import DrawMenu from '@/components/CreateElemMenu/DrawMenu.vue'
-import EditElemMenu from '@/components/EditElemMenus/EditElemMenu.vue'
-import EditPlaneMenu from '@/components/EditPlaneMenu/EditPlaneMenu.vue'
+import CreateElemMenu from '@/components/CreateElemMenu/CreateElemMenu.vue';
+import EditElemMenu from '@/components/EditElemMenus/EditElemMenu.vue';
+import EditPlaneMenu from '@/components/EditPlaneMenu/EditPlaneMenu.vue';
+
 import SimulationMenu from '@/components/ExecSimulationMenu/SimulationMenu.vue'
 
 import ChangeViewMenu from '@/components/ChangeViewMenu.vue';
+
 
 </script>
 
@@ -15,7 +17,7 @@ import ChangeViewMenu from '@/components/ChangeViewMenu.vue';
             <EditPlaneMenu/>
         </div>
         <div>
-            <DrawMenu/>
+            <CreateElemMenu/>
         </div>
         <div class="menu-container">
             <p class="text">Edit element</p>

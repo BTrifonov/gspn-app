@@ -1,11 +1,8 @@
 <script setup>
-import MainContainer from '@/components/MainContainer.vue'
+
 </script>
 
 <template>
-  <!--<div id="app">
-    <MainContainer/>
-  </div>-->
   <router-view></router-view>
 </template>
 

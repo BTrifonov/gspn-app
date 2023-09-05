@@ -29,6 +29,7 @@
 <style scoped>
 @import '../assets/sidebar-submenu.css';
 
+/*
 .btn-container {
     display: flex;
     flex-direction: row;
@@ -47,4 +48,5 @@ button {
 button:active {
     background-color: grey;
 }
+*/
 </style>
