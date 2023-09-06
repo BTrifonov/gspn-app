@@ -303,7 +303,7 @@ watch(() => planeStore.triggerSave, (newValue)=> {
     if(newValue) {
         const jsonGraph = graph.toJSON()
 
-        axios.post('/model', {
+        axios.post('/model/plainJSON', {
             model: jsonGraph
         })
             .then(function(response) {

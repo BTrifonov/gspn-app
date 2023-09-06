@@ -1,7 +1,7 @@
 <script setup>
-    import NavBar from '@/components/NavBar.vue'
-
-    import SimSideBar from '@/components/SimViewComponents/SimSideBar.vue'
+    import NavBar from '@/components/NavBar.vue';
+    import SimSideBar from '@/components/SimViewComponents/SimSideBar.vue';
+    import SimGridPlane from '@/components/SimViewComponents/SimGridPlane.vue';
 </script>
 
 <template>
@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="grid-plane-container">
-                    <p>This is the grid plane</p>
+                    <SimGridPlane/>
                 </div>
             </div>
         </div>

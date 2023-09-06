@@ -2,8 +2,8 @@ from pathlib import Path
 
 import json
 
-#Write the PN model to a local file model.json 
-def write_model_file(model_data):
+#Write the PN model to a local file with file_name
+def write_model_file(model_data, file_name):
     """Doc of the function"""
     try:
         current_dir_path = Path.cwd()
@@ -14,8 +14,7 @@ def write_model_file(model_data):
         
         
         #Now dir models should be created
-        model_file_path = model_dir_path / "model.json"
-
+        model_file_path = model_dir_path / file_name
         json_cells = []
 
         #Transform each cell into json format
@@ -32,14 +31,52 @@ def write_model_file(model_data):
     except OSError as e:
         print(f"The following error occurred: {e}")
 
+def write_file_direct(model_data, file_name):
+    """Doc of the function"""
+    try: 
+        current_dir_path = Path.cwd()
+        model_dir_path = current_dir_path / "models"
 
-#Delete the model.json file and the directory if empty
-def delete_model_file():
+        if not model_dir_path.is_dir():
+            create_model_dir()
+
+        model_file_path = model_dir_path / file_name
+
+        with open(model_file_path, "w") as file:
+            file.write(model_data)
+
+    except OSError as e:
+        print(f"The following error occured: {e}")
+
+
+def get_model_file(file_name):
+    """Doc of the function"""
+    try:
+        current_dir_path = Path.cwd()
+        model_dir_path = current_dir_path /  "models"
+
+        if not model_dir_path.is_dir():
+            raise OSError("The model directory does not exist")
+        
+        model_file_path = model_dir_path / file_name
+
+        if not model_file_path.is_file():
+            raise OSError(f"The file with name {file_name} does not exist")
+
+        with open(model_file_path, "r") as file:
+            return file.read()
+        
+    except OSError as e:
+        print(f"The following error occured: {e}")
+
+
+#Delete the file with file_name and the directory if empty
+def delete_model_file(file_name):
     try:
         current_dir_path = Path.cwd()
         
         model_dir_path = current_dir_path / "models"
-        model_file_path = model_dir_path / "model.json"
+        model_file_path = model_dir_path / file_name
 
         Path(model_file_path).unlink()
 
@@ -51,6 +88,11 @@ def delete_model_file():
 
     except OSError as e:
         print(f"The following error occured: {e}")
+
+
+
+
+
 
 
 #Create the model directory

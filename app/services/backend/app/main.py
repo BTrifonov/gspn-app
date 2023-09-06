@@ -4,8 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pathlib import Path
 
+
+from fastapi.responses import JSONResponse
+
 #Problems when importing without the dot
-from .readWriteJSON import write_model_file, delete_model_file
+from .readWriteJSON import write_model_file, delete_model_file, write_file_direct, get_model_file
 
 import json
 import os
@@ -30,6 +33,13 @@ class Model(BaseModel):
 
 class ReqBody(BaseModel):
     model: Model
+
+
+#All attributes required when transferring object
+class PlainJSON(BaseModel):
+    model: dict
+
+
 
 app = FastAPI()
 
@@ -60,14 +70,32 @@ async def main():
         "message": "Hello World"
     }
 
+@app.get("/model/plainJSON")
+async def getModel():
+    """Doc of the API point"""
+    print("Tried to fetch the model")
+    model_file = get_model_file(file_name='plainModel.json')
+    return JSONResponse(content=model_file,headers={"Content-Type": "application/json"}) 
+
 #----------------------------------------------------------------
 
 #POST methods
 
 @app.post("/model")
 async def saveModel(req_body: ReqBody):
-    """Saves the model locally to the model directory as a JSON"""
-    write_model_file(req_body.model)
+    """Doc of the API point"""
+    write_model_file(model_data=req_body.model,file_name="strippedModel.json")
+
+@app.post("/model/plainJSON")
+async def savePlainJSON(req_body: PlainJSON):
+    """Doc of the API point"""
+    json_file = json.dumps(req_body.model)
+    write_file_direct(json_file, file_name="plainModel.json")
+
+    #jsonFile = json.dumps({"model":req_body.model}, indent=4)
+    #write_file_direct(model_data=json_content, file_name="plainModel.json")
+    #print(json_content)
+    #print(json.dumps(json_data, indent=4))
 
 
 #----------------------------------------------------------------
@@ -76,4 +104,5 @@ async def saveModel(req_body: ReqBody):
 
 @app.delete("/model")
 async def deleteModel():
-    delete_model_file()
+    """Doc of the API point"""
+    delete_model_file(file_name="strippedModel.json")
