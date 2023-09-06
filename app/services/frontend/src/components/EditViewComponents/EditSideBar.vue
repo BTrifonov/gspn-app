@@ -5,6 +5,7 @@ import EditPlaneMenu from '@/components/EditViewComponents/EditPlaneMenu.vue';
 
 
 import ChangeViewMenu from '@/components/ChangeViewMenu.vue';
+import StoreModelMenu from '@/components/EditViewComponents/StoreModelMenu.vue';
 
 
 </script>
@@ -12,13 +13,16 @@ import ChangeViewMenu from '@/components/ChangeViewMenu.vue';
 <template>
     <div class="container">
         <div>
-            <EditPlaneMenu/>
-        </div>
-        <div>
             <CreateElemMenu/>
         </div>
         <div>
             <EditElemMenu/>
+        </div>
+        <div>
+            <StoreModelMenu/>
+        </div>
+        <div>
+            <EditPlaneMenu/>
         </div>
         <div>
             <ChangeViewMenu/>
