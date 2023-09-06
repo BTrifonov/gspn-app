@@ -1,0 +1,49 @@
+[
+{
+    "id": "e4142d07-5604-4672-8b39-4ddc97160033",
+    "type": "custom.Place",
+    "attrs": {
+        "label": {
+            "text": "My Place"
+        },
+        "tokenNumber": {
+            "text": "5"
+        }
+    },
+    "source": null,
+    "target": null
+},
+{
+    "id": "53f98c57-33c7-4b2c-aa4a-255065267142",
+    "type": "custom.Transition",
+    "attrs": {
+        "label": {
+            "text": "My transition"
+        },
+        "tokenDistribution": {
+            "rate": 0.75,
+            "distribution": "exponential"
+        },
+        "rateLabel": {
+            "text": "\u03bb = 0.75"
+        }
+    },
+    "source": null,
+    "target": null
+},
+{
+    "id": "f5e1d0ae-9a08-4915-9180-ae3bff8fde8a",
+    "type": "custom.Arc",
+    "attrs": {},
+    "source": {
+        "id": "e4142d07-5604-4672-8b39-4ddc97160033",
+        "x": null,
+        "y": null
+    },
+    "target": {
+        "id": "53f98c57-33c7-4b2c-aa4a-255065267142",
+        "x": null,
+        "y": null
+    }
+}
+]

@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pathlib import Path
 
+#Problems when importing without the dot
 from .readWriteJSON import write_model_file, delete_model_file
 
 import json

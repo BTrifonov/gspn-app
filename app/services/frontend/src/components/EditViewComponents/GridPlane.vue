@@ -325,39 +325,18 @@ watch(() => planeStore.triggerSave, (newValue)=> {
 </script>
 
 <template>
-    <div class="main-container" ref="container" :style="styleContainer">
+    <div class="plane-container" ref="container" :style="styleContainer">
         <div class="plane" ref="plane"></div>
     </div>
 </template>
 
 <style scoped>
-.plane {
-    min-width: 100%;
-    min-height: 100%;
-}
-.main-container {
-    min-height: 100%;
-    min-width: 100%;
-
-    display: flex;
-    position: relative;
-
- 
-    padding: 0px;
-    overflow: auto;
-}
-
-/**TODO: Either import as external stylesheet or use addition */
-/*@import '../assets/availablePorts.css'*/
+@import '@/assets/grid-plane-structure.css';
 </style>
 
+<!--TODO: If this style is added from external file, does not work-->
 <style>
 .available-magnet {
     visibility: visible;
-}
-
-
-.available-cell rect {
-    fill: 'red';
 }
 </style>

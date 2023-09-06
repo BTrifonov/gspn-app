@@ -1,0 +1,25 @@
+.plane {
+    width: 100%;
+    height: 100%;
+}
+
+.plane-container {
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    position: relative;
+
+
+    padding: 0px;
+    overflow: auto;
+}
+
+.available-magnet {
+    visibility: visible;
+}
+
+
+.available-cell rect {
+    fill: 'red';
+}
