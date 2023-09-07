@@ -1,23 +1,7 @@
 <script setup>
-import { useTriggerStore } from '@/components/stores/TriggerStore';
+import { useCreateElemStore } from '@/components/stores/EditViewStores/CreateElemStore';
 
-const store = useTriggerStore()
-//-------------------------------------------------------------
-function triggerPlace() {
-    store.placeTrigger = true
-}
-
-function triggerTransition() {
-    store.transitionTrigger = true
-}
-
-function triggerImmediateTransition() {
-    store.immediateTransitionTrigger = true
-}
-
-function triggerArc() {
-    store.connectTrigger = !store.connectTrigger
-}
+const store = useCreateElemStore()
 
 </script>
 
@@ -26,20 +10,20 @@ function triggerArc() {
         <p class="text">Create Element</p>
 
         <div class="btn-container">
-            <button @click="triggerPlace">
+            <button @click="store.setPlaceButton(true)">
                 <img src="../../assets/BasicElements/place.svg">
             </button> 
         
-            <button @click="triggerTransition"> 
+            <button @click="store.setTransitionButton(true)"> 
                 <img src="../../assets/BasicElements/transition.svg">
             </button>
         
         
-            <button @click="triggerImmediateTransition"> 
+            <button @click="store.setImmediateTransitionButton(true)"> 
                 <img src="../../assets/BasicElements/immediateTransition.svg">
             </button>
         
-            <button @click="triggerArc">
+            <button @click="store.setArcButton(true)">
                 <img src="../../assets/MenuIcons/arrow-right.png">
             </button> 
         </div>

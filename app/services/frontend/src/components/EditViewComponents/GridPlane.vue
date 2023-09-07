@@ -7,7 +7,9 @@ import axios from 'axios';
 
 import * as joint from 'jointjs';
 
-import { useTriggerStore } from '@/components/stores/TriggerStore';
+
+import {useCreateElemStore} from '@/components/stores/EditViewStores/CreateElemStore'
+
 import { useElementStore} from '@/components/stores/ElementStore';
 import { usePlaneStore } from '@/components/stores/PlaneStore';
 
@@ -35,7 +37,8 @@ const styleContainer = reactive({
 
 const plane = ref(null)
 
-const triggerStore = useTriggerStore()
+const createElemStore = useCreateElemStore()
+
 const elementStore = useElementStore()
 const planeStore = usePlaneStore()
 
@@ -205,36 +208,46 @@ function createArc() {
 //----------------------------------------------------------
 //
 //----------------------------------------------------------
-//Watchers for user interaction with the draw menu
+//User interaction with the CreateElemMenu
+createElemStore.$onAction(({
+    name, 
+    store, 
+    args, 
+    after 
+}) => {
+        //Buttons are set to false after an element has been drawn, therefore return in this case
+        if(!args[0])
+            return
 
-watch(()=> triggerStore.placeTrigger, (value) => {
-    if(value) {
-        createPlace()
-        triggerStore.placeTrigger = false
-    }
+        after((res)=> {
+            console.log(res)
+            switch(name) {
+                case "setPlaceButton": {
+                    createPlace()
+                    store.setPlaceButton(false)
+                    break
+                }
+                case "setTransitionButton": {
+                    createTransition()
+                    store.setTransitionButton(false)
+                    break
+                }
+                case "setImmediateTransitionButton": {
+                    createImmediateTransition()
+                    store.setImmediateTransitionButton(false)
+                    break
+                }
+                case "setArcButton": {
+                    createArc()
+                    store.setArcButton(false)
+                    break
+                }
+                default: {
+                    break;
+                }
+            }
+        })
 })
-
-watch(() => triggerStore.transitionTrigger, (value) => {
-    if(value) {
-        createTransition()
-        triggerStore.transitionTrigger = false
-    }
-})
-
-watch(() => triggerStore.immediateTransitionTrigger,(value) => {
-    if(value) {
-        createImmediateTransition()
-        triggerStore.immediateTransitionTrigger = false
-    }
-})
-
-watch(() => triggerStore.connectTrigger, (newValue) => {
-    if(newValue) {
-        createArc()
-        triggerStore.connectTrigger = false
-    }
-})
-
 //---------------------------------------------------------
 // Watchers for user interaction with the edit plane menu
 watch(()=> planeStore.paperGrid, (newValue) => {
