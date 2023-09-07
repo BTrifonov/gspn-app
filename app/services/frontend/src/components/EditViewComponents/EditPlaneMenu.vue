@@ -3,18 +3,6 @@ import {usePlaneStore} from '@/components/stores/PlaneStore'
 
 const planeStore = usePlaneStore()
 
-function triggerDelete() {
-    planeStore.triggerDelete = true
-}
-
-function triggerSave() {
-    planeStore.triggerSave = true
-}
-
-function triggerSaveFile(event) {
-    planeStore.selectedFile = event.target.files[0]
-}
-
 </script>
 
 <template>
@@ -40,15 +28,6 @@ function triggerSaveFile(event) {
             <div class="sim-container">
                 <input type="range" min="0.5" max="2" step="0.1" class="input" v-model="planeStore.paperScale">
                 <p>Plane Scale</p>
-            </div>
-
-            <div class="btn-container">
-                <button @click="triggerDelete">
-                    <img src="../../assets/EditPlaneButtons/delete.svg">
-                </button>
-                <button @click="triggerSave">
-                    <img src="../../assets/EditPlaneButtons/save.svg">
-                </button>
             </div>
         </div>
         <div v-else class="sim-container">

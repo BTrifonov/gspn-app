@@ -8,8 +8,6 @@ export const usePlaneStore = defineStore('plane', {
         editPlaneEnabled: false,
         paperGrid: '',
         paperGridSize: 0, 
-        paperScale: 1,
-        triggerDelete: false, 
-        triggerSave: false
+        paperScale: 1
     })
 })

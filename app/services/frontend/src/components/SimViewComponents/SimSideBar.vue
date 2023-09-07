@@ -1,14 +1,18 @@
 <script setup>
 import SimulationMenu from '@/components/SimViewComponents/SimulationMenu.vue';
 import SimEnabledTransitionsMenu from '@/components/SimViewComponents/SimEnabledTransitionsMenu.vue';
-
-
 import SimTracebackMenu from '@/components/SimViewComponents/SimTracebackMenu.vue';
+import SimModelMenu from '@/components/SimViewComponents/SimModelMenu.vue';
+
 import ChangeViewMenu from '@/components/ChangeViewMenu.vue';
+
 </script>
 
 <template>
     <div class="container">
+        <div>
+            <SimModelMenu/>
+        </div>
         <div>
             <SimulationMenu/>
         </div>

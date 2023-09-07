@@ -1,42 +1,46 @@
 <script setup>
 import { ref } from 'vue';
+import {useModelStore} from '@/components/stores/ModelStore'
 
-const files = ref([{name: "sample-model.json", selected: false}])
-const fileName = ref(null)
+const modelStore = useModelStore()
+const modelName = ref('')
 
-function triggerSave() {
-    files.value.push({name: fileName.value, selected:false})
-    fileName.value = null
+/**TODO: Think about possible errors: empty user input */
+function saveModel() {
+    modelStore.saveModel(modelName.value)
+
+    modelName.value = null
 }
 
-function triggerDelete(file) {
-    const indexElem = files.value.indexOf(file)
-    if(indexElem != -1) {
-        files.value.splice(indexElem, 1)
-    }
+function deleteModel(model) {
+   modelStore.deleteModel(model)
 }
 
-function printToConsole() {
-    console.log("What's up")
+function selectUnselectModel(chosenModel) {
+   modelStore.selectUnselectModel(chosenModel)
 }
 
 </script>
-
 <template>
     <div class="menu-container">
         <p class="text"> Store Model </p>
         
         <div class="outer-container">
-            <div v-for="file in files" class="sim-container">
-                <div class="file-name" @click="printToConsole">
-                    {{ file.name }}
+            <div v-for="model in modelStore.getModels" class="sim-container">
+                <div>
+                    <a  href="#" 
+                        class="a-container" 
+                        @click="selectUnselectModel(model)"
+                        :style="{ color: model.selected ? 'white' : 'blue' }">
+                        
+                        {{ model.name }}
+                    </a>
                 </div>
-
                 <div class="btn-container">
                     <button>
                         <img src="@/assets/EditPlaneButtons/save.svg">
                     </button>
-                    <button @click="triggerDelete(file)">
+                    <button @click="deleteModel(model)">
                         <img src="@/assets/EditPlaneButtons/delete.svg">
                     </button>
                 </div>
@@ -44,10 +48,10 @@ function printToConsole() {
         </div>
 
         <div class="sim-container">
-            <input type="text" placeholder="Model name" v-model="fileName" class="input">
+            <input type="text" placeholder="Model name" v-model="modelName" class="input">
 
             <div class="btn-container">
-                <button @click="triggerSave">
+                <button @click="saveModel()">
                     <img src="@/assets/EditPlaneButtons/save.svg">
                 </button>
             </div>
@@ -64,17 +68,21 @@ function printToConsole() {
     display: flex;
 }
 
+/*
 .file-name {
     display: flex;
     width: 60%;
     background-color: rgb(9, 147, 240);
     margin: 0 auto;
 }
-
-
+*/
+.a-container {
+    display: block;
+    height: 100%;
+    width: 100%;
+    text-decoration: none;
+}
 /*-----------------------------------*/
-
-
 
 /**Overwrite styling of the external stylesheet for the following classes */
 .sim-container {
