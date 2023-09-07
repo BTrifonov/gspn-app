@@ -64,7 +64,16 @@ On some READMEs, you may see small images that convey metadata, such as whether 
 Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+To run the backend navigate to the app/services/backend directory and run main.py, afterwards start a terminal and use the following command:
+    "uvicorn app.main:app --host 0.0.0.0 --port 5000"
+
+To run the frontend navigate to the app/services/frontend directory and run the following command in the terminal:
+    "npm run dev"
+
+To run the whole appplication navigate to the app/ directory and run the following command in the terminal:
+    "docker compose up"
+
+TODO: Check why it is not possible to store the models in the backend, whenever Docker is used
 
 ## Usage
 Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
