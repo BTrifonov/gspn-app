@@ -36,10 +36,14 @@ class ReqBody(BaseModel):
 
 
 #All attributes required when transferring object
+class Param(BaseModel):
+    name: str
+
+
 class PlainJSON(BaseModel):
-    model: dict
-
-
+    data: dict
+    params: Param
+    
 
 app = FastAPI()
 
@@ -71,11 +75,12 @@ async def main():
     }
 
 @app.get("/model/plainJSON")
-async def getModel():
+async def getModel(name: str):
     """Doc of the API point"""
-    print("Tried to fetch the model")
-    model_file = get_model_file(file_name='plainModel.json')
-    return JSONResponse(content=model_file,headers={"Content-Type": "application/json"}) 
+    model_file = get_model_file(file_name=name)
+    print(model_file)
+    return model_file
+    #return JSONResponse(content=model_file,headers={"Content-Type": "application/json"}) 
 
 #----------------------------------------------------------------
 
@@ -86,11 +91,13 @@ async def saveModel(req_body: ReqBody):
     """Doc of the API point"""
     write_model_file(model_data=req_body.model,file_name="strippedModel.json")
 
+
+
 @app.post("/model/plainJSON")
 async def savePlainJSON(req_body: PlainJSON):
     """Doc of the API point"""
-    json_file = json.dumps(req_body.model)
-    write_file_direct(json_file, file_name="plainModel.json")
+    json_file = json.dumps(req_body.data)
+    write_file_direct(json_file, file_name = req_body.params.name)
 
     #jsonFile = json.dumps({"model":req_body.model}, indent=4)
     #write_file_direct(model_data=json_content, file_name="plainModel.json")

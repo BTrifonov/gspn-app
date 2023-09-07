@@ -2,11 +2,15 @@
 import {ref, onMounted} from 'vue'
 
 
+import {useModelStore} from '@/components/stores/ModelStore'
+
+
 import * as joint from 'jointjs'
 import axios from 'axios';
 
-
 const plane = ref(null)
+
+const modelStore = useModelStore()
 
 const namespace = joint.shapes
 
@@ -14,22 +18,6 @@ const graph = new joint.dia.Graph({}, {cellNamespace:namespace})
 
 let paper = null
 onMounted(()=> {
-    //fetch the locally saved model
-      axios.get('/model/plainJSON')
-            .then(function(response) {
-                console.log("Success")
-                graph.fromJSON(JSON.parse(response.data))
-            })
-            .catch(function(response) {
-                console.log("Error occured")
-                console.log("Error is: ")
-                console.log(response)
-            })
-            .finally(function(response) {
-                
-            })
-
-
     paper = new joint.dia.Paper({
         el: plane.value, 
         model: graph, 
@@ -39,14 +27,54 @@ onMounted(()=> {
         gridSize: 5,
         cellViewNamespace: namespace,
     })
-
 })
+
+
+modelStore.$onAction(({
+    name, 
+    store, 
+    args, 
+    after, 
+    onError
+}) => {
+
+   
+    after(()=> {
+        if(name === "selectUnselectModel") {
+            //This is the entire model object
+            const model = args[0]
+
+            //Fetch the model based on the model.name
+            const params = {
+                name: model.name
+            }
+
+            axios.get('/model/plainJSON', {params})
+                .then(function(response) {
+                    console.log("Fetch the model with name" + model.name)
+                    //console.log(response.data)
+                    const modelJSON = JSON.parse(response.data)
+                    console.log(modelJSON.model)
+                    graph.fromJSON(modelJSON.model)
+                    console.log(graph)
+                })
+                .catch(function(err) {
+                    console.log("An error occured" + err)
+                })
+                .finally(function() {
+                    //
+                })
+        }
+
+    })
+})
+
 
 </script>
 
 
 <template>
-    <div class="plane-container" ref="container" :style="styleContainer">
+    <div class="plane-container" ref="container">
         <div class="plane" ref="plane"></div>
     </div>
 </template>

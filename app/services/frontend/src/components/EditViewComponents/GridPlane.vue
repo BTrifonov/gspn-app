@@ -9,6 +9,8 @@ import * as joint from 'jointjs';
 
 
 import {useCreateElemStore} from '@/components/stores/EditViewStores/CreateElemStore'
+import {useModelStore} from '@/components/stores/ModelStore'
+
 
 import { useElementStore} from '@/components/stores/ElementStore';
 import { usePlaneStore } from '@/components/stores/PlaneStore';
@@ -29,15 +31,11 @@ import { Arc } from '@/components/utils/CustomElements/arc';
 //TODO: Probably won't be needed, delete later
 const container = ref(null)
 
-const styleContainer = reactive({
-  //width: '100%',
-  //height: '100%',
-})
-
 
 const plane = ref(null)
 
 const createElemStore = useCreateElemStore()
+const modelStore = useModelStore()
 
 const elementStore = useElementStore()
 const planeStore = usePlaneStore()
@@ -209,6 +207,7 @@ function createArc() {
 //
 //----------------------------------------------------------
 //User interaction with the CreateElemMenu
+
 createElemStore.$onAction(({
     name, 
     store, 
@@ -248,6 +247,77 @@ createElemStore.$onAction(({
             }
         })
 })
+
+
+//---------------------------------------------------------
+//
+//---------------------------------------------------------
+//User interaction with the StoreModelMenu
+modelStore.$onAction(({
+    name, 
+    store, 
+    args, 
+    after, 
+    onError
+}) => {
+
+    /*Executed after modification of the store*/
+    after(()=> {
+        if(name === "saveModel") {
+            const modelName = args[0]
+
+            console.log("Successfully identified storing the model with name: " + args[0])
+
+            const jsonGraph = graph.toJSON()
+
+            const data = {
+                model: jsonGraph
+            }
+
+            const params = {
+                name: modelName
+            }
+
+            axios.post('/model/plainJSON', { data, params })
+                    .then(function(response) {
+                        console.log("Saved successfully model:")
+                        console.log(jsonGraph)
+                    })
+                    .catch(function (err) {
+                        console.log("The following error occured:" + err)
+                    })  
+                    .finally(function() {
+                        //
+                    })
+            }
+        else if(name === "selectUnselectModel") {
+            //This is the entire model object
+            const model = args[0]
+
+            //Fetch the model based on the model.name
+            const params = {
+                name: model.name
+            }
+
+            axios.get('/model/plainJSON', {params})
+                .then(function(response) {
+                    console.log("Fetch the model with name" + model.name)
+                })
+                .catch(function(err) {
+                    console.log("An error occured")
+                })
+                .finally(function() {
+                    //
+                })
+        }
+    })
+
+})
+
+
+
+//---------------------------------------------------------
+//
 //---------------------------------------------------------
 // Watchers for user interaction with the edit plane menu
 watch(()=> planeStore.paperGrid, (newValue) => {
@@ -338,7 +408,7 @@ watch(() => planeStore.triggerSave, (newValue)=> {
 </script>
 
 <template>
-    <div class="plane-container" ref="container" :style="styleContainer">
+    <div class="plane-container" ref="container">
         <div class="plane" ref="plane"></div>
     </div>
 </template>

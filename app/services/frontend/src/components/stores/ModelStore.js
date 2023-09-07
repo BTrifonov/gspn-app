@@ -12,7 +12,8 @@ export const useModelStore = defineStore('modelStore', {
     }, 
     actions: {
         saveModel(model) {
-            this.models.push({name: model, selected: false})
+            //The last saved model is automatically the model, on which it is currently working
+            this.models.push({name: model, selected: true})
         },
         selectUnselectModel(chosenModel) {
             if(!chosenModel.selected) {
