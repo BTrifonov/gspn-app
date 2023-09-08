@@ -18,7 +18,17 @@ function deleteModel(model) {
 
 function updateModel() {
     modelStore.triggerUpdate()
+}
 
+function handleModelSelection(model) {
+    if(!model.selected) {
+        //model.selected is false -> user selects model
+        modelStore.selectModel(model)
+    }
+    else {
+        //model.selected is true -> user unselects model
+        modelStore.unselectModel(model)
+    }
 }
 
 </script>
@@ -31,7 +41,7 @@ function updateModel() {
                 <div>
                     <a  href="#" 
                         class="a-container" 
-                        @click="modelStore.selectModel(model)"
+                        @click="handleModelSelection(model)"
                         :style="{ color: model.selected ? 'white' : 'blue' }">
                         
                         {{ model.name }}

@@ -271,7 +271,6 @@ modelStore.$onAction(({
 
             store.saveModel(modelName, modelJSON)
 
-            
             graph.clear()
             store.disableSaveTrigger()
         } else if(name === "triggerUpdate") {
@@ -282,35 +281,37 @@ modelStore.$onAction(({
 
             store.disableUpdateTrigger()
         } else if(name === "selectModel") {
-            //fetch the model and return to the frontend
+            if(!result) 
+                throw Error("Result missing")
+            
             const model = args[0]
 
-            //Fetch the model based on the model.name
             const params = {
                 name: model.name
             }
 
-            
             axios.get('/model/plainJSON', {params})
-                .then(function(response) {
-                    console.log("Fetch the model with name: " + model.name)
+                    .then(function(response) {
+                        console.log("Fetch the model with name: " + model.name)
                    
-                    const modelJSON = JSON.parse(response.data)
-                    console.log(modelJSON)
-                    graph.fromJSON(modelJSON.model)  
-                })
-                .catch(function(err) {
-                    console.log("An error occured" + err)
-                })
-                .finally(function() {
-                    //
-                })
+                        const modelJSON = JSON.parse(response.data)
+                
+                        graph.fromJSON(modelJSON.model)
+                    })
+            .catch(function(err) {
+                console.log("An error occured" + err)
+            })
+            .finally(function() {
+                //
+            })
+        } else if(name === "unselectModel") {
+            if(!result)
+                throw Error("Result missing")
+
+            graph.clear()
         }
     })
 })
-
-
-
 
 
 //---------------------------------------------------------

@@ -101,10 +101,21 @@ async def savePlainJSON(req_body: PlainJSON):
     print(json_file)
     write_file_direct(json_file, file_name = req_body.params.name)
 
-    #jsonFile = json.dumps({"model":req_body.model}, indent=4)
-    #write_file_direct(model_data=json_content, file_name="plainModel.json")
-    #print(json_content)
-    #print(json.dumps(json_data, indent=4))
+
+
+#----------------------------------------------------------------
+
+
+# PUT methods
+
+
+@app.put("/model/plainJSON")
+async def updatePlainJSON(req_body: PlainJSON):
+    """Doc of the API point"""
+    json_file = json.dumps(req_body.data, indent=4)
+    print(json_file)
+
+    
 
 
 #----------------------------------------------------------------

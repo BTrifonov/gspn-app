@@ -26,18 +26,6 @@ export const useModelStore = defineStore('modelStore', {
         disableUpdateTrigger() {
             this.updateTrigger = false
         },
-        selectModel(selectedModel) {
-            //first update the flag of the selectedModel
-            if(!selectedModel.selectedModel) {
-                for(const model of this.models)
-                    if(model != selectedModel) {
-                        model.selected = false
-                    }
-            }
-
-            //change flag of selected model
-            selectedModel.selected = true
-        },
         saveModel(modelName, modelJSON) {
             const data = {
                 model: modelJSON
@@ -89,6 +77,31 @@ export const useModelStore = defineStore('modelStore', {
             if(indexElem != -1) {
                 this.models.splice(indexElem, 1)
             }
+        },
+
+        selectModel(model) {
+            if(!this.models.includes(model))
+                throw new Error("Cannot unselect model, which has not been previously stored")
+
+            //unselect all other models
+            for(const iterModel of this.models) {
+                if(model != iterModel) {
+                    iterModel.selected = false
+                }
+            }
+
+            //change flag of model to true
+            model.selected = true
+            
+            return true
+        }, 
+        unselectModel(model) {
+            if(!this.models.includes(model))
+                throw new Error("Cannot unselect model, which has not been previously stored")
+
+            model.selected = false
+        
+            return true  
         }
     }
 })

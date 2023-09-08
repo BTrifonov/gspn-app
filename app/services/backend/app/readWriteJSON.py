@@ -92,9 +92,6 @@ def delete_model_file(file_name):
 
 
 
-
-
-
 #Create the model directory
 def create_model_dir():
     """Doc of the function"""
