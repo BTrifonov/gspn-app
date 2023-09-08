@@ -41,9 +41,30 @@ modelStore.$onAction(({
    
     after((result)=> {
         if(name === "selectModel") {
-           console.log(result)
+          //fetch the model and return to the frontend
+          const model = args[0]
+
+        //Fetch the model based on the model.name
+        const params = {
+            name: model.name
         }
 
+
+        axios.get('/model/plainJSON', {params})
+            .then(function(response) {
+                console.log("Fetch the model with name: " + model.name)
+       
+                const modelJSON = JSON.parse(response.data)
+                console.log(modelJSON)
+                graph.fromJSON(modelJSON.model)  
+            })
+            .catch(function(err) {
+                console.log("An error occured" + err)
+            })
+            .finally(function() {
+                //
+            })
+        }
     })
 })
 

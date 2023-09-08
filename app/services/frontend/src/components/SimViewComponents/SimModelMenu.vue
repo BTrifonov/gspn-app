@@ -3,8 +3,8 @@ import {useModelStore} from '@/components/stores/ModelStore'
 
 const modelStore = useModelStore()
 
-function selectUnselectModel(model) {
-    modelStore.selectUnselectModel(model)
+function selectModel(model) {
+    modelStore.selectModel(model)
 }
 
 </script>
@@ -18,7 +18,7 @@ function selectUnselectModel(model) {
                     <a  href="#" 
                         class="a-container" 
                         :style="{ color: model.selected ? 'white' : 'blue' }"
-                        @click="selectUnselectModel(model)">
+                        @click="selectModel(model)">
                     
                         {{ model.name }}
                     
