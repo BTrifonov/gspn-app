@@ -51,12 +51,16 @@ modelStore.$onAction(({
 
             axios.get('/model/plainJSON', {params})
                 .then(function(response) {
-                    console.log("Fetch the model with name" + model.name)
-                    //console.log(response.data)
+                    console.log("Fetch the model with name: " + model.name)
+                   
                     const modelJSON = JSON.parse(response.data)
-                    console.log(modelJSON.model)
+                    console.log(modelJSON)
+
+                    //const modelJSON = JSON.parse(response.data)
+                    //console.log(modelJSON.model)
+
                     graph.fromJSON(modelJSON.model)
-                    console.log(graph)
+
                 })
                 .catch(function(err) {
                     console.log("An error occured" + err)

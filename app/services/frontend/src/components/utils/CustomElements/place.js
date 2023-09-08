@@ -58,4 +58,17 @@ export class Place extends joint.shapes.standard.Circle {
             }
         }
     }
+
+    toJSON() {
+        const json = super.toJSON()
+
+        json.attrs = this.get('attrs')
+
+        return json
+    }
+
+    /*Currenty not used */
+//    fromJSON() {
+//
+//    }
 }

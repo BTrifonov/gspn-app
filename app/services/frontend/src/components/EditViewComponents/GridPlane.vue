@@ -1,8 +1,6 @@
-
 <script setup>
 import {ref, onMounted} from 'vue';
 import {watch} from 'vue';
-import {reactive} from 'vue';
 import axios from 'axios';
 
 import * as joint from 'jointjs';
@@ -22,9 +20,8 @@ import { drawArc } from '@/components/utils/element-generator'
 
 import { createLinkToolView } from '@/components/utils/tool-generator';
 import { createElementToolView } from '@/components/utils/tool-generator';
-import { Arc } from '@/components/utils/CustomElements/arc';
 
-
+//import { Arc } from '@/components/utils/CustomElements/arc';
 //import { validateArc } from './utils/connection-validator';
 
 
@@ -40,10 +37,9 @@ const modelStore = useModelStore()
 const elementStore = useElementStore()
 const planeStore = usePlaneStore()
 
-//TODO: Here should be added all custom shapes
-//const namespace = {...joint.shapes, custom: {Place, Transition}}
-const namespace = joint.shapes
 
+/*----------------------------*/
+const namespace = joint.shapes
 const graph = new joint.dia.Graph({}, {cellNamespace:namespace})
 
 let paper = null
@@ -56,7 +52,7 @@ onMounted(()=> {
         drawGrid: 'mesh',
         gridSize: 5,
         cellViewNamespace: namespace,
-        defaultLink: () => new Arc(),
+        defaultLink: () => new joint.shapes.standard.Link(),
         /**TODO: Validation does not work, use the connection-validator */
         //validateConnection: 
         markAvailable: true
@@ -185,11 +181,13 @@ onMounted(()=> {
 //Create a PN place, transition or arc
 function createPlace() {
     const place = drawPlace()   
+    
     place.addTo(graph)
 }
 
 function createTransition() {    
     const rect = drawTransition()
+    
     rect.addTo(graph)
 }
 
@@ -266,9 +264,9 @@ modelStore.$onAction(({
         if(name === "saveModel") {
             const modelName = args[0]
 
-            console.log("Successfully identified storing the model with name: " + args[0])
+            console.log("Successfully store the model with name: " + args[0])
 
-            const jsonGraph = graph.toJSON()
+            const jsonGraph = graph.toJSON() 
 
             const data = {
                 model: jsonGraph
@@ -313,7 +311,6 @@ modelStore.$onAction(({
     })
 
 })
-
 
 
 //---------------------------------------------------------

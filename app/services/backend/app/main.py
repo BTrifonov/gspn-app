@@ -78,7 +78,8 @@ async def main():
 async def getModel(name: str):
     """Doc of the API point"""
     model_file = get_model_file(file_name=name)
-    print(model_file)
+    json_file = json.loads(model_file)
+    print(json_file)
     return model_file
     #return JSONResponse(content=model_file,headers={"Content-Type": "application/json"}) 
 
@@ -96,7 +97,8 @@ async def saveModel(req_body: ReqBody):
 @app.post("/model/plainJSON")
 async def savePlainJSON(req_body: PlainJSON):
     """Doc of the API point"""
-    json_file = json.dumps(req_body.data)
+    json_file = json.dumps(req_body.data, indent=4)
+    print(json_file)
     write_file_direct(json_file, file_name = req_body.params.name)
 
     #jsonFile = json.dumps({"model":req_body.model}, indent=4)

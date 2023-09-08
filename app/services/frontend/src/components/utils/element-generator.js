@@ -2,7 +2,7 @@ import * as joint from 'jointjs'
 
 import { Place } from './CustomElements/place'
 import { Transition } from './CustomElements/transition'
-import { Arc } from './CustomElements/arc'
+
 
 
 /**Create a visual representation for a PN place */
@@ -20,18 +20,19 @@ export function drawPlace() {
         },
     });
 
+
+    
     //Add ports to the place
     for(let i = 0; i < 9; i++) {
         place.addPort({group: 'radialPort'})
     }
     
-    return place;
+  
+    return place
 }
 
 export function drawTransition() {
     const transition = new Transition({
-        position: {x: 100, y: 100}, 
-        size: {width: 25, height: 50}, 
         attrs: {
             label: {
                 text: 'My transition'
@@ -69,7 +70,7 @@ export function drawImmediateTransition() {
 }
 
 export function drawArc() {
-    const arc = new Arc()
+    const arc = new joint.shapes.standard.Link()
     arc.source(new joint.g.Point(50, 50));
     arc.target(new joint.g.Point(100, 100));
     return arc

@@ -1,0 +1,1088 @@
+{
+    "model": {
+        "cells": [
+            {
+                "type": "custom.Place",
+                "position": {
+                    "x": 100,
+                    "y": 150
+                },
+                "size": {
+                    "width": 50,
+                    "height": 50
+                },
+                "angle": 0,
+                "markup": [
+                    {
+                        "tagName": "circle",
+                        "selector": "body"
+                    },
+                    {
+                        "tagName": "text",
+                        "selector": "label"
+                    },
+                    {
+                        "tagName": "text",
+                        "selector": "tokenNumber"
+                    }
+                ],
+                "ports": {
+                    "groups": {
+                        "radialPort": {
+                            "position": {
+                                "name": "ellipseSpread",
+                                "args": {
+                                    "angle": 0,
+                                    "step": 45,
+                                    "compensateRotation": false
+                                }
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        }
+                    },
+                    "items": [
+                        {
+                            "group": "radialPort",
+                            "id": "6281b710-5b8f-4d29-a9a0-22648ad36e3f",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "104c72b0-6eff-4042-a2c0-f40d499565da",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "bcbee123-0669-413e-84c8-f7f4f990f9d3",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "9b91d941-7172-4c1f-9ed3-374c3cc05e99",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "7c2e214f-b3b2-46e7-ac9f-98971bc43142",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "dd7930a1-7e0c-448a-838e-124ed10acc0d",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "adc6c941-4d10-4713-ae60-b4e0db3aadb1",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "2219a5c2-9d81-46d2-8ecc-ffeaacbac367",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "c34b5ab6-9e71-45e3-9b27-1cf0e89fb024",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "id": "4c6aa6f2-3c32-4062-8d62-c4fa2cbaf241",
+                "z": 1,
+                "attrs": {
+                    "root": {
+                        "magnet": false
+                    },
+                    "body": {
+                        "cx": "calc(w/2)",
+                        "cy": "calc(h/2)",
+                        "r": "calc(h/2)",
+                        "strokeWidth": 2,
+                        "stroke": "black",
+                        "fill": "grey"
+                    },
+                    "label": {
+                        "textVerticalAnchor": "middle",
+                        "textAnchor": "middle",
+                        "x": 0,
+                        "y": "calc(h)",
+                        "fontSize": 10,
+                        "fill": "black",
+                        "text": "My Place"
+                    },
+                    "tokenNumber": {
+                        "textVerticalAnchor": "middle",
+                        "textAnchor": "middle",
+                        "x": "calc(w/2)",
+                        "y": "calc(h/2)",
+                        "fontSize": 10,
+                        "fill": "black",
+                        "text": "5"
+                    }
+                }
+            },
+            {
+                "type": "custom.Transition",
+                "position": {
+                    "x": 240,
+                    "y": 65
+                },
+                "size": {
+                    "width": 20,
+                    "height": 50
+                },
+                "markup": [
+                    {
+                        "tagName": "rect",
+                        "selector": "body"
+                    },
+                    {
+                        "tagName": "text",
+                        "selector": "label"
+                    }
+                ],
+                "ports": {
+                    "groups": {
+                        "leftPort": {
+                            "position": {
+                                "name": "left",
+                                "args": {}
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "rightPort": {
+                            "position": {
+                                "name": "right",
+                                "args": {}
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "topPort": {
+                            "position": {
+                                "name": "top",
+                                "args": {}
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "bottomPort": {
+                            "position": {
+                                "name": "bottom",
+                                "args": {}
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "leftUpperCornerPort": {
+                            "position": {
+                                "name": "absolute",
+                                "args": {
+                                    "x": 0,
+                                    "y": 0
+                                }
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "leftBottomCornerPort": {
+                            "position": {
+                                "name": "absolute",
+                                "args": {
+                                    "x": 0,
+                                    "y": "calc(h)"
+                                }
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "rightUpperCornerPort": {
+                            "position": {
+                                "name": "absolute",
+                                "args": {
+                                    "x": "calc(w)",
+                                    "y": "0"
+                                }
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "rightBottomCornerPort": {
+                            "position": {
+                                "name": "absolute",
+                                "args": {
+                                    "x": "calc(w)",
+                                    "y": "calc(h)"
+                                }
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        }
+                    },
+                    "items": [
+                        {
+                            "group": "bottomPort",
+                            "id": "4eef4071-ead6-4ab7-8219-3d4185fcd58a",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "topPort",
+                            "id": "259282cc-10df-4504-bfa3-14abe6607422",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "leftPort",
+                            "id": "27a65b11-0e6b-4af1-b3ad-7e658b163934",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "rightPort",
+                            "id": "611672cf-2a7b-461a-b463-0d75960f0f0d",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "leftBottomCornerPort",
+                            "id": "8d8f07ac-c78c-4047-92de-97f85b6963af",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "leftUpperCornerPort",
+                            "id": "930657f6-87d9-4c9e-8901-ad111763cd91",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "rightBottomCornerPort",
+                            "id": "6de1e2f4-426a-4194-8f16-f5f373bcc2d7",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "rightUpperCornerPort",
+                            "id": "1564b0f8-f7fa-45c2-b4c9-d881aabdcc40",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "id": "fb993504-46d7-4299-9436-8fe8360e3a59",
+                "z": 2,
+                "attrs": {
+                    "root": {
+                        "magnet": false
+                    },
+                    "body": {
+                        "height": 50,
+                        "width": 20,
+                        "strokeWidth": 2,
+                        "stroke": "black",
+                        "fill": "grey"
+                    },
+                    "label": {
+                        "textVerticalAnchor": "middle",
+                        "textAnchor": "middle",
+                        "x": "calc(w/2)",
+                        "y": "calc(h)",
+                        "fontSize": 10,
+                        "fill": "black",
+                        "text": "My transition"
+                    },
+                    "tokenDistribution": {
+                        "display": "none",
+                        "distribition": "exponential",
+                        "rate": 0.75,
+                        "distribution": "exponential"
+                    },
+                    "rateLabel": {
+                        "textVerticalAnchor": "middle",
+                        "textAnchor": "middle",
+                        "x": "calc(w/2)",
+                        "y": 0,
+                        "fontSize": 10,
+                        "fill": "black",
+                        "text": "\u03bb = 0.75"
+                    }
+                }
+            },
+            {
+                "type": "custom.Transition",
+                "position": {
+                    "x": 240,
+                    "y": 220
+                },
+                "size": {
+                    "width": 20,
+                    "height": 50
+                },
+                "markup": [
+                    {
+                        "tagName": "rect",
+                        "selector": "body"
+                    },
+                    {
+                        "tagName": "text",
+                        "selector": "label"
+                    }
+                ],
+                "ports": {
+                    "groups": {
+                        "leftPort": {
+                            "position": {
+                                "name": "left",
+                                "args": {}
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "rightPort": {
+                            "position": {
+                                "name": "right",
+                                "args": {}
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "topPort": {
+                            "position": {
+                                "name": "top",
+                                "args": {}
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "bottomPort": {
+                            "position": {
+                                "name": "bottom",
+                                "args": {}
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "leftUpperCornerPort": {
+                            "position": {
+                                "name": "absolute",
+                                "args": {
+                                    "x": 0,
+                                    "y": 0
+                                }
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "leftBottomCornerPort": {
+                            "position": {
+                                "name": "absolute",
+                                "args": {
+                                    "x": 0,
+                                    "y": "calc(h)"
+                                }
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "rightUpperCornerPort": {
+                            "position": {
+                                "name": "absolute",
+                                "args": {
+                                    "x": "calc(w)",
+                                    "y": "0"
+                                }
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        },
+                        "rightBottomCornerPort": {
+                            "position": {
+                                "name": "absolute",
+                                "args": {
+                                    "x": "calc(w)",
+                                    "y": "calc(h)"
+                                }
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        }
+                    },
+                    "items": [
+                        {
+                            "group": "bottomPort",
+                            "id": "e301812a-40ce-4498-9489-726f67ed0e88",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "topPort",
+                            "id": "79d4e60e-220e-4d36-b26f-63c5313e6f33",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "leftPort",
+                            "id": "3925daa1-9205-4089-b9db-3adb0b4c1fe9",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "rightPort",
+                            "id": "2fdf9483-678b-4eff-b7fa-c49739aca6cf",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "leftBottomCornerPort",
+                            "id": "882ab0a9-c147-48bd-86a7-78ebdec84634",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "leftUpperCornerPort",
+                            "id": "71625580-e5c0-4ce0-ba89-dbfda80afa5d",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "rightBottomCornerPort",
+                            "id": "7ce0cb99-9931-4261-bc65-075d3f129e08",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "rightUpperCornerPort",
+                            "id": "c6d85516-022e-4a67-b814-47d064d6293b",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "id": "97099ca0-f251-4f18-a0ee-1d2235cec010",
+                "z": 3,
+                "attrs": {
+                    "root": {
+                        "magnet": false
+                    },
+                    "body": {
+                        "height": 50,
+                        "width": 20,
+                        "strokeWidth": 2,
+                        "stroke": "black",
+                        "fill": "grey"
+                    },
+                    "label": {
+                        "textVerticalAnchor": "middle",
+                        "textAnchor": "middle",
+                        "x": "calc(w/2)",
+                        "y": "calc(h)",
+                        "fontSize": 10,
+                        "fill": "black",
+                        "text": "My transition"
+                    },
+                    "tokenDistribution": {
+                        "display": "none",
+                        "distribition": "exponential",
+                        "rate": 0.75,
+                        "distribution": "exponential"
+                    },
+                    "rateLabel": {
+                        "textVerticalAnchor": "middle",
+                        "textAnchor": "middle",
+                        "x": "calc(w/2)",
+                        "y": 0,
+                        "fontSize": 10,
+                        "fill": "black",
+                        "text": "\u03bb = 0.75"
+                    }
+                }
+            },
+            {
+                "type": "custom.Place",
+                "position": {
+                    "x": 345,
+                    "y": 155
+                },
+                "size": {
+                    "width": 50,
+                    "height": 50
+                },
+                "angle": 0,
+                "markup": [
+                    {
+                        "tagName": "circle",
+                        "selector": "body"
+                    },
+                    {
+                        "tagName": "text",
+                        "selector": "label"
+                    },
+                    {
+                        "tagName": "text",
+                        "selector": "tokenNumber"
+                    }
+                ],
+                "ports": {
+                    "groups": {
+                        "radialPort": {
+                            "position": {
+                                "name": "ellipseSpread",
+                                "args": {
+                                    "angle": 0,
+                                    "step": 45,
+                                    "compensateRotation": false
+                                }
+                            },
+                            "attrs": {
+                                "body": {
+                                    "magnet": true,
+                                    "r": 5,
+                                    "fill": "lightblue",
+                                    "stroke": "blue",
+                                    "visibility": "hidden",
+                                    "opacity": 0.6
+                                }
+                            },
+                            "markup": [
+                                {
+                                    "tagName": "circle",
+                                    "selector": "body"
+                                }
+                            ]
+                        }
+                    },
+                    "items": [
+                        {
+                            "group": "radialPort",
+                            "id": "73e8354f-50f7-495e-9b99-71d772653d14",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "0efab7b8-bcfc-49c7-bae2-5983f030dcd5",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "40a0dba9-b0f9-4538-a379-360291b9e4a0",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "f0c3aeb7-f393-44d6-bbe6-1078f1336917",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "d3a101d6-28aa-4020-b4ff-09fcc8342915",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "126b7a91-64ed-4695-a2a1-c19c80d38317",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "c212ea73-9d0c-4ad6-8585-77b5524f386a",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "3680433f-563a-431a-8496-9821c8ecf868",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        },
+                        {
+                            "group": "radialPort",
+                            "id": "ad745a64-cb09-44e7-a9f2-f8fa07d900b8",
+                            "attrs": {
+                                "body": {
+                                    "visibility": "hidden"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "id": "ec06c8df-340a-4b8e-be73-5ba22000c2b1",
+                "z": 4,
+                "attrs": {
+                    "root": {
+                        "magnet": false
+                    },
+                    "body": {
+                        "cx": "calc(w/2)",
+                        "cy": "calc(h/2)",
+                        "r": "calc(h/2)",
+                        "strokeWidth": 2,
+                        "stroke": "black",
+                        "fill": "grey"
+                    },
+                    "label": {
+                        "textVerticalAnchor": "middle",
+                        "textAnchor": "middle",
+                        "x": 0,
+                        "y": "calc(h)",
+                        "fontSize": 10,
+                        "fill": "black",
+                        "text": "My Place"
+                    },
+                    "tokenNumber": {
+                        "textVerticalAnchor": "middle",
+                        "textAnchor": "middle",
+                        "x": "calc(w/2)",
+                        "y": "calc(h/2)",
+                        "fontSize": 10,
+                        "fill": "black",
+                        "text": "5"
+                    }
+                }
+            },
+            {
+                "type": "standard.Link",
+                "source": {
+                    "id": "4c6aa6f2-3c32-4062-8d62-c4fa2cbaf241",
+                    "magnet": "body",
+                    "port": "c34b5ab6-9e71-45e3-9b27-1cf0e89fb024"
+                },
+                "target": {
+                    "id": "fb993504-46d7-4299-9436-8fe8360e3a59",
+                    "magnet": "body",
+                    "port": "27a65b11-0e6b-4af1-b3ad-7e658b163934"
+                },
+                "id": "27435c9f-b77d-4756-9de8-153d1f2fff13",
+                "z": 5,
+                "vertices": [
+                    {
+                        "x": 125,
+                        "y": 90
+                    }
+                ],
+                "attrs": {}
+            },
+            {
+                "type": "standard.Link",
+                "source": {
+                    "id": "4c6aa6f2-3c32-4062-8d62-c4fa2cbaf241",
+                    "magnet": "body",
+                    "port": "7c2e214f-b3b2-46e7-ac9f-98971bc43142"
+                },
+                "target": {
+                    "id": "97099ca0-f251-4f18-a0ee-1d2235cec010",
+                    "magnet": "body",
+                    "port": "3925daa1-9205-4089-b9db-3adb0b4c1fe9"
+                },
+                "id": "6861eb46-72fa-482b-bd0d-5a4acd47d5cc",
+                "z": 6,
+                "vertices": [
+                    {
+                        "x": 125,
+                        "y": 245
+                    }
+                ],
+                "attrs": {}
+            },
+            {
+                "type": "standard.Link",
+                "source": {
+                    "id": "fb993504-46d7-4299-9436-8fe8360e3a59",
+                    "magnet": "body",
+                    "port": "611672cf-2a7b-461a-b463-0d75960f0f0d"
+                },
+                "target": {
+                    "id": "ec06c8df-340a-4b8e-be73-5ba22000c2b1",
+                    "magnet": "body",
+                    "port": "ad745a64-cb09-44e7-a9f2-f8fa07d900b8"
+                },
+                "id": "e58af521-8fec-4e15-bf3e-666809009bd1",
+                "z": 7,
+                "vertices": [
+                    {
+                        "x": 370,
+                        "y": 90
+                    }
+                ],
+                "attrs": {}
+            },
+            {
+                "type": "standard.Link",
+                "source": {
+                    "id": "97099ca0-f251-4f18-a0ee-1d2235cec010",
+                    "magnet": "body",
+                    "port": "2fdf9483-678b-4eff-b7fa-c49739aca6cf"
+                },
+                "target": {
+                    "id": "ec06c8df-340a-4b8e-be73-5ba22000c2b1",
+                    "magnet": "body",
+                    "port": "d3a101d6-28aa-4020-b4ff-09fcc8342915"
+                },
+                "id": "92186eef-f550-464e-82c3-5a1686c7decd",
+                "z": 8,
+                "vertices": [
+                    {
+                        "x": 370,
+                        "y": 245
+                    }
+                ],
+                "attrs": {}
+            }
+        ]
+    }
+}

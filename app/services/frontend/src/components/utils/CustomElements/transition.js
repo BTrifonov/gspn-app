@@ -5,18 +5,26 @@ import { bottomPort, leftBottomCornerPort, leftPort, leftUpperCornerPort, rightB
 export class Transition extends joint.shapes.standard.Rectangle {
     defaults() {
         return {
-            ...super.defaults, 
+ //           ...super.defaults,
             type: 'custom.Transition',
+            position: {
+                x: 200, 
+                y: 200
+            },
+            size: {
+                width: 20, 
+                height: 50
+            },
             attrs: {
                 root: {
                     magnet: false
                 },
                 body: {
-                    height: 'calc(h)', 
-                    width: 'calc(w)', 
-                    strokeWidth: 2, 
-                    stroke: 'black', 
-                    fill: 'grey'
+                   height: 50, 
+                   width: 20, 
+                   strokeWidth: 2, 
+                   stroke: 'black', 
+                   fill: 'grey'
                 }, 
                 label: {
                     textVerticalAnchor: 'middle', 
@@ -41,6 +49,13 @@ export class Transition extends joint.shapes.standard.Rectangle {
                     fill: 'black'
                 }
             },
+            markup: [{
+                tagName: 'rect',
+                selector: 'body',
+            }, {
+                tagName: 'text',
+                selector: 'label'
+            }],
             ports: {
                 groups: {
                     'leftPort': leftPort,
@@ -57,4 +72,20 @@ export class Transition extends joint.shapes.standard.Rectangle {
             }
         }
     }
+    
+    /* Serialize and deserialize the style inside attrs as well, so that we can reconstruct later */
+    toJSON() {
+        const json = super.toJSON()
+
+        // Include the attrs.body in the JSON object
+        json.attrs = this.get('attrs')
+        
+        return json
+    }
+
+    /*Currently not needed */
+//    fromJSON(json) {
+//       this.attr('attrs', json.attrs);
+//       super.fromJSON(json);
+//    }
 }
