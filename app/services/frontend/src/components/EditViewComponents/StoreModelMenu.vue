@@ -7,7 +7,7 @@ const modelName = ref('')
 
 /**TODO: Think about possible errors: empty user input */
 function saveModel() {
-    modelStore.saveModel(modelName.value)
+    modelStore.triggerSave(modelName.value)
 
     modelName.value = null
 }
@@ -16,8 +16,9 @@ function deleteModel(model) {
    modelStore.deleteModel(model)
 }
 
-function selectUnselectModel(chosenModel) {
-   modelStore.selectUnselectModel(chosenModel)
+function updateModel() {
+    modelStore.triggerUpdate()
+
 }
 
 </script>
@@ -30,14 +31,14 @@ function selectUnselectModel(chosenModel) {
                 <div>
                     <a  href="#" 
                         class="a-container" 
-                        @click="selectUnselectModel(model)"
+                        @click="modelStore.selectModel(model)"
                         :style="{ color: model.selected ? 'white' : 'blue' }">
                         
                         {{ model.name }}
                     </a>
                 </div>
                 <div class="btn-container">
-                    <button>
+                    <button @click="updateModel()">
                         <img src="@/assets/EditPlaneButtons/save.svg">
                     </button>
                     <button @click="deleteModel(model)">

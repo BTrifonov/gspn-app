@@ -12,7 +12,7 @@ export class Transition extends joint.shapes.standard.Rectangle {
                 y: 200
             },
             size: {
-                width: 20, 
+                width: 25, 
                 height: 50
             },
             attrs: {
@@ -21,7 +21,7 @@ export class Transition extends joint.shapes.standard.Rectangle {
                 },
                 body: {
                    height: 50, 
-                   width: 20, 
+                   width: 25, 
                    strokeWidth: 2, 
                    stroke: 'black', 
                    fill: 'grey'

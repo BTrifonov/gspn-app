@@ -39,35 +39,9 @@ modelStore.$onAction(({
 }) => {
 
    
-    after(()=> {
-        if(name === "selectUnselectModel") {
-            //This is the entire model object
-            const model = args[0]
-
-            //Fetch the model based on the model.name
-            const params = {
-                name: model.name
-            }
-
-            axios.get('/model/plainJSON', {params})
-                .then(function(response) {
-                    console.log("Fetch the model with name: " + model.name)
-                   
-                    const modelJSON = JSON.parse(response.data)
-                    console.log(modelJSON)
-
-                    //const modelJSON = JSON.parse(response.data)
-                    //console.log(modelJSON.model)
-
-                    graph.fromJSON(modelJSON.model)
-
-                })
-                .catch(function(err) {
-                    console.log("An error occured" + err)
-                })
-                .finally(function() {
-                    //
-                })
+    after((result)=> {
+        if(name === "selectModel") {
+           console.log(result)
         }
 
     })

@@ -258,38 +258,31 @@ modelStore.$onAction(({
     after, 
     onError
 }) => {
-
+    /**TODO: All the requests should be executed here!!!! */
     /*Executed after modification of the store*/
-    after(()=> {
-        if(name === "saveModel") {
+    after((result)=> {
+        console.log(result)
+        if(name === "disableSaveTrigger" || name === "disableUpdateTrigger") {
+            return
+
+        } else if(name === "triggerSave") {
             const modelName = args[0]
+            const modelJSON = graph.toJSON()
 
-            console.log("Successfully store the model with name: " + args[0])
+            store.saveModel(modelName, modelJSON)
 
-            const jsonGraph = graph.toJSON() 
+            
+            graph.clear()
+            store.disableSaveTrigger()
+        } else if(name === "triggerUpdate") {
+            const modelName = args[0]
+            const modelJSON = graph.toJSON()
 
-            const data = {
-                model: jsonGraph
-            }
+            store.updateModel(modelName, modelJSON)
 
-            const params = {
-                name: modelName
-            }
-
-            axios.post('/model/plainJSON', { data, params })
-                    .then(function(response) {
-                        console.log("Saved successfully model:")
-                        console.log(jsonGraph)
-                    })
-                    .catch(function (err) {
-                        console.log("The following error occured:" + err)
-                    })  
-                    .finally(function() {
-                        //
-                    })
-            }
-        else if(name === "selectUnselectModel") {
-            //This is the entire model object
+            store.disableUpdateTrigger()
+        } else if(name === "selectModel") {
+            //fetch the model and return to the frontend
             const model = args[0]
 
             //Fetch the model based on the model.name
@@ -297,20 +290,27 @@ modelStore.$onAction(({
                 name: model.name
             }
 
+            
             axios.get('/model/plainJSON', {params})
                 .then(function(response) {
-                    console.log("Fetch the model with name" + model.name)
+                    console.log("Fetch the model with name: " + model.name)
+                   
+                    const modelJSON = JSON.parse(response.data)
+                    console.log(modelJSON)
+                    graph.fromJSON(modelJSON.model)  
                 })
                 .catch(function(err) {
-                    console.log("An error occured")
+                    console.log("An error occured" + err)
                 })
                 .finally(function() {
                     //
                 })
         }
     })
-
 })
+
+
+
 
 
 //---------------------------------------------------------
