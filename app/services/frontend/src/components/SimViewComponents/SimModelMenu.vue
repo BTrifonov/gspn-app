@@ -7,6 +7,7 @@ function handleModelSelection(model) {
     if(!model.selected) {
         //model.selected is false -> user selects model
         modelStore.selectModel(model)
+        modelStore.simulateModel(model)
     }
     else {
         //model.selected is true -> user unselects model

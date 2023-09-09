@@ -75,20 +75,24 @@ async def main():
         "message": "Hello World"
     }
 
-@app.get("/model/plainJSON")
-async def getModel(name: str):
+@app.get("/model")
+async def get_model(name: str):
     """Doc of the API point"""
     model_file = get_model_file(file_name=name)
     json_file = json.loads(model_file)
     print(json_file)
     return model_file
-    #return JSONResponse(content=model_file,headers={"Content-Type": "application/json"}) 
+
+@app.get("/model/enabled-transitions")
+async def get_enabled_transitions(name: str):
+    print(f"Get enabled transitions for model: {name}")
+
 
 #----------------------------------------------------------------
 
 #POST methods
 
-@app.post("/model/plainJSON")
+@app.post("/model")
 async def savePlainJSON(req_body: PlainJSON):
     """Doc of the API point"""
     json_file = json.dumps(req_body.data, indent=4)
@@ -99,7 +103,7 @@ async def savePlainJSON(req_body: PlainJSON):
 
 # PUT methods
 
-@app.put("/model/plainJSON")
+@app.put("/model")
 async def updatePlainJSON(req_body: PlainJSON):
     """Doc of the API point"""
     model_name = req_body.params.name
@@ -116,7 +120,7 @@ async def updatePlainJSON(req_body: PlainJSON):
 
 #DELETE methods
 
-@app.delete("/model/plainJSON")
+@app.delete("/model")
 async def deleteModel(name: str):
     """Doc of the API point"""
     model_name = name

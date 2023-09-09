@@ -27,6 +27,9 @@ onMounted(()=> {
         gridSize: 5,
         cellViewNamespace: namespace,
     })
+
+
+    modelStore.unselectAllModels()
 })
 
 //---------------------------------------------
@@ -51,7 +54,7 @@ modelStore.$onAction(({
         }
 
 
-        axios.get('/model/plainJSON', {params})
+        axios.get('/model', {params})
             .then(function(response) {
                 console.log("Fetch the model with name: " + model.name)
        
@@ -67,6 +70,24 @@ modelStore.$onAction(({
             })
         } else if(name === "unselectModel") {
             graph.clear()
+        } else if(name == "simulateModel") {
+            const model = args[0]
+            const modelName = model.name
+
+            const params = {
+                name: modelName
+            }
+
+            axios.get('model/enabled-transitions', {params})
+                .then(function(response) {
+                    console.log(response)
+                })
+                .catch(function(error) {
+                    console.log(error)
+                })
+                .finally(function() {
+                    //
+                })
         }
     })
 })

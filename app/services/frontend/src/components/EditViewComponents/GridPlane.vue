@@ -272,7 +272,7 @@ modelStore.$onAction(({
                 name: modelName
             }
 
-            axios.post('/model/plainJSON', { data, params })
+            axios.post('/model', { data, params })
                     .then(function(response) {
                         console.log("Saved successfully model: " + modelName)
                         return true
@@ -299,7 +299,7 @@ modelStore.$onAction(({
                 name: modelName
             }
 
-            axios.put('model/plainJSON', {data, params})
+            axios.put('/model', {data, params})
                 .then(function(response) {
                     console.log("Updated successfully model: " + modelName)
                     return true
@@ -318,7 +318,7 @@ modelStore.$onAction(({
                 name:modelName
             }
 
-            axios.delete('model/plainJSON', {params})
+            axios.delete('/model', {params})
                 .then(function(response) {
                     console.log("Deleted successfully model: " + modelName)
 
@@ -341,7 +341,7 @@ modelStore.$onAction(({
                 name: model.name
             }
 
-            axios.get('/model/plainJSON', {params})
+            axios.get('/model', {params})
                     .then(function(response) {
                         console.log("Fetch the model with name: " + model.name)
                    
