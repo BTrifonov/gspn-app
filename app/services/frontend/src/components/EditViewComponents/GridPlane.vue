@@ -261,25 +261,77 @@ modelStore.$onAction(({
     /**TODO: All the requests should be executed here!!!! */
     /*Executed after modification of the store*/
     after((result)=> {
-        console.log(result)
-        if(name === "disableSaveTrigger" || name === "disableUpdateTrigger") {
-            return
-
-        } else if(name === "triggerSave") {
+        if(name === "saveModel") {
             const modelName = args[0]
             const modelJSON = graph.toJSON()
 
-            store.saveModel(modelName, modelJSON)
+            const data = {
+                model: modelJSON
+            }
+
+            const params = {
+                name: modelName
+            }
+
+            axios.post('/model/plainJSON', { data, params })
+                    .then(function(response) {
+                        console.log("Saved successfully model: " + modelName)
+                        return true
+                    })
+                    .catch(function (err) {
+                        console.log("The following error occured:" + err)
+                        return false
+                    })  
+                    .finally(function() {
+                        
+                    })
 
             graph.clear()
-            store.disableSaveTrigger()
-        } else if(name === "triggerUpdate") {
-            const modelName = args[0]
+        } else if(name === "updateModel") {
+            const model = args[0]
+            const modelName = model.name
             const modelJSON = graph.toJSON()
 
-            store.updateModel(modelName, modelJSON)
+            const data = {
+                model: modelJSON
+            }
 
-            store.disableUpdateTrigger()
+            const params = {
+                name: modelName
+            }
+
+            axios.put('model/plainJSON', {data, params})
+                .then(function(response) {
+                    console.log("Updated successfully model: " + modelName)
+                    return true
+                })
+                .catch(function(err) {
+                    console.log("Following error occured, while updating model " + modelName + ": " + err)
+                })
+                .finally(function() {
+                    //
+                })
+        } else if(name === "deleteModel") {
+            const model = args[0]
+            const modelName = model.name
+
+            const params = {
+                name:modelName
+            }
+
+            axios.delete('model/plainJSON', {params})
+                .then(function(response) {
+                    console.log("Deleted successfully model: " + modelName)
+
+                    graph.clear()
+                })
+                .catch(function(err) {
+                    console.log("Following error occured, while deleting model " + modelName + ": " + err)
+                })
+                .finally(function() {
+                    //
+                })
+
         } else if(name === "selectModel") {
             if(!result) 
                 throw Error("Result missing")
@@ -309,7 +361,7 @@ modelStore.$onAction(({
                 throw Error("Result missing")
 
             graph.clear()
-        }
+        } 
     })
 })
 

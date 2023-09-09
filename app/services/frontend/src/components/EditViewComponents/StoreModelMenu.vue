@@ -7,8 +7,8 @@ const modelName = ref('')
 
 /**TODO: Think about possible errors: empty user input */
 function saveModel() {
-    modelStore.triggerSave(modelName.value)
-
+    modelStore.saveModel(modelName.value)
+    
     modelName.value = null
 }
 
@@ -16,8 +16,8 @@ function deleteModel(model) {
    modelStore.deleteModel(model)
 }
 
-function updateModel() {
-    modelStore.triggerUpdate()
+function updateModel(model) {
+    modelStore.updateModel(model)
 }
 
 function handleModelSelection(model) {
@@ -48,10 +48,18 @@ function handleModelSelection(model) {
                     </a>
                 </div>
                 <div class="btn-container">
-                    <button @click="updateModel()">
+                    <button 
+                        @click="updateModel(model)" 
+                        :style="{ 'pointer-events': model.selected ? 'auto' : 'none', opacity: model.selected ? 1 : 0.4 }"
+                        :disabled="!model.selected">
+                        
                         <img src="@/assets/EditPlaneButtons/save.svg">
                     </button>
-                    <button @click="deleteModel(model)">
+                    <button 
+                        @click="deleteModel(model)" 
+                        :style="{ 'pointer-events': model.selected ? 'auto' : 'none', opacity: model.selected ? 1 : 0.4 }"
+                        :disabled="!model.selected">
+                        
                         <img src="@/assets/EditPlaneButtons/delete.svg">
                     </button>
                 </div>

@@ -31,6 +31,7 @@ def write_model_file(model_data, file_name):
     except OSError as e:
         print(f"The following error occurred: {e}")
 
+#Should be refactored with write_model_file
 def write_file_direct(model_data, file_name):
     """Doc of the function"""
     try: 
@@ -49,6 +50,7 @@ def write_file_direct(model_data, file_name):
         print(f"The following error occured: {e}")
 
 
+#Get the file with file_name or raise error if it does not exist
 def get_model_file(file_name):
     """Doc of the function"""
     try:
@@ -90,7 +92,21 @@ def delete_model_file(file_name):
         print(f"The following error occured: {e}")
 
 
+#Check if file with file_name exists
+def model_file_exists(file_name):
+    """Doc of the function"""
+    try:
+        current_dir_path = Path.cwd()
 
+        model_dir_path = current_dir_path / "models"
+        model_file_path = Path(model_dir_path / file_name)
+
+        if(model_file_path.exists()):
+            return True
+        
+        return False
+    except OSError as e:
+        print(f"The following error occured: {e}")
 
 #Create the model directory
 def create_model_dir():

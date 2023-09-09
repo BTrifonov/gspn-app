@@ -6,79 +6,38 @@ import axios from 'axios'
 export const useModelStore = defineStore('modelStore', {
     state: () => ({
         models: [{name: 'sample-model.json', selected: false}],
-        saveTrigger: false, 
-        updateTrigger: false,
         selectedModelJSON: null
     }),
     getters: {
         getModels: (state) => state.models
     }, 
     actions: {
-        triggerSave() {
-            this.saveTrigger = true
-        },
-        disableSaveTrigger() {
-            this.saveTrigger = false
-        },
-        triggerUpdate() {
-            this.updateTrigger = true
-        },
-        disableUpdateTrigger() {
-            this.updateTrigger = false
-        },
-        saveModel(modelName, modelJSON) {
-            const data = {
-                model: modelJSON
+        saveModel(modelName) {
+            //check for existing model with this name
+            for(const iterModel of this.models) {
+                if(modelName === iterModel.name) 
+                    throw new Error("Cannot save model with name: " + modelName + " already exists model with this name!")
             }
-
-            const params = {
-                name: modelName
-            }
-
-            axios.post('/model/plainJSON', { data, params })
-                    .then(function(response) {
-                        console.log("Saved successfully model: " + modelName)
-                        return true
-                    })
-                    .catch(function (err) {
-                        console.log("The following error occured:" + err)
-                        return false
-                    })  
-                    .finally(function() {
-                        
-                    })
-
 
             this.models.push({name: modelName, selected: false})
+            return true
         },
-        updateModel(modelName, modelJSON) {
-            const data = {
-                model: modelJSON
-            }
+        updateModel(model) {
+            //check if model can be found in models
+            if(!this.models.includes(model))
+                throw new Error("Cannot update model, which has not been previously stored")
 
-            const params = {
-                name: modelName
-            }
-
-            axios.put('/model/plainJSON', { data, params })
-                    .then(function(response) {
-                        console.log("Saved successfully model: " + modelName)
-                    })
-                    .catch(function (err) {
-                        console.log("The following error occured:" + err)
-                    })  
-                    .finally(function() {
-                        //
-                    })
-
+            //this function server primarily to notify the EditGridPlane to issue new put request
+            return true
         },
         deleteModel(model) {
             const indexElem = this.models.indexOf(model)
-            if(indexElem != -1) {
-                this.models.splice(indexElem, 1)
-            }
-        },
+            if(indexElem == -1)
+                throw new Error("Cannot delete model, which has not been previously stored")
 
+            this.models.splice(indexElem, 1)
+            return true
+        },
         selectModel(model) {
             if(!this.models.includes(model))
                 throw new Error("Cannot unselect model, which has not been previously stored")

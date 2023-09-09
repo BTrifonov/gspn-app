@@ -8,7 +8,7 @@ from pathlib import Path
 from fastapi.responses import JSONResponse
 
 #Problems when importing without the dot
-from .readWriteJSON import write_model_file, delete_model_file, write_file_direct, get_model_file
+from .readWriteJSON import write_model_file, delete_model_file, write_file_direct, get_model_file, model_file_exists
 
 import json
 import os
@@ -36,14 +36,17 @@ class ReqBody(BaseModel):
 
 
 #All attributes required when transferring object
+#TODO: Read FastAPI, surely there is a better approach to pass query param
 class Param(BaseModel):
     name: str
 
+class ParameterClass(BaseModel):
+    params: Param
 
 class PlainJSON(BaseModel):
     data: dict
     params: Param
-    
+
 
 app = FastAPI()
 
@@ -60,8 +63,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 
 
 #API points
@@ -98,31 +99,32 @@ async def saveModel(req_body: ReqBody):
 async def savePlainJSON(req_body: PlainJSON):
     """Doc of the API point"""
     json_file = json.dumps(req_body.data, indent=4)
-    print(json_file)
     write_file_direct(json_file, file_name = req_body.params.name)
-
 
 
 #----------------------------------------------------------------
 
-
 # PUT methods
-
 
 @app.put("/model/plainJSON")
 async def updatePlainJSON(req_body: PlainJSON):
     """Doc of the API point"""
-    json_file = json.dumps(req_body.data, indent=4)
-    print(json_file)
+    model_name = req_body.params.name
+    model_exists = model_file_exists(model_name)
+
+    if(model_exists):
+        json_file = json.dumps(req_body.data, indent=4)
+        write_file_direct(model_data= json_file, file_name = model_name)
+    else:
+        raise FileNotFoundError("File with name: " + model_name + " not found for update")
 
     
-
-
 #----------------------------------------------------------------
 
 #DELETE methods
 
-@app.delete("/model")
-async def deleteModel():
+@app.delete("/model/plainJSON")
+async def deleteModel(name: str):
     """Doc of the API point"""
-    delete_model_file(file_name="strippedModel.json")
+    model_name = name
+    delete_model_file(model_name)
