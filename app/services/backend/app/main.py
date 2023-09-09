@@ -88,13 +88,6 @@ async def getModel(name: str):
 
 #POST methods
 
-@app.post("/model")
-async def saveModel(req_body: ReqBody):
-    """Doc of the API point"""
-    write_model_file(model_data=req_body.model,file_name="strippedModel.json")
-
-
-
 @app.post("/model/plainJSON")
 async def savePlainJSON(req_body: PlainJSON):
     """Doc of the API point"""

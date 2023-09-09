@@ -3,10 +3,16 @@ import {useModelStore} from '@/components/stores/ModelStore'
 
 const modelStore = useModelStore()
 
-function selectModel(model) {
-    modelStore.selectModel(model)
+function handleModelSelection(model) {
+    if(!model.selected) {
+        //model.selected is false -> user selects model
+        modelStore.selectModel(model)
+    }
+    else {
+        //model.selected is true -> user unselects model
+        modelStore.unselectModel(model)
+    }
 }
-
 </script>
 
 <template>
@@ -18,7 +24,7 @@ function selectModel(model) {
                     <a  href="#" 
                         class="a-container" 
                         :style="{ color: model.selected ? 'white' : 'blue' }"
-                        @click="selectModel(model)">
+                        @click="handleModelSelection(model)">
                     
                         {{ model.name }}
                     

@@ -29,7 +29,10 @@ onMounted(()=> {
     })
 })
 
-
+//---------------------------------------------
+//
+//---------------------------------------------
+//User interaction with the SimModelMenu
 modelStore.$onAction(({
     name, 
     store, 
@@ -37,12 +40,10 @@ modelStore.$onAction(({
     after, 
     onError
 }) => {
-
-   
     after((result)=> {
         if(name === "selectModel") {
-          //fetch the model and return to the frontend
-          const model = args[0]
+        //fetch the model and return to the frontend
+        const model = args[0]
 
         //Fetch the model based on the model.name
         const params = {
@@ -64,10 +65,11 @@ modelStore.$onAction(({
             .finally(function() {
                 //
             })
+        } else if(name === "unselectModel") {
+            graph.clear()
         }
     })
 })
-
 
 </script>
 

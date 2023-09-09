@@ -57,13 +57,15 @@ def get_model_file(file_name):
         current_dir_path = Path.cwd()
         model_dir_path = current_dir_path /  "models"
 
-        if not model_dir_path.is_dir():
-            raise OSError("The model directory does not exist")
+        print(model_dir_path)
+        if (Path.exists(model_dir_path) == False):
+            raise NotADirectoryError("The model directory does not exist")
         
         model_file_path = model_dir_path / file_name
 
-        if not model_file_path.is_file():
-            raise OSError(f"The file with name {file_name} does not exist")
+        print(model_file_path)
+        if (Path.exists(model_file_path) == False):
+            raise FileNotFoundError(f"The file with name {file_name} does not exist")
 
         with open(model_file_path, "r") as file:
             return file.read()

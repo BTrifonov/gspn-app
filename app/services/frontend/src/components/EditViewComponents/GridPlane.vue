@@ -246,7 +246,6 @@ createElemStore.$onAction(({
         })
 })
 
-
 //---------------------------------------------------------
 //
 //---------------------------------------------------------
@@ -367,7 +366,7 @@ modelStore.$onAction(({
 
 
 //---------------------------------------------------------
-//
+//TODO: Should be made as the CreateElemMenu instead of watchers
 //---------------------------------------------------------
 // Watchers for user interaction with the edit plane menu
 watch(()=> planeStore.paperGrid, (newValue) => {
