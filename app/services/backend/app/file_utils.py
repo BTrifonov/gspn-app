@@ -1,39 +1,11 @@
 from pathlib import Path
 
-import json
-
-#Write the PN model to a local file with file_name
-def parse_model(model_data, file_name):
-    """Doc of the function"""
-    try:
-        current_dir_path = Path.cwd()
-        model_dir_path = current_dir_path / "models" 
-
-        if not model_dir_path.is_dir():
-            create_model_dir()
-        
-        
-        #Now dir models should be created
-        model_file_path = model_dir_path / file_name
-        json_cells = []
-
-        #Transform each cell into json format
-        for cell in model_data.cells:
-            json_cell = json.dumps(cell.dict(), indent=4)
-            json_cells.append(json_cell)
-
-        #Write the array of json cells to a file
-        with open(model_file_path, "w") as file:
-           file.write("[\n")
-           file.write(',\n'.join(json_cells))
-           file.write("\n]")
-
-    except OSError as e:
-        print(f"The following error occurred: {e}")
-
-#Should be refactored with write_model_file
-def write_file(model_data, file_name):
-    """Doc of the function"""
+def write_file(data, file_name):
+    """
+    Write a file with 'file_name' as name and 'data' as content
+    Stored in the '/models' dir, created if missing
+    """
+    
     try: 
         current_dir_path = Path.cwd()
         model_dir_path = current_dir_path / "models"
@@ -44,15 +16,16 @@ def write_file(model_data, file_name):
         model_file_path = model_dir_path / file_name
 
         with open(model_file_path, "w") as file:
-            file.write(model_data)
+            file.write(data)
 
     except OSError as e:
         print(f"The following error occured: {e}")
 
-
-#Get the file with file_name or raise error if it does not exist
-def get_model_file(file_name):
-    """Doc of the function"""
+def get_file(file_name):
+    """
+    Retrieve the file with 'file_name' as name
+    Search in the '/models' dir
+    """
     try:
         current_dir_path = Path.cwd()
         model_dir_path = current_dir_path /  "models"
@@ -73,9 +46,11 @@ def get_model_file(file_name):
     except OSError as e:
         print(f"The following error occured: {e}")
 
-
-#Delete the file with file_name and the directory if empty
-def delete_model_file(file_name):
+def delete_file(file_name):
+    """
+    Delete the file with 'file_name' as name
+    Delete the '/model' dir if empty
+    """
     try:
         current_dir_path = Path.cwd()
         
@@ -93,10 +68,10 @@ def delete_model_file(file_name):
     except OSError as e:
         print(f"The following error occured: {e}")
 
-
-#Check if file with file_name exists
-def model_file_exists(file_name):
-    """Doc of the function"""
+def file_exists(file_name):
+    """
+    Check if the file with 'file_name' as name exists
+    """
     try:
         current_dir_path = Path.cwd()
 
@@ -110,9 +85,14 @@ def model_file_exists(file_name):
     except OSError as e:
         print(f"The following error occured: {e}")
 
-#Create the model directory
+#------------------------------------------------------------------
+# Directory functions, used only as helpers for the upper functions
+#------------------------------------------------------------------
+
 def create_model_dir():
-    """Doc of the function"""
+    """
+    Create the '/model' dir
+    """
     try:
         current_dir_path = Path.cwd()
         model_dir_path = "models"
@@ -123,9 +103,11 @@ def create_model_dir():
     except OSError as e:
         print(f"The following error occurred: {e}")
 
-#Delete the model directory 
+ 
 def delete_model_dir():
-    """Doc of the function"""
+    """
+    Delete the '/model' dir
+    """
     current_dir_path = Path.cwd()
     model_dir_path = current_dir_path / "models"
 
