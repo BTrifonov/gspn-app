@@ -11,7 +11,7 @@ from fastapi.responses import JSONResponse
 from .read_write_JSON import delete_model_file, write_file, get_model_file, model_file_exists
 
 from .parse_model import parse_model
-from .create_incidence_matrix import create_matrix
+from .create_incidence_matrix import create_matrix, get_place_marking, determine_enabled_transitions
 
 import json
 import os
@@ -91,9 +91,13 @@ async def get_enabled_transitions(name: str):
     json_file = json.loads(model_file)
 
     elements = parse_model(model_data=json_file['model'], file_name=name.removesuffix('.json') + "-parsed.json")
-    create_matrix(elements=elements)
+    matrix = create_matrix(elements=elements)
+    marking = get_place_marking(elements=elements)
 
-    print(f"Get enabled transitions for model: {name}")
+    enabled_transitions = determine_enabled_transitions(matrix, marking)
+    print(matrix)
+    print(marking)
+    print(enabled_transitions)
 
 #----------------------------------------------------------------
 

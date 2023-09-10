@@ -37,8 +37,8 @@ def parse_model(model_data, file_name):
         elements['arcs'] = arcs
 
         #Write the array of json cells to a file
-        #with open(model_file_path, "w") as file:
-        #   file.write(json.dumps(elements, indent=4))
+        with open(model_file_path, "w") as file:
+           file.write(json.dumps(elements, indent=4))
         
         #Instead of saving the new dictionary, return it
         return elements
