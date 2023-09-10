@@ -51,7 +51,6 @@ def parse_place(cell):
 
     return place
 
-
 def parse_transition(cell):
     """
     Retrieve relevant transition attributes for a simulation

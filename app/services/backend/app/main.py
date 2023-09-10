@@ -9,6 +9,7 @@ from .file_utils import write_file, get_file, delete_file, file_exists
 
 from .model_utils import parse_model
 from .create_incidence_matrix import create_matrix, get_place_marking, determine_enabled_transitions
+from .model import Model
 
 import json
 
@@ -22,18 +23,18 @@ class SourceTarget(BaseModel):
 
 
 #Relevant attributes of (custom.Place, custom.Transition, custom.Arc)
-class Cell(BaseModel):
-    id: str
-    type: str
-    attrs: dict
-    source: SourceTarget | None = None
-    target: SourceTarget | None = None
+#class Cell(BaseModel):
+#    id: str
+#    type: str
+#    attrs: dict
+#    source: SourceTarget | None = None
+#    target: SourceTarget | None = None
 
-class Model(BaseModel):
-    cells: list[Cell] | None = None
+#class ModelReq(BaseModel):
+#    cells: list[Cell] | None = None
 
-class ReqBody(BaseModel):
-    model: Model
+#class ReqBody(BaseModel):
+#    model: ModelReq
 
 
 #All attributes required when transferring object
@@ -89,27 +90,21 @@ async def get_model(name: str):
 @app.get("/model/enabled-transitions")
 async def get_enabled_transitions(name: str):
     """
-    Return all enabled transitions
-    """
-    
+    Return the id's of all enabled transitions
+    """    
     plain_json_file = get_file(name)
 
     #Deserialize to a python object
     file = json.loads(plain_json_file)
-
-    model = parse_model(model_data=file['model'])
+    model_file = parse_model(file['model'])
     
-    #Save the model
-    write_file(json.dumps(model, indent=4), name.removesuffix('.json') + "-parsed.json")
-    
-    matrix = create_matrix(model)
-    marking = get_place_marking(model)
+    #Save the model, before working with it
+    write_file(json.dumps(model_file, indent=4), name.removesuffix('.json') + "-parsed.json")
 
-    enabled_transitions = determine_enabled_transitions(matrix, marking)
-    print(matrix)
-    print(marking)
+    model = Model(model_file)
+    enabled_transitions = model.determine_enabled_transitions()
     print(enabled_transitions)
-
+    return enabled_transitions
 #----------------------------------------------------------------
 
 #POST methods

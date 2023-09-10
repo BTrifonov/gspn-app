@@ -1,5 +1,5 @@
 <script setup>
-import { useElementStore } from '@/components/stores/ElementStore';
+import { useElementStore } from '@/components/stores/EditElementStore';
 import { ref, watch } from 'vue';
 
 const elementStore = useElementStore()
@@ -10,7 +10,7 @@ const tokenDistribution = ref(null)
 
 function deleteTransition() {
     elementStore.selectedTransition.remove()
-    elementStore.selectedTransition = null
+    elementStore.unselectAll()
 }
 
 

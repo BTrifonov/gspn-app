@@ -20,8 +20,8 @@ export class Transition extends joint.shapes.standard.Rectangle {
                     magnet: false
                 },
                 body: {
-                   height: 50, 
-                   width: 25, 
+                   height: 'calc(h)', 
+                   width: 'calc(w)', 
                    strokeWidth: 2, 
                    stroke: 'black', 
                    fill: 'grey'

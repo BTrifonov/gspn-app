@@ -1,5 +1,5 @@
 <script setup>
-import { useElementStore } from '@/components/stores/ElementStore';
+import { useElementStore } from '@/components/stores/EditElementStore';
 import { watch } from 'vue';
 import { ref } from 'vue';
 
@@ -12,7 +12,7 @@ const label = ref('')
 
 function deletePlace() {
     elementStore.selectedPlace.remove()
-    elementStore.selectedPlace = null
+    elementStore.unselectAll()
 }
 
 watch(radiusInput, (newVal) => {

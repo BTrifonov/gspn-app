@@ -86,9 +86,14 @@ def determine_enabled_transitions(incidence_matrix, marking):
         transition_enabled = True
 
         for j in range(0, rows):
-            if(incidence_matrix[j][i] > marking[j]):
-                transition_enabled = False
-                break
+            matrix_value = incidence_matrix[j][i]
+
+            #If the matrix_value is 0, then there is no connection between
+            #the transition and the place
+            if(matrix_value != 0):
+                if(incidence_matrix[j][i] > marking[j]):
+                    transition_enabled = False
+                    break
         
         if transition_enabled:
             indices_enabled_transitions.append(i)

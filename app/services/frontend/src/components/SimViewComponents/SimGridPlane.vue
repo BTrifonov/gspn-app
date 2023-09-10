@@ -80,7 +80,7 @@ modelStore.$onAction(({
 
             axios.get('model/enabled-transitions', {params})
                 .then(function(response) {
-                    console.log(response)
+                    highlightEnabledTransitions(response.data)
                 })
                 .catch(function(error) {
                     console.log(error)
@@ -91,6 +91,19 @@ modelStore.$onAction(({
         }
     })
 })
+
+
+function highlightEnabledTransitions(idTransitions) {
+    console.log(idTransitions)
+    for(let i = 0; i < idTransitions.length;i++) {
+        const cell = graph.getCell(idTransitions[i])
+        const cellView = paper.findViewByModel(cell)
+        cellView.highlight()
+
+        console.log(cell)
+        console.log(cellView)
+    }
+}
 
 </script>
 

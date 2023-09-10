@@ -10,7 +10,7 @@ import {useCreateElemStore} from '@/components/stores/EditViewStores/CreateElemS
 import {useModelStore} from '@/components/stores/ModelStore'
 
 
-import { useElementStore} from '@/components/stores/ElementStore';
+import { useElementStore} from '@/components/stores/EditElementStore';
 import { usePlaneStore } from '@/components/stores/PlaneStore';
 
 import { drawPlace } from '@/components/utils/element-generator';
@@ -28,13 +28,12 @@ import { createElementToolView } from '@/components/utils/tool-generator';
 //TODO: Probably won't be needed, delete later
 const container = ref(null)
 
-
 const plane = ref(null)
 
 const createElemStore = useCreateElemStore()
 const modelStore = useModelStore()
 
-const elementStore = useElementStore()
+const editElementStore = useElementStore()
 const planeStore = usePlaneStore()
 
 
@@ -63,34 +62,30 @@ onMounted(()=> {
     const linkToolView = createLinkToolView()
     const elementToolView = createElementToolView()
 
+   
     paper.on('cell:pointerclick', function(view) {
-        elementStore.selectedArc = null
-        elementStore.selectedPlace = null
-        elementStore.selectedTransition = null
-
         const model = view.model
 
         if(model instanceof joint.shapes.standard.Link) {
             view.addTools(linkToolView)
-            elementStore.selectedArc = model
+            
+            //editElementStore.setArc(model)
         }
         else {
             view.addTools(elementToolView)
 
             if(model instanceof joint.shapes.standard.Circle) {
-                elementStore.selectedPlace = model
+                editElementStore.setPlace(model)
             }
             else {
-                elementStore.selectedTransition = model
+                editElementStore.setTransition(model)
             }
         }
     })
 
     paper.on('blank:pointerclick', function() {
         paper.removeTools()
-        elementStore.selectedArc = null
-        elementStore.selectedPlace = null
-        elementStore.selectedTransition = null
+        editElementStore.unselectAll()
     })
 
     paper.on('blank:pointerdblclick', function() {
@@ -217,7 +212,6 @@ createElemStore.$onAction(({
             return
 
         after((res)=> {
-            console.log(res)
             switch(name) {
                 case "setPlaceButton": {
                     createPlace()
