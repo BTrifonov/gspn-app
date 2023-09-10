@@ -6,33 +6,60 @@ import {defineStore} from 'pinia'
  */
 export const useElementStore = defineStore('selectElements', {
     state: () => ({
-        selectedPlace: null, 
-        selectedTransition: null, 
-        selectedArc: null
+        selectedPlace: false, 
+        selectedTransition: false, 
+        selectedArc: false
     }),
     actions: {
-        setPlace(place) {
-            this.selectedTransition = null
-            this.selectedArc = null
-    
-            this.selectedPlace = place
-        },
-        setTransition(transition) {
-            this.selectedPlace = null
-            this.selectedArc = null
-    
-            this.selectedTransition = transition
+        selectPlace() {
+            this.selectedTransition = false
+            this.selectedArc = false
+
+            this.selectedPlace = true
         }, 
-        /*setArc(arc) {
-            this.selectedPlace = null
-            this.selectedTransition = null
-    
-            this.selectedArc = arc
-        },*/ 
+        selectTransition() {
+            this.selectedPlace = false
+            this.selectedArc = false
+            
+            this.selectedTransition = true
+        },
+        selectArc() {
+            this.selectedPlace = false
+            this.selectedTransition = false
+
+            this.selectedArc = true
+        },
         unselectAll() {
-            this.selectedPlace = null, 
-            this.selectedTransition = null, 
-            this.selectedArc = null
+            this.selectedPlace = false
+            this.selectedTransition = false
+            this.selectedArc = false
+        },
+        //----------------------------------------
+        //Place specific functions
+        //----------------------------------------
+        setPlaceTokenNumber(tokenNumber) {
+            //Primary function is to pass tokenNumber from EditPlaceMenu to EditGridPlane
+        }, 
+        setPlaceLabel(label) {
+            //Primary function is to pass label from EditPlaceMenu to EditGridPlane
+        }, 
+        deletePlace() {
+            //
+        },
+        //---------------------------------------
+        //Transition specific functions
+        //---------------------------------------
+        setTransitionLabel(label) {
+            //
+        },
+        setTransitionDistribution(distribution) {
+            //
+        }, 
+        setTransitionRate(rate) {
+            //
+        },
+        deleteTransition() {
+            //
         }
     }
 })

@@ -5,7 +5,7 @@ import { bottomPort, leftBottomCornerPort, leftPort, leftUpperCornerPort, rightB
 export class Transition extends joint.shapes.standard.Rectangle {
     defaults() {
         return {
- //           ...super.defaults,
+            ...super.defaults,
             type: 'custom.Transition',
             position: {
                 x: 200, 

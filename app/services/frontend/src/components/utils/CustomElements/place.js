@@ -7,7 +7,8 @@ export class Place extends joint.shapes.standard.Circle {
     defaults() {
         return {
             ...super.defaults, 
-            type: "custom.Place", 
+            type: "custom.Place",
+            tokenNumber: 5,
             attrs: {
                 root: {
                     magnet: false
@@ -23,8 +24,8 @@ export class Place extends joint.shapes.standard.Circle {
                 label: {
                     textVerticalAnchor: 'middle', 
                     textAnchor: 'middle', 
-                    x: 0, 
-                    y: 'calc(h)',
+                    x: 'calc(w/2)', 
+                    y: 'calc(h+5)',
                     fontSize: 10, 
                     fill: 'black'
                 }, 

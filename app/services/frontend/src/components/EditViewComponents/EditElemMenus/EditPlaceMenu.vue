@@ -3,41 +3,30 @@ import { useElementStore } from '@/components/stores/EditElementStore';
 import { watch } from 'vue';
 import { ref } from 'vue';
 
-const elementStore = useElementStore()
+const editElementStore = useElementStore()
 
-const radiusInput = ref(0)
 const tokenInput = ref(0)
 const label = ref('')
 
-
 function deletePlace() {
-    elementStore.selectedPlace.remove()
-    elementStore.unselectAll()
+    editElementStore.deletePlace()
+    editElementStore.unselectAll()
 }
 
-watch(radiusInput, (newVal) => {
-    elementStore.selectedPlace.resize(newVal, newVal)
-})
-
 watch(tokenInput, (newVal) => {
-    elementStore.selectedPlace.attr('tokenNumber/text', newVal)
+    editElementStore.setPlaceTokenNumber(newVal)
 })
 
 watch(label, (newVal) => {
-    elementStore.selectedPlace.attr('label/text', newVal)
+    editElementStore.setPlaceLabel(newVal)
 })
-
 </script>
 
 <template>
     <div>
         <div class="sim-container">
             <input type="text" placeholder="Place id" v-model="label" class="input">
-            <p>Change place id</p>
-        </div>
-        <div class="sim-container">
-            <input type="range" v-model="radiusInput" class="input">
-            <p>Change place radius</p>
+            <p>Change place label</p>
         </div>
         <div class="sim-container">
             <input type="number" placeholder="Token number" v-model="tokenInput" class="input">

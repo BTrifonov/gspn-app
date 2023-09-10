@@ -12,16 +12,19 @@ const editElementStore = useElementStore()
 <template>
     <div class="menu-container">
         <p class="text">Edit element</p>
-        <div v-if="editElementStore.selectedPlace != null">
+        <div v-if="editElementStore.selectedPlace">
             <EditPlaceMenu/>
         </div>
         <!--<div v-if="selectedArc != null">
             <EditArcMenu/>
         </div>-->
-        <div v-if="editElementStore.selectedTransition != null">
+        <div v-if="editElementStore.selectedTransition">
             <EditTransitionMenu/>
         </div>
-        <div class="sim-container" v-if="editElementStore.selectedArc==null && editElementStore.selectedPlace==null && editElementStore.selectedTransition==null">
+        <div class="sim-container" 
+             v-if="!editElementStore.selectedArc && 
+                                    !editElementStore.selectedPlace && 
+                                        !editElementStore.selectedTransition">
             <p>Click once on an element</p>
         </div>
     </div>

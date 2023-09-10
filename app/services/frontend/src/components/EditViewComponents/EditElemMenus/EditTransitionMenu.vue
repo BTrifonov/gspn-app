@@ -2,56 +2,50 @@
 import { useElementStore } from '@/components/stores/EditElementStore';
 import { ref, watch } from 'vue';
 
-const elementStore = useElementStore()
+const editElementStore = useElementStore()
 
-const heightInput = ref(0)
-const widthInput = ref(0)
-const tokenDistribution = ref(null)
+const label = ref('')
+const distribution = ref(null)
+const rate = ref(null)
 
 function deleteTransition() {
-    elementStore.selectedTransition.remove()
-    elementStore.unselectAll()
+    editElementStore.unselectAll()
+    editElementStore.deleteTransition()
 }
 
-
-watch(heightInput, (newHeight) => {
-    const selectedTransition = elementStore.selectedTransition
-    const width = selectedTransition.get('size').width
-    selectedTransition.resize(width, newHeight)
+watch(label, (newValue) => {
+    editElementStore.setTransitionLabel(newValue)
 })
 
-watch(widthInput, (newWidth) => {
-    const selectedTransition = elementStore.selectedTransition
-    const height = selectedTransition.get('size').height
-    selectedTransition.resize(newWidth, height)
+watch(distribution, (newValue)=> {
+    editElementStore.setTransitionDistribution(newValue)
 })
 
+watch(rate, (newValue)=>{
+    editElementStore.setTransitionRate(newValue)
+})
 </script>
 
 <template>
     <div>
         <div class="sim-container">
-            <input type="text" placeholder="Transition id" class="input">
-            <p>Change transition id</p>
+            <input type="text" placeholder="Transition label" v-model="label" class="input">
+            <p>Change transition label</p>
         </div>
 
         <div class="sim-container">
-            <input type="range" placeholder="Transition height" v-model="heightInput" class="input">
-            <p>Change transition height</p>
-        </div>
-
-        <div class="sim-container">
-            <input type="range" placeholder="Transition width" v-model="widthInput" class="input">
-            <p>Change transition width</p>
-        </div>
-
-        <div class="sim-container">
-            <select v-model="tokenDistribution" class="input">
+            <select v-model="distribution" class="input">
                 <option value="">Exponential</option>
                 <option value="">General</option>
             </select>
             <p>Change transition token distribution</p>
         </div>
+
+        <div class="sim-container">
+            <input type="number" placeholder="Distribution rate" v-model="rate" class="input">
+            <p>Change token distribution rate</p>
+        </div>
+
         <div class="btn-container">
             <button @click="deleteTransition">
                 <img src="@/assets/EditPlaneButtons/delete.svg">

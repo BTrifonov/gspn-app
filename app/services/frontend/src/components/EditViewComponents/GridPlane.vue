@@ -42,6 +42,7 @@ const namespace = joint.shapes
 const graph = new joint.dia.Graph({}, {cellNamespace:namespace})
 
 let paper = null
+let editElementBuf = null
 onMounted(()=> {
     paper = new joint.dia.Paper({
         el: plane.value, 
@@ -62,8 +63,24 @@ onMounted(()=> {
     const linkToolView = createLinkToolView()
     const elementToolView = createElementToolView()
 
-   
-    paper.on('cell:pointerclick', function(view) {
+    paper.on('link:pointerclick', function(linkView) {
+        linkView.addTools(linkToolView)
+    })
+    
+    paper.on('element:pointerclick', function(elementView) {
+        const model = elementView.model
+        
+        elementView.addTools(elementToolView)
+        if(model.attributes.type === 'custom.Place') {
+            editElementStore.selectPlace()
+            editElementBuf = model
+        } else if(model.attributes.typ === 'custom.Transition')  {
+            editElementStore.selectTransition()
+            editElementBuf = model
+        }
+    })
+
+    /*paper.on('cell:pointerclick', function(view) {
         const model = view.model
 
         if(model instanceof joint.shapes.standard.Link) {
@@ -75,13 +92,13 @@ onMounted(()=> {
             view.addTools(elementToolView)
 
             if(model instanceof joint.shapes.standard.Circle) {
-                editElementStore.setPlace(model)
+                editElementStore.selectPlace(model)
             }
             else {
-                editElementStore.setTransition(model)
+                //editElementStore.setTransition(model)
             }
         }
-    })
+    })*/
 
     paper.on('blank:pointerclick', function() {
         paper.removeTools()
@@ -195,6 +212,45 @@ function createArc() {
     const arc = drawArc()
     arc.addTo(graph)
 }
+
+//----------------------------------------------------------
+//User interaction with the EditElementMenu 
+//----------------------------------------------------------
+editElementStore.$onAction(({
+    name, 
+    store, 
+    args, 
+    after, 
+}) => {
+    after((res)=> {
+        if(name === "setPlaceLabel") {
+            const label = args[0]
+            editElementBuf.attr('label/text', label)
+
+        } else if(name === "setPlaceTokenNumber") {
+            const tokenNumber = args[0]
+            editElementBuf.attr('tokenNumber/text', tokenNumber)
+
+        } else if(name === "deletePlace") {
+            editElementBuf.remove()
+
+        } else if(name === "setTransitionLabel") {
+            const label = args[0]
+            editElementBuf.attr('label/text', label)
+
+        } else if(name === "setTransitionDistribution") {
+            const distributionType = args[0]
+            editElementBuf.prop('tokenDistribution/distribution', distributionType)
+
+        } else if(name === "setTransitionRate") {
+            const rate = args[0]
+            editElementBuf.prop('tokenDistribution/rate', rate)
+
+        } else if(name === "deleteTransition") {
+            editElementBuf.remove()
+        }
+    })
+})
 
 //----------------------------------------------------------
 //
