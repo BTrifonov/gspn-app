@@ -8,7 +8,10 @@ from pathlib import Path
 from fastapi.responses import JSONResponse
 
 #Problems when importing without the dot
-from .readWriteJSON import write_model_file, delete_model_file, write_file_direct, get_model_file, model_file_exists
+from .read_write_JSON import delete_model_file, write_file, get_model_file, model_file_exists
+
+from .parse_model import parse_model
+from .create_incidence_matrix import create_matrix
 
 import json
 import os
@@ -80,23 +83,27 @@ async def get_model(name: str):
     """Doc of the API point"""
     model_file = get_model_file(file_name=name)
     json_file = json.loads(model_file)
-    print(json_file)
     return model_file
 
 @app.get("/model/enabled-transitions")
 async def get_enabled_transitions(name: str):
-    print(f"Get enabled transitions for model: {name}")
+    model_file = get_model_file(file_name=name)
+    json_file = json.loads(model_file)
 
+    elements = parse_model(model_data=json_file['model'], file_name=name.removesuffix('.json') + "-parsed.json")
+    create_matrix(elements=elements)
+
+    print(f"Get enabled transitions for model: {name}")
 
 #----------------------------------------------------------------
 
 #POST methods
 
 @app.post("/model")
-async def savePlainJSON(req_body: PlainJSON):
+async def save_model(req_body: PlainJSON):
     """Doc of the API point"""
     json_file = json.dumps(req_body.data, indent=4)
-    write_file_direct(json_file, file_name = req_body.params.name)
+    write_file(json_file, file_name = req_body.params.name)
 
 
 #----------------------------------------------------------------
@@ -104,14 +111,14 @@ async def savePlainJSON(req_body: PlainJSON):
 # PUT methods
 
 @app.put("/model")
-async def updatePlainJSON(req_body: PlainJSON):
+async def update_model(req_body: PlainJSON):
     """Doc of the API point"""
     model_name = req_body.params.name
     model_exists = model_file_exists(model_name)
 
     if(model_exists):
         json_file = json.dumps(req_body.data, indent=4)
-        write_file_direct(model_data= json_file, file_name = model_name)
+        write_file(model_data= json_file, file_name = model_name)
     else:
         raise FileNotFoundError("File with name: " + model_name + " not found for update")
 
@@ -121,7 +128,7 @@ async def updatePlainJSON(req_body: PlainJSON):
 #DELETE methods
 
 @app.delete("/model")
-async def deleteModel(name: str):
+async def delete_model(name: str):
     """Doc of the API point"""
     model_name = name
     delete_model_file(model_name)

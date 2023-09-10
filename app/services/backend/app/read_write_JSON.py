@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 
 #Write the PN model to a local file with file_name
-def write_model_file(model_data, file_name):
+def parse_model(model_data, file_name):
     """Doc of the function"""
     try:
         current_dir_path = Path.cwd()
@@ -32,7 +32,7 @@ def write_model_file(model_data, file_name):
         print(f"The following error occurred: {e}")
 
 #Should be refactored with write_model_file
-def write_file_direct(model_data, file_name):
+def write_file(model_data, file_name):
     """Doc of the function"""
     try: 
         current_dir_path = Path.cwd()
