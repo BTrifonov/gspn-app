@@ -52,8 +52,12 @@ When you're ready to make this README your own, just edit this file and use the 
 Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
 
 ## Name
-Choose a self-explaining name for your project.
+A Web application for modelling and simulation of Generalized Stochastic Petri Nets (GSPNs)
 
+
+Brief overview:
+
+<img src="/gspnappvite/app/diagrams/structure.drawio.png">
 ## Description
 Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
 

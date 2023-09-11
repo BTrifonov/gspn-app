@@ -1,6 +1,7 @@
 import numpy as np
 
 #Create the incidence matrix of a petri net
+#IMPORTANT: This .py file is currently not used, refer to model.py
 def create_matrix(elements):
     """Doc of the function"""
     places = elements['places']
