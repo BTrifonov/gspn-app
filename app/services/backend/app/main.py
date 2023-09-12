@@ -1,7 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware 
 
 from pydantic import BaseModel
+
+#---------------------------------------------------
+import asyncio
+#---------------------------------------------------
+
 
 
 #Problems with the relative import
@@ -45,8 +50,18 @@ app.add_middleware(
 )
 
 
-#API endpoints
+#---------------------------------------------------------
+#Try to create and serve a websocket for the simulation of PNs
+@app.websocket("/ws/{websocket_id}")
+async def websocket_endpoint(websocket: WebSocket, websocket_id: int):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        await websocket.send_text(f"Message text was: {data}")
 
+
+#---------------------------------------------------------
+#API endpoints
 #GET methods
 
 @app.get("/")

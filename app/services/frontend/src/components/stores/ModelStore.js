@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia'
 import axios from 'axios'
 /**
- * TODO: All stores should provide functions for state manipulations, more performant
+ * TODO: All stores should provide functions for state manipulations
  */
 export const useModelStore = defineStore('modelStore', {
     state: () => ({
@@ -66,11 +66,6 @@ export const useModelStore = defineStore('modelStore', {
             for(const iterModel of this.models) {
                 iterModel.selected = false
             }
-        },
-
-        //Methods relevant for SimView
-        simulateModel(model) {
-            console.log("Triggered simulation for model with name: " + model.name)
         }
     }
 })

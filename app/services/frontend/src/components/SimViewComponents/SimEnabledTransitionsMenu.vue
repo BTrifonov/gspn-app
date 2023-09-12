@@ -1,10 +1,10 @@
 <script setup>
-import { useEnabledTransitionsStore } from '@/components/stores/SimViewStores/EnabledTransitionsStore'
+import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore'
 
-const transitionStore = useEnabledTransitionsStore()
+const simulationStore = useSimulationStore()
 
 function fireTransition(transition) {
-    transitionStore.fireTransition(transition)
+    simulationStore.fireTransition(transition)
 }
 
 </script>
@@ -12,7 +12,7 @@ function fireTransition(transition) {
 <template>
     <div class="menu-container">
         <p class="text">Enabled Transitions</p>
-        <div v-for="transition in transitionStore.getEnabledTransitions" class="sim-container">
+        <div v-for="transition in simulationStore.getEnabledTransitions" class="sim-container">
             <a  href="#"
                 class="a-container"
                 @click="fireTransition(transition)">
@@ -37,10 +37,11 @@ function fireTransition(transition) {
     text-decoration: none;
 }
 
+/*
 .tr-container {
     width: 90%;
     margin: 5%;
     background-color: rgb(9, 147, 240);
     border-radius: 5px;
-}
+}*/
 </style>

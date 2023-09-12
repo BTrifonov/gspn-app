@@ -1,4 +1,31 @@
 <script setup>
+import {useSimMenuStore} from '@/components/stores/SimViewStores/SimMenuStore'
+import { watch, ref } from 'vue';
+
+const simMenuStore = useSimMenuStore()
+const simSpeed = ref(0)
+
+function handleStart() {
+    simMenuStore.startButton()
+}
+
+function handleStop() {
+    simMenuStore.stop()
+}   
+
+function handleRewindToStart() {
+    simMenuStore.rewindToStart()
+}
+
+function handleRewindToEnd() {
+    simMenuStore.rewindToEnd()
+}
+
+watch(simSpeed, (newVal) => {
+    simMenuStore.setSimSpeed()
+})
+
+
 </script>
 
 <template>
@@ -6,11 +33,11 @@
         <p class="text"> Execute Simulation </p>
 
         <div class="btn-container">
-            <button>
+            <button @click="handleStart">
                 <img src="../../assets/SimButtons/startButton.svg">
             </button>
 
-            <button>
+            <button @click="handleStop">
                 <img src="../../assets/SimButtons/stopButton.svg">
             </button>
 
@@ -18,17 +45,17 @@
                 <img src="../../assets/SimButtons/restartButton.svg">
             </button>
 
-            <button>
+            <button @click="handleRewindToStart">
                 <img src="../../assets/SimButtons/skipToStartButton.svg">
             </button>
 
-            <button>
+            <button @click="handleRewindToEnd">
                 <img src="../../assets/SimButtons/skipToEndButton.svg">
             </button>
         </div>
 
         <div class="sim-container">
-            <input type="range" min="0.5" max="2" step="0.5" class="input">
+            <input type="range" min="0.5" max="2" step="0.5" class="input" v-model="simSpeed">
             <p>Simulation speed</p> 
         </div>
     </div>

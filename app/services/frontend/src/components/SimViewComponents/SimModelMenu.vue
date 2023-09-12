@@ -1,17 +1,16 @@
 <script setup>
-import {useModelStore} from '@/components/stores/ModelStore'
+import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore'
 
-const modelStore = useModelStore()
+const simulationStore = useSimulationStore()
 
 function handleModelSelection(model) {
     if(!model.selected) {
         //model.selected is false -> user selects model
-        modelStore.selectModel(model)
-        modelStore.simulateModel(model)
+        simulationStore.selectModel(model)
     }
     else {
         //model.selected is true -> user unselects model
-        modelStore.unselectModel(model)
+        simulationStore.unselectModel(model)
     }
 }
 </script>
@@ -21,7 +20,7 @@ function handleModelSelection(model) {
         <p class="text"> Choose model </p>
         
         <div>
-            <div v-for="model in modelStore.getModels" class="sim-container">
+            <div v-for="model in simulationStore.getModels" class="sim-container">
                     <a  href="#" 
                         class="a-container" 
                         :style="{ color: model.selected ? 'white' : 'blue' }"
