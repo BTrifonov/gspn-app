@@ -13,14 +13,14 @@ export class Transition extends joint.shapes.standard.Rectangle {
             },
             size: {
                 width: 25, 
-                height: 50
+                height: 60
             },
             attrs: {
                 root: {
                     magnet: false
                 },
                 body: {
-                   height: 'calc(h)', 
+                   height: 'calc(h-10)', 
                    width: 'calc(w)', 
                    strokeWidth: 2, 
                    stroke: 'black', 

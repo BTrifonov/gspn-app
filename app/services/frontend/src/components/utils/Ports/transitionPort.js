@@ -4,7 +4,10 @@
 export const leftPort = {
     position: {
         name: 'left',
-        args: {}
+        args: {
+            x: 0, 
+            y: 25
+        }
     }, 
     attrs: {
         body: {
@@ -25,7 +28,10 @@ export const leftPort = {
 export const rightPort = {
     position: {
         name: 'right',
-        args: {}
+        args: {
+            x: 25, 
+            y: 25
+        }
     }, 
     attrs: {
         body: {
@@ -67,7 +73,12 @@ export const topPort = {
 export const bottomPort = {
     position: {
         name: 'bottom',
-        args: {}
+        args: {
+            x: 12.5,
+            y: 50,
+            //dx: 1,
+            //dy: 1
+        }
     }, 
     attrs: {
         body: {
@@ -114,7 +125,7 @@ export const leftBottomCornerPort = {
         name: 'absolute',
         args: {
             x: 0,
-            y: 'calc(h)'
+            y: 50
         }
     }, 
     attrs: {
@@ -161,8 +172,8 @@ export const rightBottomCornerPort = {
     position: {
         name: 'absolute',
         args: {
-            x: 'calc(w)',
-            y: 'calc(h)'
+            x: 25,
+            y: 50
         }
     }, 
     attrs: {

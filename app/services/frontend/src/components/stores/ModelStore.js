@@ -68,7 +68,6 @@ export const useModelStore = defineStore('modelStore', {
             }
         },
 
-
         //Methods relevant for SimView
         simulateModel(model) {
             console.log("Triggered simulation for model with name: " + model.name)

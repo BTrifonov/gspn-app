@@ -13,40 +13,18 @@ from .model import Model
 
 import json
 
-#Source/Target attribute of custom.Arc
-#TODO Does not work when the arc is created from the DrawMenu
-class SourceTarget(BaseModel):
-    id: str | None = None
-    x: int | None = None
-    y: int | None = None
-
-
-
-#Relevant attributes of (custom.Place, custom.Transition, custom.Arc)
-#class Cell(BaseModel):
-#    id: str
-#    type: str
-#    attrs: dict
-#    source: SourceTarget | None = None
-#    target: SourceTarget | None = None
-
-#class ModelReq(BaseModel):
-#    cells: list[Cell] | None = None
-
-#class ReqBody(BaseModel):
-#    model: ModelReq
-
 
 #All attributes required when transferring object
 #TODO: Read FastAPI, surely there is a better approach to pass query param
 class Param(BaseModel):
     name: str
+    transition_id: str | None = None
 
 class ParameterClass(BaseModel):
     params: Param
 
 class PlainJSON(BaseModel):
-    data: dict
+    data: dict | None = None
     params: Param
 
 
@@ -94,14 +72,14 @@ async def get_enabled_transitions(name: str):
     """    
     plain_json_file = get_file(name)
 
-    #Deserialize to a python object
-    file = json.loads(plain_json_file)
-    model_file = parse_model(file['model'])
+    #Deserialize to a python dict
+    model_dict = json.loads(plain_json_file)
+    model_parsed = parse_model(model_dict['model'])
     
     #Save the model, before working with it
-    write_file(json.dumps(model_file, indent=4), name.removesuffix('.json') + "-parsed.json")
+    write_file(json.dumps(model_parsed, indent=4), name.removesuffix('.json') + "-parsed.json")
 
-    model = Model(model_file)
+    model = Model(model_parsed)
     enabled_transitions = model.determine_enabled_transitions()
     print(enabled_transitions)
     return enabled_transitions
@@ -118,6 +96,24 @@ async def save_model(req_body: PlainJSON):
     plain_json_file = json.dumps(req_body.data, indent=4)
     write_file(plain_json_file, req_body.params.name)
 
+
+@app.post("/model/fire-transition")
+async def fire_transition(req_body: PlainJSON):
+    """
+    Fire a transition of the plain json model
+    """
+    file_name = req_body.params.name
+    transition_id = req_body.params.transition_id
+
+    plain_json_file = get_file(file_name)
+
+    #Deserialize to a python dictionary
+    model_dict = json.loads(plain_json_file)
+    model_parsed = parse_model(model_dict['model'])
+
+    model = Model(model_parsed)
+
+    return model.fire_transition(transition_id)
 
 #----------------------------------------------------------------
 

@@ -41,31 +41,46 @@ class Model:
 
         #Get the id's of all enabled transitions
         print(indices_enabled_transitions)
-        id_enabled_transitions = self.transition_index_to_id(indices_enabled_transitions)
+        id_enabled_transitions = self.transition_indices_to_ids(indices_enabled_transitions)
 
         return id_enabled_transitions
 
 
-    def transition_index_to_id(self, indices):
-        """
-        Determine the id's of all transitions, whose index is inside 
-        the indices array
-        """
-        id_transitions = []
+    def fire_transition(self, transition_id):
+        transition_index = self.transitions_id_to_index[transition_id] 
+        input_places = []
+        output_places = []
+       
+        for index, matrix_entry in enumerate(self.incidence_matrix[:, transition_index]):
+            print(index)
+            print(matrix_entry)
+            print("-----------------------")
+            if matrix_entry == -1:
+                self.place_marking[index] -= 1
 
-        
-        for key, value in self.transitions_id_to_index.items():
-            if value in indices:
-                id_transitions.append(key)
-                indices.remove(value)
-        
+                place_tokens = self.place_marking[index]
+                place_id = self.place_indices_to_ids([index])[0]
 
-        return id_transitions
+                input_places.append({'id': place_id, 'tokens': place_tokens})
+            elif matrix_entry == 1:
+                #This is an output place
+                print("output place detected")
+                self.place_marking[index] += 1
+                
+                place_tokens = self.place_marking[index]
+                place_id = self.place_indices_to_ids([index])[0]
 
+                output_places.append({'id': place_id, 'tokens': place_tokens})
+                
+
+
+            
+        input_output_places = {'input_places': input_places, 'output_places': output_places}
+        return input_output_places
 
 
 #---------------------------------------------------------
-#Helper methods, called on instantiation of an object 
+#Helper methods
 #---------------------------------------------------------
     def create_place_marking(self):
         place_marking = np.zeros(len(self.places_id_to_index))
@@ -130,5 +145,36 @@ class Model:
 
         return transitions_id_to_index
 
+
+    def transition_indices_to_ids(self, indices):
+        """
+        Determine the id's of all transitions, whose index is inside 
+        the indices array
+        """
+        id_transitions = []
+
+        
+        for key, value in self.transitions_id_to_index.items():
+            if value in indices:
+                id_transitions.append(key)
+                indices.remove(value)
+        
+
+        return id_transitions
+
+
+    def place_indices_to_ids(self, indices):
+        """
+        Determine the id's of all places, whose index is inside 
+        the indices array
+        """
+        id_places = []
+
+        for key, value in self.places_id_to_index.items():
+            if value in indices:
+                id_places.append(key)
+                indices.remove(value)
+
+        return id_places
 #---------------------------------------------------------       
 

@@ -74,7 +74,7 @@ onMounted(()=> {
         if(model.attributes.type === 'custom.Place') {
             editElementStore.selectPlace()
             editElementBuf = model
-        } else if(model.attributes.typ === 'custom.Transition')  {
+        } else if(model.attributes.type === 'custom.Transition')  {
             editElementStore.selectTransition()
             editElementBuf = model
         }
@@ -392,13 +392,7 @@ modelStore.$onAction(({
             }
 
             axios.get('/model', {params})
-                    .then(function(response) {
-                        console.log("Fetch the model with name: " + model.name)
-                   
-                        const modelJSON = JSON.parse(response.data)
-                
-                        graph.fromJSON(modelJSON.model)
-                    })
+                    .then(function(response) {test(model, response)})
             .catch(function(err) {
                 console.log("An error occured" + err)
             })
@@ -413,6 +407,14 @@ modelStore.$onAction(({
         } 
     })
 })
+
+function test(model, response) {
+                        console.log("Fetch the model with name: " + model.name)
+                   
+                        const modelJSON = JSON.parse(response.data)
+                
+                        graph.fromJSON(modelJSON.model)
+                    }
 
 
 //---------------------------------------------------------

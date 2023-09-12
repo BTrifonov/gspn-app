@@ -1,12 +1,23 @@
 <script setup>
+import { useEnabledTransitionsStore } from '@/components/stores/SimViewStores/EnabledTransitionsStore'
+
+const transitionStore = useEnabledTransitionsStore()
+
+function fireTransition(transition) {
+    transitionStore.fireTransition(transition)
+}
+
 </script>
 
 <template>
     <div class="menu-container">
         <p class="text">Enabled Transitions</p>
-        <div class="sim-container">
-            <p>Here will be displayed all enabled transitions, after choosing a model
-            </p>
+        <div v-for="transition in transitionStore.getEnabledTransitions" class="sim-container">
+            <a  href="#"
+                class="a-container"
+                @click="fireTransition(transition)">
+                {{ transition.label }}
+            </a>
         </div>
         <div class="sim-container">
             <button>
@@ -18,6 +29,13 @@
 
 <style scoped>
 @import '@/assets/sidebar-submenu.css';
+
+.a-container {
+    display: block;
+    height: 100%;
+    width: 100%;
+    text-decoration: none;
+}
 
 .tr-container {
     width: 90%;

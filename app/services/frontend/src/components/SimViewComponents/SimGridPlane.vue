@@ -5,12 +5,16 @@ import {ref, onMounted} from 'vue'
 import {useModelStore} from '@/components/stores/ModelStore'
 
 
+import { useEnabledTransitionsStore } from '@/components/stores/SimViewStores/EnabledTransitionsStore'
+
+
 import * as joint from 'jointjs'
 import axios from 'axios';
 
 const plane = ref(null)
 
 const modelStore = useModelStore()
+const enabledTransitionsStore = useEnabledTransitionsStore()
 
 const namespace = joint.shapes
 
@@ -59,8 +63,12 @@ modelStore.$onAction(({
                 console.log("Fetch the model with name: " + model.name)
        
                 const modelJSON = JSON.parse(response.data)
-                console.log(modelJSON)
-                graph.fromJSON(modelJSON.model)  
+                graph.fromJSON(modelJSON.model)
+                
+                //find enabled transitions
+                enabledTransitionsStore.selectModel(model.name)
+                enabledTransitionsStore.findEnabledTransitions()
+
             })
             .catch(function(err) {
                 console.log("An error occured" + err)
@@ -71,8 +79,21 @@ modelStore.$onAction(({
         } else if(name === "unselectModel") {
             graph.clear()
         } else if(name == "simulateModel") {
-            const model = args[0]
-            const modelName = model.name
+            //
+        }
+    })
+})
+
+enabledTransitionsStore.$onAction(({
+    name, 
+    store,
+    args, 
+    after, 
+    onError
+}) => {
+    after((res) => {
+        if(name === "findEnabledTransitions") {
+            const modelName = enabledTransitionsStore.getModelName
 
             const params = {
                 name: modelName
@@ -80,7 +101,11 @@ modelStore.$onAction(({
 
             axios.get('model/enabled-transitions', {params})
                 .then(function(response) {
-                    highlightEnabledTransitions(response.data)
+                    //highlightEnabledTransitions(response.data)
+
+                    const enabledTransitions = setEnabledTransitions(response.data)
+
+                    enabledTransitionsStore.setEnabledTransitions(enabledTransitions)
                 })
                 .catch(function(error) {
                     console.log(error)
@@ -88,21 +113,76 @@ modelStore.$onAction(({
                 .finally(function() {
                     //
                 })
+        } else if(name === "fireTransition") {
+            const modelName = enabledTransitionsStore.getModelName
+            const transition = args[0]
+            console.log("Fire transition with label: " + transition.label)
+            console.log("Transition id is: " + transition.id)
+
+            const params = {
+                name: modelName, 
+                transition_id: transition.id
+            }
+
+            axios.post('/model/fire-transition', {params})
+                    .then(function(response) {
+                        console.log(response.data)
+                        animateSimulation(response.data.input_places, response.data.output_places, transition.id)
+                    })
         }
     })
 })
 
 
+function animateSimulation(inputPlaces, outputPlaces, transitionId) {
+    for(const inputPlace of inputPlaces) {
+        const cell = graph.getCell(inputPlace.id)
+        const cellView = paper.findViewByModel(cell)
+
+        setTimeout(()=>{
+            highlightUnhighlightElement(inputPlace.tokens, cell, cellView)
+        }, 1000)
+    }
+
+    /*const cell = graph.getCell(transitionId)
+    const cellView = paper.findViewByModel(cell)
+    cellView.highlight()
+    */
+    
+
+    for(const outputPlace of outputPlaces) {
+        const cell = graph.getCell(outputPlace.id)
+        const cellView = paper.findViewByModel(cell)
+
+        setTimeout(()=>{
+            highlightUnhighlightElement(outputPlace.tokens, cell, cellView)
+        }, 1000)
+    }
+}
+
+
+function highlightUnhighlightElement(token, cell, cellView) {
+    cellView.highlight()
+    cell.attr('tokenNumber/text', token)
+    setTimeout(()=> {cellView.unhighlight()}, 1000)
+}
+
 function highlightEnabledTransitions(idTransitions) {
-    console.log(idTransitions)
     for(let i = 0; i < idTransitions.length;i++) {
         const cell = graph.getCell(idTransitions[i])
         const cellView = paper.findViewByModel(cell)
         cellView.highlight()
-
-        console.log(cell)
-        console.log(cellView)
     }
+}
+
+function setEnabledTransitions(idTransitions) {
+    const enabledTransitions = []
+    for(let i = 0;i < idTransitions.length;i++) {
+        const cell = graph.getCell(idTransitions[i])
+        const label = cell.attr('label/text')
+        enabledTransitions.push({id: idTransitions[i], label: label})
+    }
+    return enabledTransitions
 }
 
 </script>

@@ -8,24 +8,25 @@ export class Place extends joint.shapes.standard.Circle {
         return {
             ...super.defaults, 
             type: "custom.Place",
-            tokenNumber: 5,
+            position: { x: 200, y: 200 },
+            size: { width: 60, height: 60 },
             attrs: {
                 root: {
                     magnet: false
                 },
                 body: {
-                    cx: 'calc(w/2)',
-                    cy: 'calc(h/2)',
-                    r: 'calc(h/2)',
+                    cx: 25, 
+                    cy: 25,
+                    r: 25,
                     strokeWidth: 2, 
                     stroke: 'black', 
                     fill: 'grey'
                 }, 
                 label: {
                     textVerticalAnchor: 'middle', 
-                    textAnchor: 'middle', 
-                    x: 'calc(w/2)', 
-                    y: 'calc(h+5)',
+                    textAnchor: 'middle',
+                    x: 25, 
+                    y: 60,
                     fontSize: 10, 
                     fill: 'black'
                 }, 
