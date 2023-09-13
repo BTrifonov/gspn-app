@@ -60,16 +60,18 @@ async def websocket_endpoint(websocket: WebSocket, socket_id: int):
         #We should have a field determining different actions
         data_json = await websocket.receive_text()
         data = json.loads(data_json)
-        model_parsed = parse_model(data['model'])
         
         
         if data['action'] == 'startSim':
+            model_parsed = parse_model(data['model'])
             model = Model(model_parsed)
             
             await model.simulateModel(websocket)
         elif data['action'] == 'stopSim':
             await websocket.send_text("Stopped simulation")
             print("Stopped simulation")
+        elif data['action'] == 'resp':
+            continue
 
 
 

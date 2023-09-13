@@ -177,6 +177,25 @@ watch(()=> simulationStore.startSim, (newVal)=> {
             console.log(responseObj.transition_id)
 
             fireTransition(responseObj.input_places, responseObj.output_places, responseObj.transition_id)
+                        .then((response)=>{
+                            //successful visual firing of a transition
+                            //inform the backend
+                            const confirmData = JSON.stringify({
+                                response: "success",
+                                action: "resp"
+                            })
+                            
+                            socket.send(confirmData)
+                            
+                        })
+                        .catch((err)=>{
+                            const confirmData = JSON.stringify({
+                                response: "failure",
+                                action: "resp"
+                            })
+
+                            socket.send(confirmData)
+                        })
         }
         simulationStore.startSim = false
     }   

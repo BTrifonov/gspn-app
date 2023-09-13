@@ -42,11 +42,17 @@ class Model:
                 'transition_id': transition_id
             }
 
-            sleep_millisec = 500 * (len(new_marking['input_places']) + len(new_marking['output_places']) + 1)
-            sleep_seconds = sleep_millisec / 1000
             await websocket.send_text(json.dumps(response))
-            print(f"Sleeping for {sleep_seconds}")
-            time.sleep(sleep_seconds)
+            confirm_msg_json = await websocket.receive_text()
+            confirm_msg = json.loads(confirm_msg_json)
+
+            if confirm_msg['response'] == 'success':
+                continue
+            elif confirm_msg['response'] == 'failure':
+                print("Unsuccessful firing of transition by the frontend")
+
+
+            
 
 
 
