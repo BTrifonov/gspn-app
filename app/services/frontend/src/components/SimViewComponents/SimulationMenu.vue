@@ -1,18 +1,19 @@
 <script setup>
-import {useSimMenuStore} from '@/components/stores/SimViewStores/SimMenuStore'
+import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore'
 import { watch, ref } from 'vue';
 
-const simMenuStore = useSimMenuStore()
+const simulationStore = useSimulationStore()
 const simSpeed = ref(0)
 
 function handleStart() {
-    simMenuStore.startButton()
+    simulationStore.startSim = true
 }
 
 function handleStop() {
-    simMenuStore.stop()
+    simulationStore.stopSim = true
 }   
 
+/*
 function handleRewindToStart() {
     simMenuStore.rewindToStart()
 }
@@ -24,7 +25,7 @@ function handleRewindToEnd() {
 watch(simSpeed, (newVal) => {
     simMenuStore.setSimSpeed()
 })
-
+*/
 
 </script>
 

@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import axios from 'axios'
+
 
 /**
  * 
@@ -7,6 +7,7 @@ import axios from 'axios'
 export const useSimulationStore = defineStore('simStore', {
     state: () => ({
         models: [],
+        firedTransition: false,
         
         startSim: false, 
         stopSim: false, 
@@ -44,24 +45,6 @@ export const useSimulationStore = defineStore('simStore', {
 
             //change flag of model to true
             model.selected = true
-
-            //Fetch the model based on the model.name
-            const params = {
-                name: model.name
-            }
-        
-            return axios.get('/model', {params})
-                            .then(function(response) {
-                                console.log("Fetch the model with name: " + model.name)
-                                const modelJSON = JSON.parse(response.data)
-                                return modelJSON.model
-                            })
-                            .catch(function(err) {
-                                console.log("An error occured" + err)
-                            })
-                            .finally(function() {
-                                //
-                            })
         },
         unselectModel(model) {
             if(!this.models.includes(model))
@@ -76,35 +59,15 @@ export const useSimulationStore = defineStore('simStore', {
                 iterModel.selected = false
             }
         },
-        async findEnabledTransitions() {
-            const params = {
-                name: this.getSelectedModelName
-            }
-
-
-            return axios.get('/model/enabled-transitions', {params})
-                            .then(function(response) {
-                                return response.data
-                            })
-                            .catch(function(error) {
-                                return error
-                            })
-
+        findEnabledTransitions() {
+            console.log("Find enabled transition initiated")
+            
         },
         setEnabledTransitions(enabledTransitions) {
             this.enabledTransitions = enabledTransitions
         },
-        async fireTransition(transition) {
-            const params = {
-                name: this.getSelectedModelName, 
-                transition_id: transition.id
-            }
-
-            return axios.post('/model/fire-transition', {params})
-                    .then(function(response) {
-                        return response.data
-                        //animateSimulation(response.data.input_places, response.data.output_places, transition.id)
-                    })
+        fireTransition(transition) {
+          //Serves as notifier for the SimGridPlane to send POST req to backend
         }
     }
 })

@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 def write_file(data, file_name):
     """
@@ -68,6 +69,25 @@ def delete_file(file_name):
     except OSError as e:
         print(f"The following error occured: {e}")
 
+def delete_all_files():
+    """
+    Delete all files inside the '/model/ dir
+    The '/model' dir will also be deleted at the end
+    """
+    try:
+        current_dir_path = Path.cwd()
+        model_dir_path = current_dir_path / "models"
+
+        for file in model_dir_path.glob('path'):
+            Path(file).unlink()
+
+        delete_model_dir()
+
+    except OSError as err:
+        print(err)
+
+
+
 def file_exists(file_name):
     """
     Check if the file with 'file_name' as name exists
@@ -113,6 +133,7 @@ def delete_model_dir():
 
     try:
         Path(model_dir_path).rmdir()
-
+        
     except OSError as e:
-        print("fThe following error occured: {e}")
+        print(e)
+        print("fThe following error occured, while trying to delete the model dir: {e}")

@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, onUnmounted} from 'vue';
 import {watch} from 'vue';
 import axios from 'axios';
 
@@ -187,6 +187,12 @@ onMounted(()=> {
             paper.translate(0, - dy + paper.options.origin.y)
         }
     })
+})
+
+
+//onUnmounted unselect all Models
+onUnmounted(()=>{
+    modelStore.unselectAllModels()
 })
 
 
@@ -483,7 +489,7 @@ watch(()=> planeStore.triggerDelete, (newValue)=> {
     }
 })
 
-watch(() => planeStore.triggerSave, (newValue)=> {
+/*watch(() => planeStore.triggerSave, (newValue)=> {
     if(newValue) {
         const jsonGraph = graph.toJSON()
 
@@ -503,7 +509,7 @@ watch(() => planeStore.triggerSave, (newValue)=> {
         
         planeStore.triggerSave = false
     }
-})
+})*/
 //---------------------------------------------------------
 
 </script>

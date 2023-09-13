@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from pydantic import BaseModel
 
+import urllib.parse
 #---------------------------------------------------
 import asyncio
 #---------------------------------------------------
@@ -10,7 +11,7 @@ import asyncio
 
 
 #Problems with the relative import
-from .file_utils import write_file, get_file, delete_file, file_exists
+from .file_utils import write_file, get_file, delete_file, file_exists, delete_all_files
 
 from .model_utils import parse_model
 from .create_incidence_matrix import create_matrix, get_place_marking, determine_enabled_transitions
@@ -22,7 +23,7 @@ import json
 #All attributes required when transferring object
 #TODO: Read FastAPI, surely there is a better approach to pass query param
 class Param(BaseModel):
-    name: str
+    name: str | None = None
     transition_id: str | None = None
 
 class ParameterClass(BaseModel):
@@ -30,7 +31,7 @@ class ParameterClass(BaseModel):
 
 class PlainJSON(BaseModel):
     data: dict | None = None
-    params: Param
+    params: Param | None = None
 
 
 app = FastAPI()
@@ -52,16 +53,29 @@ app.add_middleware(
 
 #---------------------------------------------------------
 #Try to create and serve a websocket for the simulation of PNs
-@app.websocket("/ws/{websocket_id}")
-async def websocket_endpoint(websocket: WebSocket, websocket_id: int):
+@app.websocket("/ws/{socket_id}")
+async def websocket_endpoint(websocket: WebSocket, socket_id: int):
     await websocket.accept()
     while True:
-        data = await websocket.receive_text()
-        await websocket.send_text(f"Message text was: {data}")
+        #We should have a field determining different actions
+        data_json = await websocket.receive_text()
+        data = json.loads(data_json)
+        model_parsed = parse_model(data['model'])
+        
+        
+        if data['action'] == 'startSim':
+            model = Model(model_parsed)
+            
+            await model.simulateModel(websocket)
+        elif data['action'] == 'stopSim':
+            await websocket.send_text("Stopped simulation")
+            print("Stopped simulation")
+
 
 
 #---------------------------------------------------------
 #API endpoints
+
 #GET methods
 
 @app.get("/")
@@ -80,23 +94,19 @@ async def get_model(name: str):
     plain_json_file = get_file(name)
     return plain_json_file
 
-@app.get("/model/enabled-transitions")
-async def get_enabled_transitions(name: str):
+@app.post("/model/enabled-transitions")
+async def get_enabled_transitions(req_body: PlainJSON):
     """
     Return the id's of all enabled transitions
-    """    
-    plain_json_file = get_file(name)
-
-    #Deserialize to a python dict
-    model_dict = json.loads(plain_json_file)
-    model_parsed = parse_model(model_dict['model'])
+    """ 
+    plain_json_file = req_body.data   
+    model_parsed = parse_model(plain_json_file['model'])
     
     #Save the model, before working with it
-    write_file(json.dumps(model_parsed, indent=4), name.removesuffix('.json') + "-parsed.json")
+    #write_file(json.dumps(model_parsed, indent=4), name.removesuffix('.json') + "-parsed.json")
 
     model = Model(model_parsed)
     enabled_transitions = model.determine_enabled_transitions()
-    print(enabled_transitions)
     return enabled_transitions
 #----------------------------------------------------------------
 
@@ -117,14 +127,10 @@ async def fire_transition(req_body: PlainJSON):
     """
     Fire a transition of the plain json model
     """
-    file_name = req_body.params.name
     transition_id = req_body.params.transition_id
 
-    plain_json_file = get_file(file_name)
-
-    #Deserialize to a python dictionary
-    model_dict = json.loads(plain_json_file)
-    model_parsed = parse_model(model_dict['model'])
+    plain_json_file = req_body.data
+    model_parsed = parse_model(plain_json_file['model'])
 
     model = Model(model_parsed)
 
@@ -152,6 +158,11 @@ async def update_model(req_body: PlainJSON):
 #----------------------------------------------------------------
 
 #DELETE methods
+
+@app.delete("/models")
+async def delete_all_models():
+    delete_all_files()
+
 
 @app.delete("/model")
 async def delete_model(name: str):

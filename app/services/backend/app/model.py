@@ -1,4 +1,6 @@
 import numpy as np
+import json
+import time
 
 class Model:
 
@@ -13,7 +15,47 @@ class Model:
         self.place_marking = self.create_place_marking()
         print(self.place_marking)
 
+
+    async def simulateModel(self, websocket):
+        """
+        Start a PN simulation \n
+        After the firing of each transition notify frontend via the websocket
+        """
+        while True:
+            ids_enabled_transitions = self.determine_enabled_transitions()
+        
+            if len(ids_enabled_transitions) == 0:
+                break
+            
+            index = 0
+            if len(ids_enabled_transitions) > 1:
+                index = np.random.randint(0, len(ids_enabled_transitions)-1)
+
+
+            transition_id = ids_enabled_transitions[index]
+            
+            new_marking = self.fire_transition(transition_id)
+
+            response = {
+                'input_places': new_marking['input_places'], 
+                'output_places': new_marking['output_places'], 
+                'transition_id': transition_id
+            }
+
+            sleep_millisec = 500 * (len(new_marking['input_places']) + len(new_marking['output_places']) + 1)
+            sleep_seconds = sleep_millisec / 1000
+            await websocket.send_text(json.dumps(response))
+            print(f"Sleeping for {sleep_seconds}")
+            time.sleep(sleep_seconds)
+
+
+
+
+
     def determine_enabled_transitions(self):
+        """
+        Return the id's of all enabled transition of the current model
+        """
         indices_enabled_transitions = []
 
         dimensions_matrix = self.incidence_matrix.shape
@@ -45,8 +87,11 @@ class Model:
 
         return id_enabled_transitions
 
-
     def fire_transition(self, transition_id):
+        """
+        Fire a transition with 'transition_id' and
+        return the {id, tokens} of all input and output places
+        """
         transition_index = self.transitions_id_to_index[transition_id] 
         input_places = []
         output_places = []
@@ -64,7 +109,6 @@ class Model:
                 input_places.append({'id': place_id, 'tokens': place_tokens})
             elif matrix_entry == 1:
                 #This is an output place
-                print("output place detected")
                 self.place_marking[index] += 1
                 
                 place_tokens = self.place_marking[index]
@@ -91,7 +135,6 @@ class Model:
             place_marking[place_index] = place_tokens
 
         return place_marking
-
 
     def create_incidence_matrix(self):
             """Doc of the function"""
@@ -161,7 +204,6 @@ class Model:
         
 
         return id_transitions
-
 
     def place_indices_to_ids(self, indices):
         """
