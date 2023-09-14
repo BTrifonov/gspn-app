@@ -10,7 +10,7 @@ function handleStart() {
 }
 
 function handleStop() {
-    simulationStore.stopSim = true
+    simulationStore.stopSim = !simulationStore.stopSim
 }   
 
 /*

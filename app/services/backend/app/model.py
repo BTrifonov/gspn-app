@@ -2,6 +2,7 @@ import numpy as np
 import json
 import time
 
+
 class Model:
 
     def __init__(self, model):
@@ -16,47 +17,40 @@ class Model:
         print(self.place_marking)
 
 
-    async def simulateModel(self, websocket):
+    async def sim_fire_transition(self):
         """
-        Start a PN simulation \n
-        After the firing of each transition notify frontend via the websocket
+        Simulate a random transition firing
         """
-        while True:
-            ids_enabled_transitions = self.determine_enabled_transitions()
+        ids_enabled_transitions = self.determine_enabled_transitions()
         
-            if len(ids_enabled_transitions) == 0:
-                break
-            
-            index = 0
-            if len(ids_enabled_transitions) > 1:
-                index = np.random.randint(0, len(ids_enabled_transitions)-1)
-
-
-            transition_id = ids_enabled_transitions[index]
-            
-            new_marking = self.fire_transition(transition_id)
-
+        #No enabled transitions
+        if len(ids_enabled_transitions) == 0:
             response = {
-                'input_places': new_marking['input_places'], 
-                'output_places': new_marking['output_places'], 
-                'transition_id': transition_id
+                'enabled_transitions': False,
+                'input_places': [], 
+                'output_places': [], 
+                'transition_id': "",
             }
-
-            await websocket.send_text(json.dumps(response))
-            confirm_msg_json = await websocket.receive_text()
-            confirm_msg = json.loads(confirm_msg_json)
-
-            if confirm_msg['response'] == 'success':
-                continue
-            elif confirm_msg['response'] == 'failure':
-                print("Unsuccessful firing of transition by the frontend")
-
-
+            return response
             
+        #Choose random transition index, if more than one enabled transitions    
+        index = 0
+        if len(ids_enabled_transitions) > 1:
+            index = np.random.randint(0, len(ids_enabled_transitions)-1)
 
+        transition_id = ids_enabled_transitions[index]
+            
+        new_marking = self.fire_transition(transition_id)
 
+        response = {
+            'input_places': new_marking['input_places'], 
+            'output_places': new_marking['output_places'], 
+            'transition_id': transition_id,
+            'enabled_transitions': True
+        }
 
-
+        #Return dictionary
+        return response
 
     def determine_enabled_transitions(self):
         """

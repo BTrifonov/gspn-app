@@ -7,14 +7,11 @@ import urllib.parse
 #---------------------------------------------------
 import asyncio
 #---------------------------------------------------
-
-
-
 #Problems with the relative import
 from .file_utils import write_file, get_file, delete_file, file_exists, delete_all_files
+from .websocket_communication import handle_websocket_communication_alternate
 
 from .model_utils import parse_model
-from .create_incidence_matrix import create_matrix, get_place_marking, determine_enabled_transitions
 from .model import Model
 
 import json
@@ -56,24 +53,48 @@ app.add_middleware(
 @app.websocket("/ws/{socket_id}")
 async def websocket_endpoint(websocket: WebSocket, socket_id: int):
     await websocket.accept()
+    await handle_websocket_communication_alternate(websocket, socket_id)
+"""    
+    await websocket.accept()
     while True:
         #We should have a field determining different actions
         data_json = await websocket.receive_text()
         data = json.loads(data_json)
+
+        #Should be instantiated once a simulation is started by the frontend
+        model = None
         
-        
+        if data['action'] == 'instantiate_model':
+                model_parsed = parse_model(data['model'])
+                model = Model(model_parsed)
+
+                while True:
+                    if data['action'] == 'startSim':
+                        response = await model.sim_fire_transition()
+                        await websocket.send(response)
+                    elif data['action'] == 'stopSim':
+                        await websocket.send_text("Stopped sim by user")
+                    
         if data['action'] == 'startSim':
             model_parsed = parse_model(data['model'])
             model = Model(model_parsed)
             
-            await model.simulateModel(websocket)
+            response = await model.sim_fire_transition()
+            await websocket.send(response)
+
         elif data['action'] == 'stopSim':
-            await websocket.send_text("Stopped simulation")
-            print("Stopped simulation")
+            await websocket.send_text("Stopped simulation by the user")
+
         elif data['action'] == 'resp':
-            continue
+            #Frontend response after visualising the transition firing
+            if data['response'] == 'success':
+                if model is not None:
+                    response = await model.sim_fire_transition()
+                    await websocket.send(response)
 
-
+            elif data['response'] == 'failure':
+                print("Frontend failed visualizing the transition firing")
+"""        
 
 #---------------------------------------------------------
 #API endpoints

@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted, watch, onUnmounted} from 'vue'
+import {ref, onMounted, watch, onUnmounted, ssrContextKey} from 'vue'
 
 
 import {useModelStore} from '@/components/stores/ModelStore'
@@ -23,6 +23,10 @@ const modelStore = useModelStore()
 //-----------------------------------------------
 
 let socket = new WebSocket("ws://localhost:5000/ws/123")
+
+socket.onmessage = function(event) {
+    handleIncomingMsg(event)
+}
 
 //-----------------------------------------------
 
@@ -77,25 +81,30 @@ simulationStore.$onAction(({
                 name: modelName
             }
         
-            return axios.get('/model', {params})
-                            .then(function(response) {
-                                console.log("Fetch the model with name: " + model.name)
-                                const modelJSON = JSON.parse(response.data)
+            axios.get('/model', {params})
+                    .then(function(response) {
+                        const modelJSON = JSON.parse(response.data)
 
-                                graph.fromJSON(modelJSON.model)
-                                simulationStore.findEnabledTransitions()
-                            })
-                            .catch(function(err) {
-                                console.log("An error occured" + err)
-                            })
-                            .finally(function() {
+                        graph.fromJSON(modelJSON.model)
+                        simulationStore.findEnabledTransitions()
+
+                        const msg = createMsg("frontend", "backend", "instantiate_model", "", graph.toJSON())
+                        
+                        socket.send(msg)
+                    })
+                    .catch(function(err) {
+                        console.log("An error occured" + err)
+                    })
+                    .finally(function() {
                                 //
-                            })
-
-
-            //graph.fromJSON(result)
+                    })
 
         } else if(name === "unselectModel") {
+            //TODO: Here the backend should be notified that to stop working with the model
+            const msg = createMsg("frontend", "backend", "unselect_model", "", "")
+
+            //Should this be awaited?
+            socket.send(msg)
             graph.clear()
         } else if(name === "fireTransition") {
             const transitionId = args[0].id
@@ -159,48 +168,21 @@ simulationStore.$onAction(({
 
 watch(()=> simulationStore.startSim, (newVal)=> {
     if(newVal) {
-        const data = JSON.stringify({
-            action: "startSim", 
-            model: graph.toJSON()
-        })
-       
-        socket.send(data)
-
-        //const buff = []
-        socket.onmessage = function(event) {
-            const responseJSON = event.data
-            const responseObj = JSON.parse(responseJSON)
-            
-            console.log("Following data received from server:")
-            console.log(responseObj.input_places)
-            console.log(responseObj.output_places)
-            console.log(responseObj.transition_id)
-
-            fireTransition(responseObj.input_places, responseObj.output_places, responseObj.transition_id)
-                        .then((response)=>{
-                            //successful visual firing of a transition
-                            //inform the backend
-                            const confirmData = JSON.stringify({
-                                response: "success",
-                                action: "resp"
-                            })
-                            
-                            socket.send(confirmData)
-                            
-                        })
-                        .catch((err)=>{
-                            const confirmData = JSON.stringify({
-                                response: "failure",
-                                action: "resp"
-                            })
-
-                            socket.send(confirmData)
-                        })
-        }
-        simulationStore.startSim = false
-    }   
+        const msg = createMsg("frontend", "backend", "start_sim", "", "")
+        socket.send(msg)
+    }
+    simulationStore.startSim = false
 })
 
+
+
+watch(() => simulationStore.stopSim, (newVal) => {
+    if(!newVal) {
+        const continueSimMsg = createMsg("frontend", "backend", "continue_sim", "", graph.toJSON())
+        console.log(continueSimMsg)
+        socket.send(continueSimMsg)
+    }
+})
 
 
 
@@ -252,7 +234,6 @@ async function fireTransition( inputPlaces, outputPlaces, transitionId) {
     outputPlacesViews.forEach((view) => view.unhighlight())
 }
 
-
 function findLabelsEnabledTransitions(idTransitions) {
     const enabledTransitions = []
     for(let i = 0;i < idTransitions.length;i++) {
@@ -265,6 +246,81 @@ function findLabelsEnabledTransitions(idTransitions) {
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+//---------------------------------------------------
+//Helper methods, websocket communication
+//---------------------------------------------------
+
+function handleIncomingMsg(event) {
+    const msgJSON = event.data
+    const msg = JSON.parse(msgJSON)
+
+    switch (msg.action) {
+        case "visualize_fired_transition": {
+            fireTransition(msg.input_places, msg.output_places, msg.transition_id)
+                .then((response) => {
+                    const continueSimMsg = createMsg("frontend", "backend", "continue_sim", "", graph.toJSON())
+                    socket.send(continueSimMsg)
+                })
+                .catch((err) => {
+                    const msg = createMsg("frontend", "backend", "response", "fail", "")
+                    console.log(err)
+                })
+            break
+        }
+        case "end_sim": {
+            //TODO: There are no more enabled transitions in the model
+            console.log("End of the simulation reached")
+            break
+        }
+        default: {
+            const msgJSON = event.data
+            const msg = JSON.parse(msgJSON)
+            
+            console.log(msg)
+        }
+    }
+}
+
+/**
+ * Set the flags of the transmitted msg, based on user input
+ */
+function setFlags() {
+    const flags = []
+    if(simulationStore.stopSim) {
+        //user requested to stop the simulation
+        flags.push({"stop": true})
+    } else {
+        flags.push({"stop": false})
+    }
+    
+    flags.push({"replay": true})
+    return flags
+}
+
+async function checkFlags(msgJSON) {
+    const msgParsed = JSON.parse(msgJSON)
+
+    //User wants to continues with simulation
+    if(!msgParsed.flags.stop) {
+        return true
+    }
+    return false
+}
+
+function createMsg(senderData, receiverData, actionData, statusData, contentData) {
+    const msg = JSON.stringify({
+        sender: senderData, 
+        receiver: receiverData, 
+        action: actionData,
+        status: statusData,
+        data: contentData,
+        flags: setFlags()
+    })
+
+    console.log
+    return msg
 }
 </script>
 

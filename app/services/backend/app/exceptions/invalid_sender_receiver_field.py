@@ -1,0 +1,2 @@
+class InvalidSenderReceiverField(Exception):
+    pass
