@@ -3,8 +3,11 @@ import SimulationMenu from '@/components/SimViewComponents/SimulationMenu.vue';
 import SimEnabledTransitionsMenu from '@/components/SimViewComponents/SimEnabledTransitionsMenu.vue';
 import SimTracebackMenu from '@/components/SimViewComponents/SimTracebackMenu.vue';
 import SimModelMenu from '@/components/SimViewComponents/SimModelMenu.vue';
+import SimPlaceStatMenu from '@/components/SimViewComponents/SimPlaceStatMenu.vue';
+
 
 import ChangeViewMenu from '@/components/ChangeViewMenu.vue';
+
 
 </script>
 
@@ -15,6 +18,9 @@ import ChangeViewMenu from '@/components/ChangeViewMenu.vue';
         </div>
         <div>
             <SimulationMenu/>
+        </div>
+        <div>
+            <SimPlaceStatMenu/>
         </div>
         <div>
             <SimEnabledTransitionsMenu/>

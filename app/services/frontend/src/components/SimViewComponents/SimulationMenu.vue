@@ -1,23 +1,43 @@
 <script setup>
 import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore'
-import { watch, ref } from 'vue';
+import { watch, ref, onMounted } from 'vue';
 
 const simulationStore = useSimulationStore()
 const simSpeed = ref(0)
+
+
+onMounted(()=>{
+    simulationStore.resetAllActions()
+})
 
 function handleStart() {
     simulationStore.startSim = true
 }
 
 function handleStop() {
+    /*if(!simulationStore.stopSim) {
+        if(!simulationStore.startSim) {
+            console.log("Cannot stop unplayed simulation!")
+            return
+        } else {
+            simulationStore.stopSim = true
+        }
+    } 8else {
+        simulationStore.stopSim = false
+    }*/
     simulationStore.stopSim = !simulationStore.stopSim
 }   
 
-/*
-function handleRewindToStart() {
-    simMenuStore.rewindToStart()
+
+function handleRestart() {
+    simulationStore.rewindToStart = !simulationStore.rewindToStart
 }
 
+/*function handleRewindToStart() {
+    simMenuStore.rewindToStart()
+}*/
+
+/*
 function handleRewindToEnd() {
     simMenuStore.rewindToEnd()
 }
@@ -26,7 +46,6 @@ watch(simSpeed, (newVal) => {
     simMenuStore.setSimSpeed()
 })
 */
-
 </script>
 
 <template>
@@ -38,17 +57,20 @@ watch(simSpeed, (newVal) => {
                 <img src="../../assets/SimButtons/startButton.svg">
             </button>
 
-            <button @click="handleStop">
+            <button 
+                @click="handleStop" 
+                :style="{'background-color': simulationStore.stopSim ? 'grey' : 'silver'}">
+
                 <img src="../../assets/SimButtons/stopButton.svg">
             </button>
 
-            <button>
+            <button @click="handleRestart">
                 <img src="../../assets/SimButtons/restartButton.svg">
             </button>
 
-            <button @click="handleRewindToStart">
+            <!--<button @click="handleRewindToStart">
                 <img src="../../assets/SimButtons/skipToStartButton.svg">
-            </button>
+            </button>-->
 
             <button @click="handleRewindToEnd">
                 <img src="../../assets/SimButtons/skipToEndButton.svg">

@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted, watch, onUnmounted, ssrContextKey} from 'vue'
+import {ref, onMounted, watch, onUnmounted} from 'vue'
 
 
 import {useModelStore} from '@/components/stores/ModelStore'
@@ -22,11 +22,9 @@ const modelStore = useModelStore()
 //Socket instantiation
 //-----------------------------------------------
 
-let socket = new WebSocket("ws://localhost:5000/ws/123")
+//Socket should be opened only when a connection
 
-socket.onmessage = function(event) {
-    handleIncomingMsg(event)
-}
+let socket = null
 
 //-----------------------------------------------
 
@@ -56,9 +54,49 @@ onMounted(()=> {
     //Transfer the names of all models from the model store in the edit view to sim view
     modelStore.unselectAllModels()
     simulationStore.setModels(modelStore.getModels)
+
+    //-------------------------------------------------
+    const boundaryTool = new joint.elementTools.Boundary()
+    
+    const toolView = new joint.dia.ToolsView({
+        tools: [
+            boundaryTool
+        ]
+    })
+
+    paper.on('element:pointerclick', function(elementView) {
+        const model = elementView.model
+        elementView.addTools(toolView)
+        if(model.attributes.type === 'custom.Place') {
+            simulationStore.selectedPlace = model
+            simulationStore.isPlaceSelected = true
+
+        }
+    })
+
+    paper.on('blank:pointerclick', function(elementView) {
+        paper.removeTools()
+        simulationStore.isPlaceSelected = false
+        simulationStore.selectedPlace = null
+    })
+
+
+
+    //Instantiate the socket
+    socket = new WebSocket("ws://localhost:5000/ws/123")
+
+    //Handle websocket incoming messages
+    socket.onmessage = function(event) {
+        handleIncomingMsg(event)
+    }
 })
 
 onUnmounted(()=>{
+    //Close the websocket connection
+    socket.close()
+
+
+    //Unselect all models from the menu
     simulationStore.unselectAllModels()
 })
 
@@ -100,11 +138,12 @@ simulationStore.$onAction(({
                     })
 
         } else if(name === "unselectModel") {
-            //TODO: Here the backend should be notified that to stop working with the model
+            //Backend notified to stop working with the model
             const msg = createMsg("frontend", "backend", "unselect_model", "", "")
-
-            //Should this be awaited?
             socket.send(msg)
+
+            //Set all buttons of SimulationStore to their defaults
+            simulationStore.resetAllActions()
             graph.clear()
         } else if(name === "fireTransition") {
             const transitionId = args[0].id
@@ -168,7 +207,8 @@ simulationStore.$onAction(({
 
 watch(()=> simulationStore.startSim, (newVal)=> {
     if(newVal) {
-        const msg = createMsg("frontend", "backend", "start_sim", "", "")
+        //const msg = createMsg("frontend", "backend", "sim", "", "")
+        const msg = createMsg("frontend", "backend", "sim", "", graph.toJSON())
         socket.send(msg)
     }
     simulationStore.startSim = false
@@ -178,10 +218,18 @@ watch(()=> simulationStore.startSim, (newVal)=> {
 
 watch(() => simulationStore.stopSim, (newVal) => {
     if(!newVal) {
-        const continueSimMsg = createMsg("frontend", "backend", "continue_sim", "", graph.toJSON())
-        console.log(continueSimMsg)
-        socket.send(continueSimMsg)
+            const continueSimMsg = createMsg("frontend", "backend", "sim", "", graph.toJSON())
+            socket.send(continueSimMsg)
     }
+
+    if(newVal) {
+        const pauseMsg = createMsg("frontend", "backend", "pause_sim", "", "")
+        socket.send(pauseMsg)
+    }
+})
+
+watch(()=>simulationStore.rewindToStart, (newVal)=>{
+
 })
 
 
@@ -206,19 +254,31 @@ async function fireTransition( inputPlaces, outputPlaces, transitionId) {
         inputPlacesViews.push(cellView)
         cellView.highlight()
         cell.attr('tokenNumber/text', inputPlace.tokens)
+
+        calcAvgTokens(cell)
+        const oldInputPlaceCounter = cell.prop('inputPlaceCounter')
+        cell.prop('inputPlaceCounter', oldInputPlaceCounter+1)
     })
 
     await sleep(500)
     inputPlacesViews.forEach((view) => view.unhighlight())
 
   
-    const cell = graph.getCell(transitionId)
-    const cellView = paper.findViewByModel(cell)
-    cellView.highlight()
+    transitionId.forEach((transition)=>{
+        const cell = graph.getCell(transition)
+        const cellView = paper.findViewByModel(cell)
+        cellView.highlight()
+    })
+    
 
     await sleep(500)
     
-    cellView.unhighlight()
+    transitionId.forEach((transition)=>{
+        const cell = graph.getCell(transition)
+        const cellView = paper.findViewByModel(cell)
+        cellView.unhighlight()
+    })
+
 
     const outputPlacesViews = []
     outputPlaces.forEach((outputPlace) => {
@@ -228,11 +288,38 @@ async function fireTransition( inputPlaces, outputPlaces, transitionId) {
         outputPlacesViews.push(cellView)
         cellView.highlight()
         cell.attr('tokenNumber/text', outputPlace.tokens)
+
+        calcAvgTokens(cell)
+        const oldOutputPlaceCounter = cell.prop('outputPlaceCounter')
+        cell.prop('outputPlaceCounter', oldOutputPlaceCounter+1)
     })
   
     await sleep(500)
     outputPlacesViews.forEach((view) => view.unhighlight())
 }
+
+function calcAvgTokens(cell) {
+    const inputPlaceCounter = cell.prop('inputPlaceCounter')
+    const outputPlaceCounter = cell.prop('outputPlaceCounter')
+    const oldAvgTokens = cell.prop('avgTokens')
+
+    const inputOutputCount = inputPlaceCounter + outputPlaceCounter
+    
+    console.log("Previous avg token number is: " + oldAvgTokens)
+
+    console.log("Total counter number is: " + inputOutputCount)
+    const tokens = cell.attr('tokenNumber/text')
+    
+    console.log("Current token number is: " + tokens)
+    console.log("---------------------------------------")
+
+
+    const newAvgTokens = (oldAvgTokens * (inputOutputCount+1) + tokens) / (inputOutputCount+2)
+    
+    
+    cell.prop('avgTokens', newAvgTokens)
+}
+
 
 function findLabelsEnabledTransitions(idTransitions) {
     const enabledTransitions = []
@@ -260,8 +347,9 @@ function handleIncomingMsg(event) {
         case "visualize_fired_transition": {
             fireTransition(msg.input_places, msg.output_places, msg.transition_id)
                 .then((response) => {
-                    const continueSimMsg = createMsg("frontend", "backend", "continue_sim", "", graph.toJSON())
-                    socket.send(continueSimMsg)
+                    const continueSimMsg = createMsg("frontend", "backend", "sim", "", graph.toJSON())
+                    if(!simulationStore.stopSim)
+                        socket.send(continueSimMsg)
                 })
                 .catch((err) => {
                     const msg = createMsg("frontend", "backend", "response", "fail", "")
@@ -297,16 +385,6 @@ function setFlags() {
     
     flags.push({"replay": true})
     return flags
-}
-
-async function checkFlags(msgJSON) {
-    const msgParsed = JSON.parse(msgJSON)
-
-    //User wants to continues with simulation
-    if(!msgParsed.flags.stop) {
-        return true
-    }
-    return false
 }
 
 function createMsg(senderData, receiverData, actionData, statusData, contentData) {

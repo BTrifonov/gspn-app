@@ -1,3 +1,7 @@
+from pathlib import Path
+import json
+from .file_utils import write_file
+
 
 def parse_model(model_data):
     """
@@ -28,6 +32,9 @@ def parse_model(model_data):
     model['places'] = places
     model['transitions'] = transitions
     model['arcs'] = arcs
+
+    #For test purposes save data locally
+    write_file(data=json.dumps(model, indent=4), file_name="model-parsed.json")
 
     return model
 
@@ -65,12 +72,15 @@ def parse_transition(cell):
     transition_attrs = cell['attrs']
 
     #Extract token distribution and rate
-    transition_distribution_attrs = transition_attrs["tokenDistribution"]
-    transition_distribution_type = transition_distribution_attrs["distribution"]
-    transition_rate = transition_distribution_attrs["rate"]
+    #transition_distribution_attrs = transition_attrs["tokenDistribution"]
+    #transition_distribution_type = transition_distribution_attrs["distribution"]
+    #transition_rate = transition_distribution_attrs["rate"]
 
-    transition['distribution_type'] = transition_distribution_type
-    transition['rate'] = transition_rate
+    
+    #transition['distribution_type'] = transition_distribution_type
+    #transition['rate'] = transition_rate
+    transition['distribution_type'] = cell['tokenDistribution']
+    transition['rate'] = cell['rate']
 
     return transition
 

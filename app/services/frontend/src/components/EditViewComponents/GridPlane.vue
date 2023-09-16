@@ -63,8 +63,12 @@ onMounted(()=> {
     const linkToolView = createLinkToolView()
     const elementToolView = createElementToolView()
 
-    paper.on('link:pointerclick', function(linkView) {
+    paper.on('link:mouseenter', function(linkView) {
         linkView.addTools(linkToolView)
+    })
+
+    paper.on('link:mouseleave', function(linkView) {
+        linkView.removeTools()
     })
     
     paper.on('element:pointerclick', function(elementView) {
@@ -236,6 +240,7 @@ editElementStore.$onAction(({
         } else if(name === "setPlaceTokenNumber") {
             const tokenNumber = args[0]
             editElementBuf.attr('tokenNumber/text', tokenNumber)
+            editElementBuf.prop('avgTokens', tokenNumber)
 
         } else if(name === "deletePlace") {
             editElementBuf.remove()
@@ -246,11 +251,11 @@ editElementStore.$onAction(({
 
         } else if(name === "setTransitionDistribution") {
             const distributionType = args[0]
-            editElementBuf.prop('tokenDistribution/distribution', distributionType)
+            editElementBuf.prop('tokenDistribution', distributionType)
 
         } else if(name === "setTransitionRate") {
             const rate = args[0]
-            editElementBuf.prop('tokenDistribution/rate', rate)
+            editElementBuf.prop('rate', rate)
 
         } else if(name === "deleteTransition") {
             editElementBuf.remove()
@@ -488,28 +493,6 @@ watch(()=> planeStore.triggerDelete, (newValue)=> {
         planeStore.triggerDelete = false
     }
 })
-
-/*watch(() => planeStore.triggerSave, (newValue)=> {
-    if(newValue) {
-        const jsonGraph = graph.toJSON()
-
-        axios.post('/model/plainJSON', {
-            model: jsonGraph
-        })
-            .then(function(response) {
-                console.log("Submitted successfully the following model:")
-                console.log(jsonGraph)
-            })
-            .catch(function (err) {
-                console.log("Lately an error")
-            })
-            .finally(function() {
-                //
-            })
-        
-        planeStore.triggerSave = false
-    }
-})*/
 //---------------------------------------------------------
 
 </script>

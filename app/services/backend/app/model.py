@@ -1,6 +1,6 @@
 import numpy as np
-import json
-import time
+
+from .model_analysis_utils import is_s_system, is_t_system
 
 
 class Model:
@@ -11,10 +11,10 @@ class Model:
         self.transitions_id_to_index = self.map_transition_id_to_index()
 
         self.incidence_matrix = self.create_incidence_matrix()
-        print(self.incidence_matrix)
+        #print(self.incidence_matrix)
 
         self.place_marking = self.create_place_marking()
-        print(self.place_marking)
+        #print(self.place_marking)
 
 
     async def sim_fire_transition(self):
@@ -23,35 +23,77 @@ class Model:
         """
         ids_enabled_transitions = self.determine_enabled_transitions()
         
-        #No enabled transitions
-        if len(ids_enabled_transitions) == 0:
-            response = {
-                'enabled_transitions': False,
-                'input_places': [], 
-                'output_places': [], 
-                'transition_id': "",
-            }
-            return response
-            
-        #Choose random transition index, if more than one enabled transitions    
-        index = 0
-        if len(ids_enabled_transitions) > 1:
-            index = np.random.randint(0, len(ids_enabled_transitions)-1)
+        print("Ids of enabled transitions are: ")
+        print(ids_enabled_transitions)
 
-        transition_id = ids_enabled_transitions[index]
-            
-        new_marking = self.fire_transition(transition_id)
-
+        #Construct the response
         response = {
-            'input_places': new_marking['input_places'], 
-            'output_places': new_marking['output_places'], 
-            'transition_id': transition_id,
-            'enabled_transitions': True
+            'input_places': [], 
+            'output_places': [],
+            'transition_id': [] 
         }
 
-        #Return dictionary
+        #No enabled transitions
+        if len(ids_enabled_transitions) == 0:
+            response['enabled_transitions'] = False
+            return response
+        
+        #Choose random transition index, if more than one enabled transitions    
+        transitions_to_fire = self.choose_transitions(ids_enabled_transitions)
+
+        print("Indexes of transitions,which will be fired: ")
+        print(transitions_to_fire)
+
+        for transition in transitions_to_fire:
+            arr = [transition]
+            transition_id = self.transition_indices_to_ids(arr)[0]
+            results = self.fire_transition(transition_id)
+
+            response['input_places'].extend(results['input_places'])
+            response['output_places'].extend(results['output_places'])
+            
+            response['transition_id'].append(transition_id)
+
+
+        print("IDs of transitions, which will be fired: ")
+        print(response['transition_id'])
+        print("Incidence matrix:")
+        print(self.incidence_matrix)
+        print("--------------------------------------")
+        response['enabled_transitions'] = True
+        print(response)
         return response
 
+    def choose_transitions(self, ids_enabled_transitions):
+        indices_enabled_transitions = []
+
+        result = set()
+        for i in range(0, len(ids_enabled_transitions)):
+            indices_enabled_transitions.append(self.transitions_id_to_index[ids_enabled_transitions[i]])
+
+        print("Indexes of enabled transitions:")
+        print(indices_enabled_transitions)
+        #Iterate over each place
+        for row_index, row in enumerate(self.incidence_matrix):
+            input_transition = []
+
+            for col_index in indices_enabled_transitions:
+                print(row[col_index])
+                print(self.place_marking[row_index])
+
+                if(row[col_index] < 0):
+                    input_transition.append(col_index)
+
+                
+
+            if(len(input_transition) > 0):
+                random_input_transition = np.random.choice(input_transition)
+                print(random_input_transition)
+                result.add(random_input_transition)
+
+        return result
+
+    
     def determine_enabled_transitions(self):
         """
         Return the id's of all enabled transition of the current model
@@ -82,7 +124,7 @@ class Model:
 
 
         #Get the id's of all enabled transitions
-        print(indices_enabled_transitions)
+        #print(indices_enabled_transitions)
         id_enabled_transitions = self.transition_indices_to_ids(indices_enabled_transitions)
 
         return id_enabled_transitions
@@ -97,9 +139,9 @@ class Model:
         output_places = []
        
         for index, matrix_entry in enumerate(self.incidence_matrix[:, transition_index]):
-            print(index)
-            print(matrix_entry)
-            print("-----------------------")
+            #print(index)
+            #print(matrix_entry)
+            #print("-----------------------")
             if matrix_entry == -1:
                 self.place_marking[index] -= 1
 
@@ -116,9 +158,7 @@ class Model:
 
                 output_places.append({'id': place_id, 'tokens': place_tokens})
                 
-
-
-            
+    
         input_output_places = {'input_places': input_places, 'output_places': output_places}
         return input_output_places
 
@@ -187,7 +227,6 @@ class Model:
             index+=1
 
         return transitions_id_to_index
-
 
     def transition_indices_to_ids(self, indices):
         """

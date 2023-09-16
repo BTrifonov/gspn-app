@@ -14,6 +14,9 @@ export const useSimulationStore = defineStore('simStore', {
         rewindToEnd: false, 
         simSpeed: false,
 
+        isPlaceSelected: false,
+        selectedPlace: null,
+
         enabledTransitions: [], 
         tracebackTransitions: []
     }), 
@@ -25,7 +28,20 @@ export const useSimulationStore = defineStore('simStore', {
                     return model.name
             }
         },
-        getEnabledTransitions: (state) => state.enabledTransitions
+        getEnabledTransitions: (state) => state.enabledTransitions,
+
+        getInputPlaceCount: (state) => {
+            if(state.selectedPlace!=null) 
+                return state.selectedPlace.prop('inputPlaceCounter')
+        }, 
+        getOutputPlaceCount: (state) => {
+            if(state.selectedPlace!=null) 
+                return state.selectedPlace.prop('outputPlaceCounter')
+        },
+        getAvgTokenPlace: (state) => {
+            if(state.selectedPlace!=null)
+                return state.selectedPlace.prop('avgTokens')
+        }
     }, 
     actions: {
         setModels(models) {
@@ -67,6 +83,13 @@ export const useSimulationStore = defineStore('simStore', {
         },
         fireTransition(transition) {
           //Serves as notifier for the SimGridPlane to send POST req to backend
+        },
+        resetAllActions() {
+            this.startSim = false
+            this.stopSim = false
+            this.rewindToStart = false
+            this.rewindToEnd  = false
+            this.unsel
         }
     }
 })

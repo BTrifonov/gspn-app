@@ -10,7 +10,7 @@ export const placePort = {
         attrs: {
             body: {
                 magnet: true, 
-                r: 5,
+                r: 7,
                 fill: 'lightblue',
                 stroke: 'blue',
                 visibility: 'hidden',

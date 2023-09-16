@@ -20,19 +20,23 @@ async def handle_websocket_communication_alternate(websocket: WebSocket, socket_
             if incoming_msg['action'] == "unselect_model":
                 continue
 
-            if incoming_msg['action'] == "start_sim":
+            if incoming_msg['action'] == "sim":
+                model = instantiateModel(incoming_msg['data'])
                 outgoing_msg = await fireTransition(model)
                 outgoing_msg_json = json.dumps(outgoing_msg)
                 await websocket.send_text(outgoing_msg_json)
 
     
-            if incoming_msg['action'] == "continue_sim":
-                    continue_allowed = check_flags(incoming_msg['flags'])
+            #if incoming_msg['action'] == "continue_sim":
+            #        continue_allowed = check_flags(incoming_msg['flags'])
+            #
+            #        if continue_allowed:
+            #            outgoing_msg = await fireTransition(model)
+            #            outgoing_msg_json = json.dumps(outgoing_msg)
+            #            await websocket.send_text(outgoing_msg_json)
 
-                    if continue_allowed:
-                        outgoing_msg = await fireTransition(model)
-                        outgoing_msg_json = json.dumps(outgoing_msg)
-                        await websocket.send_text(outgoing_msg_json)
+            if incoming_msg['action'] == "pause_sim":
+                continue
                     
                         
     except WebSocketDisconnect:

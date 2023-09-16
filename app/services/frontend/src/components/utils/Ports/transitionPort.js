@@ -6,13 +6,14 @@ export const leftPort = {
         name: 'left',
         args: {
             x: 0, 
-            y: 25
+            //y: 25,
+            y: 'calc(h/2-5)'
         }
     }, 
     attrs: {
         body: {
             magnet: true, 
-            r: 5,
+            r: 7,
             fill: 'lightblue',
             stroke: 'blue',
             visibility: 'hidden',
@@ -29,14 +30,16 @@ export const rightPort = {
     position: {
         name: 'right',
         args: {
-            x: 25, 
-            y: 25
+            x: 'calc(w)',
+            //x: 25, 
+            y: 'calc(h/2-5)'
+            //y: 25
         }
     }, 
     attrs: {
         body: {
             magnet: true, 
-            r: 5,
+            r: 7,
             fill: 'lightblue',
             stroke: 'blue',
             visibility: 'hidden',
@@ -57,7 +60,7 @@ export const topPort = {
     attrs: {
         body: {
             magnet: true, 
-            r: 5,
+            r: 7,
             fill: 'lightblue',
             stroke: 'blue',
             visibility: 'hidden',
@@ -74,8 +77,10 @@ export const bottomPort = {
     position: {
         name: 'bottom',
         args: {
-            x: 12.5,
-            y: 50,
+            x: 'calc(w/2)',
+            y: 'calc(h-10)'
+            //x: 12.5,
+            //y: 50,
             //dx: 1,
             //dy: 1
         }
@@ -83,7 +88,7 @@ export const bottomPort = {
     attrs: {
         body: {
             magnet: true, 
-            r: 5,
+            r: 7,
             fill: 'lightblue',
             stroke: 'blue',
             visibility: 'hidden', 
@@ -107,7 +112,7 @@ export const leftUpperCornerPort = {
     attrs: {
         body: {
             magnet: true, 
-            r: 5,
+            r: 7,
             fill: 'lightblue',
             stroke: 'blue',
             visibility: 'hidden', 
@@ -125,13 +130,13 @@ export const leftBottomCornerPort = {
         name: 'absolute',
         args: {
             x: 0,
-            y: 50
+            y: 'calc(h-10)'
         }
     }, 
     attrs: {
         body: {
             magnet: true, 
-            r: 5,
+            r: 7,
             fill: 'lightblue',
             stroke: 'blue',
             visibility: 'hidden', 
@@ -149,13 +154,13 @@ export const rightUpperCornerPort = {
         name: 'absolute',
         args: {
             x: 'calc(w)',
-            y: '0'
+            y: 0
         }
     }, 
     attrs: {
         body: {
             magnet: true, 
-            r: 5,
+            r: 7,
             fill: 'lightblue',
             stroke: 'blue',
             visibility: 'hidden', 
@@ -172,14 +177,16 @@ export const rightBottomCornerPort = {
     position: {
         name: 'absolute',
         args: {
-            x: 25,
-            y: 50
+            //x: 25
+            x: 'calc(w)',
+            //y: 50
+            y: 'calc(h-10)'
         }
     }, 
     attrs: {
         body: {
             magnet: true, 
-            r: 5,
+            r: 7,
             fill: 'lightblue',
             stroke: 'blue',
             visibility: 'hidden', 

@@ -53,48 +53,7 @@ app.add_middleware(
 @app.websocket("/ws/{socket_id}")
 async def websocket_endpoint(websocket: WebSocket, socket_id: int):
     await websocket.accept()
-    await handle_websocket_communication_alternate(websocket, socket_id)
-"""    
-    await websocket.accept()
-    while True:
-        #We should have a field determining different actions
-        data_json = await websocket.receive_text()
-        data = json.loads(data_json)
-
-        #Should be instantiated once a simulation is started by the frontend
-        model = None
-        
-        if data['action'] == 'instantiate_model':
-                model_parsed = parse_model(data['model'])
-                model = Model(model_parsed)
-
-                while True:
-                    if data['action'] == 'startSim':
-                        response = await model.sim_fire_transition()
-                        await websocket.send(response)
-                    elif data['action'] == 'stopSim':
-                        await websocket.send_text("Stopped sim by user")
-                    
-        if data['action'] == 'startSim':
-            model_parsed = parse_model(data['model'])
-            model = Model(model_parsed)
-            
-            response = await model.sim_fire_transition()
-            await websocket.send(response)
-
-        elif data['action'] == 'stopSim':
-            await websocket.send_text("Stopped simulation by the user")
-
-        elif data['action'] == 'resp':
-            #Frontend response after visualising the transition firing
-            if data['response'] == 'success':
-                if model is not None:
-                    response = await model.sim_fire_transition()
-                    await websocket.send(response)
-
-            elif data['response'] == 'failure':
-                print("Frontend failed visualizing the transition firing")
-"""        
+    await handle_websocket_communication_alternate(websocket, socket_id)      
 
 #---------------------------------------------------------
 #API endpoints

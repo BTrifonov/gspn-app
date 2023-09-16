@@ -22,6 +22,7 @@ watch(distribution, (newValue)=> {
 })
 
 watch(rate, (newValue)=>{
+    console.log("New distribution rate should be set: " + newValue)
     editElementStore.setTransitionRate(newValue)
 })
 </script>
