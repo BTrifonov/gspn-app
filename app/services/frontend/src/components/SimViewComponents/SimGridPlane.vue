@@ -298,6 +298,58 @@ async function fireTransition( inputPlaces, outputPlaces, transitionId) {
     outputPlacesViews.forEach((view) => view.unhighlight())
 }
 
+
+async function fireTransitionAlternate(inputPlaces, outputPlaces, transitions) {
+    inputPlaces.forEach((inputPlace)=>{
+        const cell = graph.getCell(inputPlace.id)
+        const cellView = paper.findViewByModel(cell)
+
+      
+        cellView.highlight()
+        cell.attr('tokenNumber/text', inputPlace.tokens)
+
+    })
+
+    transitions.forEach((transition)=>{
+        const cell = graph.getCell(transition)
+        const cellView = paper.findViewByModel(cell)
+        cellView.highlight()
+    })
+    
+    outputPlaces.forEach((outputPlace) => {
+        const cell = graph.getCell(outputPlace.id)
+        const cellView = paper.findViewByModel(cell)
+        cellView.highlight()
+        cell.attr('tokenNumber/text', outputPlace.tokens)
+
+    })    
+
+
+    await sleep(1000)
+
+    inputPlaces.forEach((inputPlace)=>{
+        const cell = graph.getCell(inputPlace.id)
+        const cellView = paper.findViewByModel(cell)
+        cellView.unhighlight()
+    })
+
+  
+    transitions.forEach((transition)=>{
+        const cell = graph.getCell(transition)
+        const cellView = paper.findViewByModel(cell)
+        cellView.unhighlight()
+    })
+    
+    outputPlaces.forEach((outputPlace) => {
+        const cell = graph.getCell(outputPlace.id)
+        const cellView = paper.findViewByModel(cell)
+        cellView.unhighlight()
+    }) 
+
+    await sleep(500)
+}
+
+
 function calcAvgTokens(cell) {
     const inputPlaceCounter = cell.prop('inputPlaceCounter')
     const outputPlaceCounter = cell.prop('outputPlaceCounter')
@@ -345,7 +397,7 @@ function handleIncomingMsg(event) {
 
     switch (msg.action) {
         case "visualize_fired_transition": {
-            fireTransition(msg.input_places, msg.output_places, msg.transition_id)
+            fireTransitionAlternate(msg.input_places, msg.output_places, msg.transition_id)
                 .then((response) => {
                     const continueSimMsg = createMsg("frontend", "backend", "sim", "", graph.toJSON())
                     if(!simulationStore.stopSim)

@@ -52,7 +52,8 @@ def instantiateModel(msg_payload):
     return model
 
 async def fireTransition(model: Model):
-    result_fired_transition = await model.sim_fire_transition()
+    #result_fired_transition = await model.sim_fire_transition()
+    result_fired_transition = model.sim_iteration()
 
     response_msg = {
         'sender': 'backend', 

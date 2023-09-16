@@ -17,6 +17,91 @@ class Model:
         #print(self.place_marking)
 
 
+    def sim_iteration(self):
+        """
+        One iteration of the simulation, in which all enabled transitions are fired
+        """
+        sim_iteration_result = {
+            'input_places': [], 
+            'output_places': [],
+            'transition_id': [],
+            'enabled_transitions': False
+        }
+
+        transitions_to_fire_ids = self.create_magic()
+
+        for transition_id in transitions_to_fire_ids:
+            firing_res = self.fire_transition(transition_id)
+            
+            sim_iteration_result['input_places'].extend(firing_res['input_places'])
+            sim_iteration_result['output_places'].extend(firing_res['output_places'])
+            sim_iteration_result['transition_id'].append(transition_id)
+
+            #Should be done with helper var so that it is not repeated multiple times
+            sim_iteration_result['enabled_transitions'] = True
+
+        return sim_iteration_result
+
+        
+    def create_magic(self):
+        transitions_to_fire = []
+
+        incidence_matrix_dim = self.incidence_matrix.shape
+        rows = incidence_matrix_dim[0]
+        cols = incidence_matrix_dim[1]
+
+        for row_index in range(0, rows):
+            input_transitions = []
+
+            for col_index in range(0, cols):
+                matrix_entry = self.incidence_matrix[row_index][col_index]
+                if matrix_entry < 0:
+                    if abs(matrix_entry) <= self.place_marking[row_index]:
+                        input_transitions.append(col_index)
+
+            random_chosen_transitions = []
+            while random_chosen_transitions != input_transitions:
+                random_input_transition = np.random.choice(input_transitions)
+                random_chosen_transitions.append(random_input_transition)
+
+                if random_input_transition not in transitions_to_fire:
+                    transitions_to_fire.append(random_input_transition)
+                    break
+
+        #With this function transitions without input_places won't fire, should be solved
+        transitions_to_fire_ids = self.transition_indices_to_ids(transitions_to_fire)
+        return transitions_to_fire_ids
+       
+
+    def enabled_transitions(self):
+        transition_enabled_arr = []
+
+        dimensions_matrix = self.incidence_matrix.shape
+        cols = dimensions_matrix[1]
+        rows = dimensions_matrix[0]
+
+        for col_index in range(0, cols):
+            transition_enabled = True
+            input_place_counter = 0
+
+            for row_index in range(0, rows):
+                matrix_entry = self.incidence_matrix[row_index][col_index] 
+                if matrix_entry < 0:
+                    #Found input place
+                    if abs(matrix_entry) > self.place_marking[row_index]:
+                        #Insufficient token number in the input place
+                        transition_enabled = False
+                        break
+
+                    #Sufficient token number in the input place
+                    input_place_counter+=1
+            
+            if transition_enabled:
+                transition_enabled_arr.append({'enabled': True, 'input_places': input_place_counter})
+            else:
+                transition_enabled_arr.append({'enabled': True, 'input_places': input_place_counter})
+            
+
     async def sim_fire_transition(self):
         """
         Simulate a random transition firing
@@ -205,6 +290,10 @@ class Model:
             return incidence_matrix
     
     def map_place_id_to_index(self):
+        """
+        Create a place dictionary of the form: {'id': ..., 'index': ...} \n
+        Index is the row index of the place in the incidence matrix
+        """
         places = self.model['places']
         
         places_id_to_index = {}
@@ -217,6 +306,11 @@ class Model:
         return places_id_to_index
     
     def map_transition_id_to_index(self):
+        """
+        Create a transition dictionary of the form: {'id': ..., 'index': ...} \n 
+        Index is the column index of the transition in the incidence matrix
+        """
+
         transitions = self.model['transitions']
 
         transitions_id_to_index = {}
@@ -257,5 +351,19 @@ class Model:
                 indices.remove(value)
 
         return id_places
+    
+
+    def transition_ids_to_indices(self, ids):
+        """
+        Determine the indices of all transitions, whose id is inside the ids array
+        """
+        indices_transitions = []
+
+        for key, value in self.transition_ids_to_indices:
+            if key in ids:
+                indices_transitions.append(value)
+                ids.remove(value)
+
+        return indices_transitions
 #---------------------------------------------------------       
 
