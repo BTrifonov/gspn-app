@@ -15,16 +15,6 @@ function handleStart() {
 }
 
 function handleStop() {
-    /*if(!simulationStore.stopSim) {
-        if(!simulationStore.startSim) {
-            console.log("Cannot stop unplayed simulation!")
-            return
-        } else {
-            simulationStore.stopSim = true
-        }
-    } 8else {
-        simulationStore.stopSim = false
-    }*/
     simulationStore.stopSim = !simulationStore.stopSim
 }   
 
@@ -81,6 +71,11 @@ watch(simSpeed, (newVal) => {
             <input type="range" min="0.5" max="2" step="0.5" class="input" v-model="simSpeed">
             <p>Simulation speed</p> 
         </div>
+
+        <div class="sim-container">
+            <p>{{ simulationStore.time }}</p>
+            <p> Simulation time</p>
+        </div>
     </div>
 </template>
 
@@ -88,4 +83,9 @@ watch(simSpeed, (newVal) => {
 
 <style scoped>
 @import '@/assets/sidebar-submenu.css';
+
+p {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
 </style>

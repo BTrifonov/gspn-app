@@ -36,7 +36,7 @@ export function drawPlace() {
 }
 
 /**
- * Create a visual representation of a PN transition
+ * Create a visual representation of a PN timed transition
  * @returns custom.Transition
  */
 export function drawTransition() {
@@ -44,19 +44,21 @@ export function drawTransition() {
         attrs: {
             label: {
                 text: 'T' + transitionIndex
-            },
-            tokenDistribution: {
-                distribution: 'exponential', 
-                rate: 0.75
-            }, 
-            rateLabel: {
-                text: 'λ = 0.75'
             }
         }
     })
 
+    //Indicate it is a timed transition
+    transition.prop('timed', true)
+
+    //Set initial time properties of the transition
+    transition.prop('tokenDistribution', 'exponential')
+    transition.prop('rate', 7)
+
+
+    addPorts(transition)
     //Add ports to the transition
-    transition.addPort({group: 'bottomPort'})
+    /*transition.addPort({group: 'bottomPort'})
     transition.addPort({group: 'topPort'})
 
     transition.addPort({group: 'leftPort'})
@@ -67,7 +69,8 @@ export function drawTransition() {
 
     transition.addPort({group: 'rightBottomCornerPort'})
     transition.addPort({group: 'rightUpperCornerPort'})
-
+    */
+    
     transitionIndex+=1
 
     return transition
@@ -78,8 +81,38 @@ export function drawTransition() {
  * @returns custom.Transition
  */
 export function drawImmediateTransition() {
-    const transition = drawTransition()
+    const transition = new Transition({
+        attrs: {
+            label: {
+                text: 'T' + transitionIndex
+            }
+        }
+    })
+
     transition.prop('attrs/body/fill', 'black')
+
+    //Indicate it is not a timed transition
+    transition.prop('timed', false)
+
+    transition.prop('attrs/body/fill', 'black')
+
+
+    //Add ports to the transition
+    addPorts(transition)
+    /*transition.addPort({group: 'bottomPort'})
+    transition.addPort({group: 'topPort'})
+
+    transition.addPort({group: 'leftPort'})
+    transition.addPort({group: 'rightPort'})
+
+    transition.addPort({group: 'leftBottomCornerPort'})
+    transition.addPort({group: 'leftUpperCornerPort'})
+
+    transition.addPort({group: 'rightBottomCornerPort'})
+    transition.addPort({group: 'rightUpperCornerPort'})*/
+
+    transitionIndex+=1
+
     return transition
 }
 
@@ -92,4 +125,26 @@ export function drawArc() {
     arc.source(new joint.g.Point(50, 50));
     arc.target(new joint.g.Point(100, 100));
     return arc
+}
+
+//----------------------------------------------------------
+//Helper methods
+//----------------------------------------------------------
+
+/**
+ * Add ports, enabling the connection of PN transitions
+ * @param {*} transition 
+ */
+function addPorts(transition) {
+    transition.addPort({group: 'bottomPort'})
+    transition.addPort({group: 'topPort'})
+
+    transition.addPort({group: 'leftPort'})
+    transition.addPort({group: 'rightPort'})
+
+    transition.addPort({group: 'leftBottomCornerPort'})
+    transition.addPort({group: 'leftUpperCornerPort'})
+
+    transition.addPort({group: 'rightBottomCornerPort'})
+    transition.addPort({group: 'rightUpperCornerPort'})
 }

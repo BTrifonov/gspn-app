@@ -69,18 +69,15 @@ def parse_transition(cell):
     transition['id'] = cell['id']
 
     #Extract the attrs
-    transition_attrs = cell['attrs']
+    #transition_attrs = cell['attrs']
 
-    #Extract token distribution and rate
-    #transition_distribution_attrs = transition_attrs["tokenDistribution"]
-    #transition_distribution_type = transition_distribution_attrs["distribution"]
-    #transition_rate = transition_distribution_attrs["rate"]
+    #Determine the transition type -> immediate or timed
+    transition['timed'] = cell['timed']
 
-    
-    #transition['distribution_type'] = transition_distribution_type
-    #transition['rate'] = transition_rate
-    transition['distribution_type'] = cell['tokenDistribution']
-    transition['rate'] = cell['rate']
+    if transition['timed']:
+        #Extract token distribution and rate if timed transition
+        transition['distribution_type'] = cell['tokenDistribution']
+        transition['rate'] = cell['rate']
 
     return transition
 

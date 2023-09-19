@@ -116,7 +116,9 @@ async def fire_transition(req_body: PlainJSON):
 
     model = Model(model_parsed)
 
-    return model.fire_transition(transition_id)
+    result = model.fire_transition(transition_id)
+    print(result)
+    return result
 
 #----------------------------------------------------------------
 

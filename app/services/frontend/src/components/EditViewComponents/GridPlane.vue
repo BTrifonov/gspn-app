@@ -55,7 +55,9 @@ onMounted(()=> {
         defaultLink: () => new joint.shapes.standard.Link(),
         /**TODO: Validation does not work, use the connection-validator */
         //validateConnection: 
-        markAvailable: true
+        markAvailable: true,
+        //By setting this it is not able to use the create arc option
+        linkPinning: false
     })
    
     //Attach and remove element and link tools

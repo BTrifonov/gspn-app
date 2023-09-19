@@ -5,8 +5,6 @@ import { ref, watch} from 'vue';
 const simulationStore = useSimulationStore()
 
 
-
-
 const isPlaceSelected = ref(false)
 const inputPlaceCounter = ref(0)
 const outputPlaceCounter = ref(0)
@@ -59,7 +57,6 @@ watch(()=> simulationStore.isPlaceSelected, (newVal)=>{
 
 <style scoped>
 @import '@/assets/sidebar-submenu.css';
-
 
 p {
     margin-top: 2px;

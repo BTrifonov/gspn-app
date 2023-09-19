@@ -7,8 +7,8 @@ export class Transition extends joint.shapes.standard.Rectangle {
         return {
             ...super.defaults,
             type: 'custom.Transition',
-            tokenDistribution: 'exponential', 
-            rate: 7,
+            /*tokenDistribution: 'exponential', 
+            rate: 7,*/
             position: {
                 x: 200, 
                 y: 200
@@ -36,7 +36,7 @@ export class Transition extends joint.shapes.standard.Rectangle {
                     fontSize: 10, 
                     fill: 'black'
                 },  
-                tokenDistribution: {
+                /*tokenDistribution: {
                     display: 'none',
                     
                     distribition: 'exponential',
@@ -49,7 +49,7 @@ export class Transition extends joint.shapes.standard.Rectangle {
                     y: 0, 
                     fontSize: 10, 
                     fill: 'black'
-                }
+                }*/
             },
             markup: [{
                 tagName: 'rect',

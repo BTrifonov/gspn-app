@@ -142,12 +142,15 @@ simulationStore.$onAction(({
             const msg = createMsg("frontend", "backend", "unselect_model", "", "")
             socket.send(msg)
 
-            //Set all buttons of SimulationStore to their defaults
+            //Set all buttons of SimulationStore to their defaults, timer also resetted
             simulationStore.resetAllActions()
             graph.clear()
+
+            simulationStore.resetTimer()
         } else if(name === "fireTransition") {
             const transitionId = args[0].id
             const modelJSON = graph.toJSON()
+            
             
             const data = {
                 model: modelJSON
@@ -160,7 +163,7 @@ simulationStore.$onAction(({
 
             axios.post('/model/fire-transition', {params, data})
                     .then((response) => {
-                        fireTransition(response.data.input_places, response.data.output_places, transitionId)
+                        fireTransitionAlternate(response.data.input_places, response.data.output_places, response.data.transition_id)
                                 .then(()=> {
                                     simulationStore.findEnabledTransitions()
                                     simulationStore.firedTransition = true
@@ -191,7 +194,7 @@ simulationStore.$onAction(({
             axios.post('/model/enabled-transitions', {data,  params})
                     .then((response)=>{
                         const idsEnabledTransitions = response.data
-
+                        
                         const enabledTransitions = findLabelsEnabledTransitions(idsEnabledTransitions)
                         simulationStore.setEnabledTransitions(enabledTransitions)
                     })
@@ -205,10 +208,13 @@ simulationStore.$onAction(({
     })
 })
 
+
 watch(()=> simulationStore.startSim, (newVal)=> {
     if(newVal) {
-        //const msg = createMsg("frontend", "backend", "sim", "", "")
+        simulationStore.startTimer()
+
         const msg = createMsg("frontend", "backend", "sim", "", graph.toJSON())
+        
         socket.send(msg)
     }
     simulationStore.startSim = false
@@ -216,13 +222,15 @@ watch(()=> simulationStore.startSim, (newVal)=> {
 
 
 
-watch(() => simulationStore.stopSim, (newVal) => {
-    if(!newVal) {
-            const continueSimMsg = createMsg("frontend", "backend", "sim", "", graph.toJSON())
-            socket.send(continueSimMsg)
+watch(() => simulationStore.stopSim, (newVal, oldVal) => {
+    if(!newVal && oldVal) {
+        simulationStore.resumeTimer()
+        const continueSimMsg = createMsg("frontend", "backend", "sim", "", graph.toJSON())
+        socket.send(continueSimMsg)
     }
 
     if(newVal) {
+        simulationStore.stopTimer()
         const pauseMsg = createMsg("frontend", "backend", "pause_sim", "", "")
         socket.send(pauseMsg)
     }
@@ -410,7 +418,9 @@ function handleIncomingMsg(event) {
             break
         }
         case "end_sim": {
-            //TODO: There are no more enabled transitions in the model
+            //Timer should be stopped
+            simulationStore.stopTimer()
+            
             console.log("End of the simulation reached")
             break
         }

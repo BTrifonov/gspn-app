@@ -1,39 +1,18 @@
 <script setup>
 import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore'
-import { ref, watch } from 'vue';
+
 
 const simulationStore = useSimulationStore()
-
-const enabledTransitions = ref(null)
-
-watch(()=> simulationStore.firedTransition, (newVal) => {
-    if(newVal) {
-        enabledTransitions.value = simulationStore.getEnabledTransitions
-    }
-    simulationStore.firedTransition = false
-})
-
-watch(()=>simulationStore.enabledTransitions, (newVal) => {
-    console.log("Setting new enabled transitions:") 
-    console.log(simulationStore.enabledTransitions)
-    enabledTransitions.value = newVal
-})
-
-function fireTransition(transition) {
-    simulationStore.fireTransition(transition)
-    simulationStore.findEnabledTransitions()
-
-}
 
 </script>
 
 <template>
     <div class="menu-container">
         <p class="text">Enabled Transitions</p>
-        <div v-for="transition in enabledTransitions" class="sim-container">
+        <div v-for="transition in simulationStore.enabledTransitions" class="sim-container">
             <a  href="#"
                 class="a-container"
-                @click="fireTransition(transition)">
+                @click="simulationStore.fireTransition(transition)">
                 {{ transition.label }}
             </a>
         </div>
