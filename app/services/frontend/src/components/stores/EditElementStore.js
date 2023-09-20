@@ -8,58 +8,168 @@ export const useElementStore = defineStore('selectElements', {
     state: () => ({
         selectedPlace: false, 
         selectedTransition: false, 
-        selectedArc: false
+        selectedArc: false, 
+        selectedElement: null
     }),
-    actions: {
-        selectPlace() {
-            this.selectedTransition = false
-            this.selectedArc = false
-
-            this.selectedPlace = true
+    getters: {
+        //----------------------------------------
+        //Place getters
+        //----------------------------------------
+        getPlaceLabel: (state) => {
+            if(state.selectedPlace)
+                return state.selectedElement.attr('label/text')
+        },
+        getPlaceTokens: (state) => {
+            if(state.selectedPlace)
+                return state.selectedElement.attr('tokenNumber/text')
         }, 
-        selectTransition() {
-            this.selectedPlace = false
-            this.selectedArc = false
-            
-            this.selectedTransition = true
+        //----------------------------------------
+        //Transition getters
+        //----------------------------------------
+        getTransitionLabel: (state) => {
+            if(state.selectedTransition)
+                return state.selectedElement.attr('label/text')
         },
-        selectArc() {
-            this.selectedPlace = false
-            this.selectedTransition = false
-
-            this.selectedArc = true
+        getTransitionDistribution: (state) => {
+            if(state.selectedTransition)
+                return state.selectedElement.prop('tokenDistribution')
         },
+        getTransitionDistributionRate: (state) => {
+            if(state.selectedTransition)
+                return state.selectedElement.prop('rate')
+        },
+        //----------------------------------------
+        //Arc getters
+        //----------------------------------------
+        getArcLabel: (state) => {
+            if(state.selectedArc)
+                return state.selectedElement.attr('label/text')
+        }
+    },
+    actions: {
+        //----------------------------------------
+        //Functions, related to the whole state
+        //----------------------------------------
         unselectAll() {
             this.selectedPlace = false
             this.selectedTransition = false
             this.selectedArc = false
+
+            this.selectedElement = null
         },
         //----------------------------------------
         //Place specific functions
         //----------------------------------------
-        setPlaceTokenNumber(tokenNumber) {
+        selectPlace(place) {
+            this.selectedTransition = false
+            this.selectedArc = false
+
+            this.selectedPlace = true
+            this.selectedElement = place
+        },
+        unselectPlace() {
+            if(this.selectedPlace) {
+                this.selectedPlace = false
+                this.selectedElement = null
+            } else {
+                console.error("Cannot unselect a place, if a place has not been selected before")
+            }
+        },
+        setPlaceTokenNumber(tokens) {
             //Primary function is to pass tokenNumber from EditPlaceMenu to EditGridPlane
+            if(this.selectedPlace) {
+                this.selectedElement.attr('tokenNumber/text', tokens)
+            } else {
+                console.error("Cannot set place tokens, if a place has not been selected")
+            }
         }, 
         setPlaceLabel(label) {
             //Primary function is to pass label from EditPlaceMenu to EditGridPlane
+            if(this.selectedPlace) {
+                this.selectedElement.attr('label/text', label)
+            } else {
+                console.error("Cannot set place label, if a place has not been selected")
+            }
         }, 
         deletePlace() {
-            //
+            if(this.selectedPlace) {
+                this.selectedPlace = false
+                
+                this.selectedElement.remove()
+                
+                this.selectedElement = null
+            } else {
+                console.error("Cannot delete a place, if a place has not been selected")
+            }
         },
         //---------------------------------------
         //Transition specific functions
         //---------------------------------------
+        selectTransition(transition) {
+            this.selectedPlace = false
+            this.selectedArc = false
+            
+            this.selectedTransition = true
+            this.selectedElement = transition
+        },
+        unselectTransition() {
+            if(this.selectedTransition) {
+                this.selectedTransition = false
+                this.selectedElement = null
+            } else {
+                console.error("Cannot unselect a transition, if a transition has not been selected before")
+            }
+        },
         setTransitionLabel(label) {
-            //
+            if(this.selectedTransition) {
+                this.selectedElement.attr('label/text', label)
+            } else {
+                console.error("Cannot set transition label, if a transition has not been selected")
+            }
         },
         setTransitionDistribution(distribution) {
-            //
+            if(this.selectedTransition) {
+                this.selectedElement.prop('tokenDistribution', distribution)
+            } else {
+                console.error("Cannot set transition distribution, if a transition has not been selected")
+            }
         }, 
         setTransitionRate(rate) {
-            //
+            if(this.selectedTransition) {
+                this.selectedElement.prop('rate', rate)
+            } else {
+                console.error("Cannot set transition rate, if a transition has not been selected")
+            }
+
         },
         deleteTransition() {
-            //
+            if(this.selectedTransition) {
+                this.selectedElement.remove()
+                
+                this.selectedTransition = false
+                this.selectedElement = null
+            } else {
+                console.error("Cannot delete a transition, if a transition has not been selected")
+            }
+        },
+        //------------------------------------------
+        //Arc specific functions
+        //TODO: Should be possible to set e.g label
+        //------------------------------------------
+        selectArc(arc) {
+            this.selectedPlace = false
+            this.selectedTransition = false
+
+            this.selectedArc = true
+            this.selectedElement = arc
+        }, 
+        unselectArc() {
+            if(this.selectedArc) {
+                this.selectedArc = false
+                this.selectedElement = null
+            } else {
+                console.error("Cannot unselect an arc, if an arc has not been selected")
+            }
         }
     }
 })

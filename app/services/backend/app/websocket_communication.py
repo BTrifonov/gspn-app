@@ -53,7 +53,8 @@ def instantiateModel(msg_payload):
 
 async def fireTransition(model: Model):
     #result_fired_transition = await model.sim_fire_transition()
-    result_fired_transition = model.sim_iteration()
+    #result_fired_transition = model.sim_iteration()
+    result_fired_transition = model.sim_iteration_timed_net()
 
     response_msg = {
         'sender': 'backend', 
@@ -61,6 +62,8 @@ async def fireTransition(model: Model):
         'input_places': result_fired_transition['input_places'], 
         'output_places': result_fired_transition['output_places'], 
         'transition_id': result_fired_transition['transition_id'],
+
+        'delay': result_fired_transition['delay'],
         'status': 'ok'
     }
 

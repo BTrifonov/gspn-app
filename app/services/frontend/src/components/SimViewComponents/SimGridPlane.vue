@@ -121,6 +121,7 @@ simulationStore.$onAction(({
         
             axios.get('/model', {params})
                     .then(function(response) {
+                        simulationStore.resetAllActions()
                         const modelJSON = JSON.parse(response.data)
 
                         graph.fromJSON(modelJSON.model)
@@ -212,6 +213,7 @@ simulationStore.$onAction(({
 watch(()=> simulationStore.startSim, (newVal)=> {
     if(newVal) {
         simulationStore.startTimer()
+        
 
         const msg = createMsg("frontend", "backend", "sim", "", graph.toJSON())
         

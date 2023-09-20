@@ -3,6 +3,11 @@ import json
 from .file_utils import write_file
 
 
+#---------------------------------------------------------
+# Functions responsible for extracting model information
+# from the plain json object
+#---------------------------------------------------------
+
 def parse_model(model_data):
     """
     Extract only attributes relevant for the simulation from the plain_json_file
@@ -102,3 +107,5 @@ def parse_arc(cell):
     arc['target'] = arc_target_id
 
     return arc
+
+

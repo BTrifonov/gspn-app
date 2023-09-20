@@ -88,7 +88,7 @@ async def get_enabled_transitions(req_body: PlainJSON):
     #write_file(json.dumps(model_parsed, indent=4), name.removesuffix('.json') + "-parsed.json")
 
     model = Model(model_parsed)
-    enabled_transitions = model.determine_enabled_transitions()
+    enabled_transitions = model.get_enabled_transition_ids()
     return enabled_transitions
 #----------------------------------------------------------------
 

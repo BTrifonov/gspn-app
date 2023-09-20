@@ -4,14 +4,29 @@ import { ref, watch } from 'vue';
 
 const editElementStore = useElementStore()
 
-const label = ref('')
-const distribution = ref(null)
-const rate = ref(null)
+
+//Values retrieved from the editElementStore
+const label = ref(editElementStore.getTransitionLabel)
+
+//TODO: The chosen option should be displayed as well
+const distribution = ref(editElementStore.getTransitionDistribution)
+
+
+const rate = ref(editElementStore.getTransitionDistributionRate)
+
 
 function deleteTransition() {
-    editElementStore.unselectAll()
     editElementStore.deleteTransition()
 }
+
+//Update the transition values, if a new transition is selected, before a previous one is unselected
+watch(()=> editElementStore.selectedElement, (newVal)=>{
+    if(newVal!=null) {
+        label.value = editElementStore.getTransitionLabel
+        distribution.value = editElementStore.getTransitionDistribution
+        rate.value = editElementStore.getTransitionDistributionRate
+    }
+})
 
 watch(label, (newValue) => {
     editElementStore.setTransitionLabel(newValue)
@@ -22,7 +37,6 @@ watch(distribution, (newValue)=> {
 })
 
 watch(rate, (newValue)=>{
-    console.log("New distribution rate should be set: " + newValue)
     editElementStore.setTransitionRate(newValue)
 })
 </script>
@@ -30,12 +44,12 @@ watch(rate, (newValue)=>{
 <template>
     <div>
         <div class="sim-container">
-            <input type="text" placeholder="Transition label" v-model="label" class="input">
+            <input type="text"  v-model="label" class="input">
             <p>Change transition label</p>
         </div>
 
         <div class="sim-container">
-            <select v-model="distribution" class="input">
+            <select v-model="distribution" placeholder="{{ distribution }}" class="input">
                 <option value="">Exponential</option>
                 <option value="">General</option>
             </select>
@@ -43,7 +57,7 @@ watch(rate, (newValue)=>{
         </div>
 
         <div class="sim-container">
-            <input type="number" placeholder="Distribution rate" v-model="rate" class="input">
+            <input type="number" v-model="rate" class="input">
             <p>Change token distribution rate</p>
         </div>
 

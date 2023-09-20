@@ -4,6 +4,7 @@ import {useElementStore} from '@/components/stores/EditElementStore'
 import EditPlaceMenu from '@/components/EditViewComponents/EditElemMenus/EditPlaceMenu.vue'
 import EditTransitionMenu from '@/components/EditViewComponents/EditElemMenus/EditTransitionMenu.vue'
 
+import EditArcMenu from '@/components/EditViewComponents/EditElemMenus/EditArcMenu.vue';
 
 const editElementStore = useElementStore()
 
@@ -15,7 +16,7 @@ const editElementStore = useElementStore()
         <div v-if="editElementStore.selectedPlace">
             <EditPlaceMenu/>
         </div>
-        <!--<div v-if="selectedArc != null">
+        <!--<div v-if="editElementStore.selectedArc">
             <EditArcMenu/>
         </div>-->
         <div v-if="editElementStore.selectedTransition">

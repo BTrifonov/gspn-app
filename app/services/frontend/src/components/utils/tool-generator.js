@@ -6,12 +6,11 @@ import * as joint from 'jointjs'
  */
 export function createElementToolView() {
     const boundaryTool = new joint.elementTools.Boundary()
-    const removeTool = new joint.elementTools.Remove()
+    //const removeTool = new joint.elementTools.Remove()
     
     const toolView = new joint.dia.ToolsView({
         tools: [
-            boundaryTool, 
-            removeTool
+            boundaryTool
         ]
     })
 

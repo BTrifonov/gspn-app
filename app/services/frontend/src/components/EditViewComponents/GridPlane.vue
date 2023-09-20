@@ -73,42 +73,45 @@ onMounted(()=> {
         linkView.removeTools()
     })
     
+
     paper.on('element:pointerclick', function(elementView) {
-        const model = elementView.model
-        
-        elementView.addTools(elementToolView)
-        if(model.attributes.type === 'custom.Place') {
-            editElementStore.selectPlace()
-            editElementBuf = model
-        } else if(model.attributes.type === 'custom.Transition')  {
-            editElementStore.selectTransition()
-            editElementBuf = model
+        const element = elementView.model
+        const modelId = element.id
+
+        const prevSelectedElement = editElementStore.selectedElement
+        let prevElementNotUnselected = false
+
+        if(prevSelectedElement != null) {
+            const prevSelectedElementId = prevSelectedElement.id
+            const prevSelectedElementView = paper.findViewByModel(prevSelectedElement)
+
+            prevSelectedElementView.removeTools()
+            editElementStore.unselectAll()
+
+            //Previous element has not been unselected, however user selects new element
+            if(modelId != prevSelectedElementId) 
+                prevElementNotUnselected = true
+        }
+
+        //There has been no selected element or
+        //Previous selected element is not the sa
+        if(prevSelectedElement == null || prevElementNotUnselected) {
+            elementView.addTools(elementToolView)
+
+            if(element.attributes.type === 'custom.Place') {
+                editElementStore.selectPlace(element)
+            } else if(element.attributes.type === 'custom.Transition') {
+                editElementStore.selectTransition(element)
+            }
         }
     })
 
-    /*paper.on('cell:pointerclick', function(view) {
-        const model = view.model
-
-        if(model instanceof joint.shapes.standard.Link) {
-            view.addTools(linkToolView)
-            
-            //editElementStore.setArc(model)
-        }
-        else {
-            view.addTools(elementToolView)
-
-            if(model instanceof joint.shapes.standard.Circle) {
-                editElementStore.selectPlace(model)
-            }
-            else {
-                //editElementStore.setTransition(model)
-            }
-        }
-    })*/
-
+    
     paper.on('blank:pointerclick', function() {
         paper.removeTools()
+
         editElementStore.unselectAll()
+        editElementStore.selectedElement = null
     })
 
     paper.on('blank:pointerdblclick', function() {
@@ -135,22 +138,6 @@ onMounted(()=> {
         }
     })
     
-
-    /**TODO: Should be used for creating a port on the target element */
-    // eslint-disable-next-line
-    paper.on('link:connect', function(linkView, evt, elementViewConnected, magnet, arrowhead) {
-        //const link = linkView.model
-
-        //const sourceElement = link.get('source')
-        //const targetElement = link.get('target')
-        
-        //const sourcePort = link.get('source').port
-        //const targetPort = link.get('target').port
-        
-       
-    })
-
-
     /**Change paper size whenever element is outside the paper*/
     paper.on('element:pointerup', function(elementView) {
         const elementSize = elementView.getBBox()
@@ -201,7 +188,6 @@ onUnmounted(()=>{
     modelStore.unselectAllModels()
 })
 
-
 //Create a PN place, transition or arc
 function createPlace() {
     const place = drawPlace()   
@@ -224,46 +210,6 @@ function createArc() {
     const arc = drawArc()
     arc.addTo(graph)
 }
-
-//----------------------------------------------------------
-//User interaction with the EditElementMenu 
-//----------------------------------------------------------
-editElementStore.$onAction(({
-    name, 
-    store, 
-    args, 
-    after, 
-}) => {
-    after((res)=> {
-        if(name === "setPlaceLabel") {
-            const label = args[0]
-            editElementBuf.attr('label/text', label)
-
-        } else if(name === "setPlaceTokenNumber") {
-            const tokenNumber = args[0]
-            editElementBuf.attr('tokenNumber/text', tokenNumber)
-            editElementBuf.prop('avgTokens', tokenNumber)
-
-        } else if(name === "deletePlace") {
-            editElementBuf.remove()
-
-        } else if(name === "setTransitionLabel") {
-            const label = args[0]
-            editElementBuf.attr('label/text', label)
-
-        } else if(name === "setTransitionDistribution") {
-            const distributionType = args[0]
-            editElementBuf.prop('tokenDistribution', distributionType)
-
-        } else if(name === "setTransitionRate") {
-            const rate = args[0]
-            editElementBuf.prop('rate', rate)
-
-        } else if(name === "deleteTransition") {
-            editElementBuf.remove()
-        }
-    })
-})
 
 //----------------------------------------------------------
 //

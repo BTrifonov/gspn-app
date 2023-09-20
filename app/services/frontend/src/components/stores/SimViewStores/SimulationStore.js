@@ -93,7 +93,6 @@ export const useSimulationStore = defineStore('simStore', {
           this.findEnabledTransitions()
         },
         startTimer() {
-            //at the beginning 0's should be appended
             this.time = "0" + this.hours + ":" + "0" + this.minutes + ":" + "0" + this.seconds
 
             this.timerInterval = setInterval(() => {

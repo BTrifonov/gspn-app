@@ -5,15 +5,23 @@ import { ref } from 'vue';
 
 const editElementStore = useElementStore()
 
-const tokenInput = ref(0)
-const label = ref('')
+//Initial values are taken from the element store
+const label = ref(editElementStore.getPlaceLabel)
+const tokens = ref(editElementStore.getPlaceTokens)
 
 function deletePlace() {
     editElementStore.deletePlace()
-    editElementStore.unselectAll()
 }
 
-watch(tokenInput, (newVal) => {
+//Update the values, if a new place is selected, before unselecting a previous one
+watch(() => editElementStore.selectedElement, (newVal)=>{
+    if(newVal!=null){
+        label.value = editElementStore.getPlaceLabel
+        tokens.value = editElementStore.getPlaceTokens
+    }
+})
+
+watch(tokens, (newVal) => {
     editElementStore.setPlaceTokenNumber(newVal)
 })
 
@@ -25,11 +33,11 @@ watch(label, (newVal) => {
 <template>
     <div>
         <div class="sim-container">
-            <input type="text" placeholder="Place id" v-model="label" class="input">
+            <input type="text" v-model="label" class="input">
             <p>Change place label</p>
         </div>
         <div class="sim-container">
-            <input type="number" placeholder="Token number" v-model="tokenInput" class="input">
+            <input type="number" v-model="tokens" class="input">
             <p>Change place token number</p>
         </div>
         <div class="btn-container">
