@@ -87,14 +87,6 @@ function handleModelSelection(model) {
     display: flex;
 }
 
-/*
-.file-name {
-    display: flex;
-    width: 60%;
-    background-color: rgb(9, 147, 240);
-    margin: 0 auto;
-}
-*/
 .a-container {
     display: block;
     height: 100%;
@@ -111,7 +103,6 @@ function handleModelSelection(model) {
 
 .input {
     width: 60%;
-    background-color: rgb(9, 147, 240);
 }
 
 .btn-container {

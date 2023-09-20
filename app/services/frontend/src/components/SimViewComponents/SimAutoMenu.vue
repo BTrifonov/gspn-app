@@ -68,24 +68,24 @@ watch(simSpeed, (newVal) => {
         </div>
 
         <div class="sim-container">
+            <input type="number" placeholder="Simulation time step" class="input">
+            <p> Simulation time step </p>
+        </div>
+
+        <div class="sim-container">
             <input type="range" min="0.5" max="2" step="0.5" class="input" v-model="simSpeed">
             <p>Simulation speed</p> 
         </div>
 
-        <div class="sim-container">
-            <p>{{ simulationStore.time }}</p>
-            <p> Simulation time</p>
-        </div>
     </div>
 </template>
-
 
 
 <style scoped>
 @import '@/assets/sidebar-submenu.css';
 
-p {
+/*p {
     margin-top: 2px;
     margin-bottom: 2px;
-}
+}*/
 </style>

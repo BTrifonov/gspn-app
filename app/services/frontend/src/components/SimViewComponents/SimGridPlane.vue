@@ -5,6 +5,10 @@ import {ref, onMounted, watch, onUnmounted} from 'vue'
 import {useModelStore} from '@/components/stores/ModelStore'
 import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore'
 
+
+import {getModel, fireTransition, findEnabledTransitions} from '@/components/SimViewComponents/requests.js'
+import {transitionFiringAnimationAlternate, transitionFiringAnimation} from '@/components/SimViewComponents/simAnimation.js'
+
 import * as joint from 'jointjs'
 import axios from 'axios';
 
@@ -38,7 +42,6 @@ const graph = new joint.dia.Graph({}, {cellNamespace:namespace})
 let paper = null
 
 //-----------------------------------------------
-
 onMounted(()=> {
     paper = new joint.dia.Paper({
         el: plane.value, 
@@ -81,7 +84,7 @@ onMounted(()=> {
     })
 
 
-
+    //TODO: Socket communication should be initiated only for auto simulation!
     //Instantiate the socket
     socket = new WebSocket("ws://localhost:5000/ws/123")
 
@@ -94,7 +97,6 @@ onMounted(()=> {
 onUnmounted(()=>{
     //Close the websocket connection
     socket.close()
-
 
     //Unselect all models from the menu
     simulationStore.unselectAllModels()
@@ -114,71 +116,64 @@ simulationStore.$onAction(({
         if(name === "selectModel") {
             //Fetch the model based on the model.name
             const model = args[0]
-            const modelName = args[0].name
-            const params = {
-                name: modelName
-            }
-        
-            axios.get('/model', {params})
-                    .then(function(response) {
-                        simulationStore.resetAllActions()
-                        const modelJSON = JSON.parse(response.data)
+            
+            getModel({name: model.name})
+                .then((response) => {
+                    simulationStore.resetAllActions()
+                    const modelJSON = JSON.parse(response)
 
-                        graph.fromJSON(modelJSON.model)
-                        simulationStore.findEnabledTransitions()
-
-                        const msg = createMsg("frontend", "backend", "instantiate_model", "", graph.toJSON())
-                        
-                        socket.send(msg)
-                    })
-                    .catch(function(err) {
-                        console.log("An error occured" + err)
-                    })
-                    .finally(function() {
-                                //
-                    })
-
+                    graph.fromJSON(modelJSON.model)
+                    simulationStore.findEnabledTransitions()
+                })
+                .catch((error) => {
+                    console.error(error)
+                })
+                .finally(()=> {
+                    //always executed
+                })
         } else if(name === "unselectModel") {
             //Backend notified to stop working with the model
-            const msg = createMsg("frontend", "backend", "unselect_model", "", "")
-            socket.send(msg)
+            //const msg = createMsg("frontend", "backend", "unselect_model", "", "")
+            //socket.send(msg)
 
-            //Set all buttons of SimulationStore to their defaults, timer also resetted
             simulationStore.resetAllActions()
-            graph.clear()
+            simulationStore.setSimulationTime(0)
 
-            simulationStore.resetTimer()
+            graph.clear()
         } else if(name === "fireTransition") {
-            const transitionId = args[0].id
-            const modelJSON = graph.toJSON()
-            
-            
             const data = {
-                model: modelJSON
+                model: graph.toJSON()
             }
 
             const params = {
                 name: simulationStore.getSelectedModelName, 
-                transition_id: transitionId
+                transition_id: args[0].id
             }
 
-            axios.post('/model/fire-transition', {params, data})
-                    .then((response) => {
-                        fireTransitionAlternate(response.data.input_places, response.data.output_places, response.data.transition_id)
-                                .then(()=> {
-                                    simulationStore.findEnabledTransitions()
-                                    simulationStore.firedTransition = true
-                                })
-                                .catch((err)=>{
-                                    console.log("error is: " + err)
-                                })
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                    })
-                    .finally(() => {
-                        //
-                    })
+            fireTransition(params, data)
+                .then((response)=>{
+                    const inputPlaces = response.input_places
+                    const outputPlaces = response.output_places
+                    const transitions = response.transition_id
+                    const delay = response.delay
+
+                    console.log(transitions)
+                    transitionFiringAnimation(inputPlaces, outputPlaces, transitions, graph, paper)
+                        .then((response)=>{
+                            console.log("Successful animation")
+
+                            if(delay > -1) 
+                                simulationStore.setSimulationTime(simulationStore.getSimulationTime + delay)
+
+                            simulationStore.findEnabledTransitions()
+
+                        })
+                        .catch((error)=>{
+                            console.error(error)
+                        })
+                    
+                })
+
         //Improve the code to ensure that findEnabledTransitions is always working with the most recent graph            
         } else if(name === "findEnabledTransitions") {
             const modelJSON = graph.toJSON()
@@ -192,19 +187,15 @@ simulationStore.$onAction(({
                transition_id: ""
             }
 
-            axios.post('/model/enabled-transitions', {data,  params})
-                    .then((response)=>{
-                        const idsEnabledTransitions = response.data
-                        
-                        const enabledTransitions = findLabelsEnabledTransitions(idsEnabledTransitions)
-                        simulationStore.setEnabledTransitions(enabledTransitions)
-                    })
-                    .catch((err)=>{
-                        console.log(err)
-                    })
-                    .finally(()=>{
-                        //
-                    })
+            findEnabledTransitions(params, data)
+                .then((response)=>{
+                    const idsEnabledTransitions = response
+                    const enabledTransitions = findLabelsEnabledTransitions(idsEnabledTransitions)
+                    simulationStore.setEnabledTransitions(enabledTransitions)
+                })
+                .catch((error)=>{
+                    console.error(error)
+                })
         }
     })
 })
@@ -212,9 +203,6 @@ simulationStore.$onAction(({
 
 watch(()=> simulationStore.startSim, (newVal)=> {
     if(newVal) {
-        simulationStore.startTimer()
-        
-
         const msg = createMsg("frontend", "backend", "sim", "", graph.toJSON())
         
         socket.send(msg)
@@ -226,13 +214,11 @@ watch(()=> simulationStore.startSim, (newVal)=> {
 
 watch(() => simulationStore.stopSim, (newVal, oldVal) => {
     if(!newVal && oldVal) {
-        simulationStore.resumeTimer()
         const continueSimMsg = createMsg("frontend", "backend", "sim", "", graph.toJSON())
         socket.send(continueSimMsg)
     }
 
     if(newVal) {
-        simulationStore.stopTimer()
         const pauseMsg = createMsg("frontend", "backend", "pause_sim", "", "")
         socket.send(pauseMsg)
     }
@@ -247,119 +233,6 @@ watch(()=>simulationStore.rewindToStart, (newVal)=>{
 //---------------------------------------------------
 //Helper methods
 //---------------------------------------------------
-
-/**
- * Fire visually the transition on the graph, after the backend has returned the new markings
- * of input and output places
- * @param {*} inputPlaces {id, tokens} of all input places after the transition firing
- * @param {*} outputPlaces {id, tokens} of all output places after the transition firing
- * @param {*} transitionId Id of the transition, which has fired
- */
-async function fireTransition( inputPlaces, outputPlaces, transitionId) {
-    const inputPlacesViews = []
-    inputPlaces.forEach((inputPlace)=>{
-        const cell = graph.getCell(inputPlace.id)
-        const cellView = paper.findViewByModel(cell)
-
-        inputPlacesViews.push(cellView)
-        cellView.highlight()
-        cell.attr('tokenNumber/text', inputPlace.tokens)
-
-        calcAvgTokens(cell)
-        const oldInputPlaceCounter = cell.prop('inputPlaceCounter')
-        cell.prop('inputPlaceCounter', oldInputPlaceCounter+1)
-    })
-
-    await sleep(500)
-    inputPlacesViews.forEach((view) => view.unhighlight())
-
-  
-    transitionId.forEach((transition)=>{
-        const cell = graph.getCell(transition)
-        const cellView = paper.findViewByModel(cell)
-        cellView.highlight()
-    })
-    
-
-    await sleep(500)
-    
-    transitionId.forEach((transition)=>{
-        const cell = graph.getCell(transition)
-        const cellView = paper.findViewByModel(cell)
-        cellView.unhighlight()
-    })
-
-
-    const outputPlacesViews = []
-    outputPlaces.forEach((outputPlace) => {
-        const cell = graph.getCell(outputPlace.id)
-        const cellView = paper.findViewByModel(cell)
-
-        outputPlacesViews.push(cellView)
-        cellView.highlight()
-        cell.attr('tokenNumber/text', outputPlace.tokens)
-
-        calcAvgTokens(cell)
-        const oldOutputPlaceCounter = cell.prop('outputPlaceCounter')
-        cell.prop('outputPlaceCounter', oldOutputPlaceCounter+1)
-    })
-  
-    await sleep(500)
-    outputPlacesViews.forEach((view) => view.unhighlight())
-}
-
-
-async function fireTransitionAlternate(inputPlaces, outputPlaces, transitions) {
-    inputPlaces.forEach((inputPlace)=>{
-        const cell = graph.getCell(inputPlace.id)
-        const cellView = paper.findViewByModel(cell)
-
-      
-        cellView.highlight()
-        cell.attr('tokenNumber/text', inputPlace.tokens)
-
-    })
-
-    transitions.forEach((transition)=>{
-        const cell = graph.getCell(transition)
-        const cellView = paper.findViewByModel(cell)
-        cellView.highlight()
-    })
-    
-    outputPlaces.forEach((outputPlace) => {
-        const cell = graph.getCell(outputPlace.id)
-        const cellView = paper.findViewByModel(cell)
-        cellView.highlight()
-        cell.attr('tokenNumber/text', outputPlace.tokens)
-
-    })    
-
-
-    await sleep(1000)
-
-    inputPlaces.forEach((inputPlace)=>{
-        const cell = graph.getCell(inputPlace.id)
-        const cellView = paper.findViewByModel(cell)
-        cellView.unhighlight()
-    })
-
-  
-    transitions.forEach((transition)=>{
-        const cell = graph.getCell(transition)
-        const cellView = paper.findViewByModel(cell)
-        cellView.unhighlight()
-    })
-    
-    outputPlaces.forEach((outputPlace) => {
-        const cell = graph.getCell(outputPlace.id)
-        const cellView = paper.findViewByModel(cell)
-        cellView.unhighlight()
-    }) 
-
-    await sleep(500)
-}
-
-
 function calcAvgTokens(cell) {
     const inputPlaceCounter = cell.prop('inputPlaceCounter')
     const outputPlaceCounter = cell.prop('outputPlaceCounter')
@@ -393,9 +266,6 @@ function findLabelsEnabledTransitions(idTransitions) {
     return enabledTransitions
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 //---------------------------------------------------
 //Helper methods, websocket communication
@@ -420,9 +290,6 @@ function handleIncomingMsg(event) {
             break
         }
         case "end_sim": {
-            //Timer should be stopped
-            simulationStore.stopTimer()
-            
             console.log("End of the simulation reached")
             break
         }

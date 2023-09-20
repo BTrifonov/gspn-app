@@ -46,6 +46,7 @@
 button {
     border-radius: 5px;
     background-color: silver;
+    margin: 1px;
 }
 
 button:active {
@@ -58,6 +59,7 @@ button:active {
     border-radius: 5px;
     width: inherit;
     margin-top: 2px;
+    background-color: lightblue;
 }
 
 /*Text styling*/

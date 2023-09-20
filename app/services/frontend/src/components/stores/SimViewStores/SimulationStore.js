@@ -8,21 +8,21 @@ export const useSimulationStore = defineStore('simStore', {
         models: [],
         firedTransition: false,
         
+        manualSimulation: false, 
+        automaticSimulation: false, 
+
         startSim: false, 
         stopSim: false, 
         rewindToStart: false, 
         rewindToEnd: false, 
         simSpeed: false,
 
+        simulationTime: 0,
+
         isPlaceSelected: false,
         selectedPlace: null,
 
-        time: null,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        timerInterval: null,
-
+        
         enabledTransitions: [], 
         tracebackTransitions: []
     }), 
@@ -33,6 +33,13 @@ export const useSimulationStore = defineStore('simStore', {
                 if(model.selected)
                     return model.name
             }
+        },
+        isModelSelected: (state) => {
+            for(const model of state.models) {
+                if(model.selected)
+                    return true
+            }
+            return false
         },
         getEnabledTransitions: (state) => state.enabledTransitions,
 
@@ -47,7 +54,9 @@ export const useSimulationStore = defineStore('simStore', {
         getAvgTokenPlace: (state) => {
             if(state.selectedPlace!=null)
                 return state.selectedPlace.prop('avgTokens')
-        }
+        },
+
+        getSimulationTime: (state) => state.simulationTime
     }, 
     actions: {
         setModels(models) {
@@ -64,6 +73,9 @@ export const useSimulationStore = defineStore('simStore', {
                 }
             }
 
+            //reset the time
+            this.simulationTime = 0
+
             //change flag of model to true
             model.selected = true            
         },
@@ -73,12 +85,33 @@ export const useSimulationStore = defineStore('simStore', {
 
             model.selected = false
     
+            //choice between manual or automatic simulation should also be reset
+            this.manualSimulation = false
+            this.automaticSimulation = false
+
+
+
             return true  
         },
         unselectAllModels() {
             for(const iterModel of this.models) {
                 iterModel.selected = false
             }
+
+            //choice between manual or automatic simulation should also be reset
+            this.manualSimulation = false
+            this.automaticSimulation = false
+        },
+        setManualSimulation() {
+            this.automaticSimulation = false
+            this.manualSimulation = true
+        },
+        setAutomaticSimulation() {
+            this.manualSimulation = false
+            this.automaticSimulation = true
+        },
+        setSimulationTime(newSimulationTime) {
+            this.simulationTime = newSimulationTime
         },
         findEnabledTransitions() {
             console.log("Find enabled transition initiated")
@@ -92,77 +125,14 @@ export const useSimulationStore = defineStore('simStore', {
           //Should initiate finding new enabled transitions, so that is menu is updated accordingly
           this.findEnabledTransitions()
         },
-        startTimer() {
-            this.time = "0" + this.hours + ":" + "0" + this.minutes + ":" + "0" + this.seconds
-
-            this.timerInterval = setInterval(() => {
-                this.updateTimer()
-            }, 1000)
-        },
-        updateTimer() {
-            this.seconds += 1
-            if(this.seconds == 60) {
-                this.minutes+=1
-                this.seconds = 0
-            }
-
-            if(this.minutes == 60) {
-                this.hours +=1
-                this.minutes = 0
-            }
-
-            let newTime = ""
-            
-            if(this.hours < 10) {
-                newTime = newTime.concat("0" + this.hours)
-            } else {
-                newTime = newTime.concat(this.hours)
-            }
-
-            newTime = newTime.concat(":")
-
-            if(this.minutes < 10) {
-                newTime = newTime.concat("0" + this.minutes)
-            } else {
-                newTime = newTime.concat(this.minutes)
-            }
-
-            newTime = newTime.concat(":")
-
-            if(this.seconds < 10) {
-                newTime = newTime.concat("0" + this.seconds)
-            } else {
-                newTime = newTime.concat(this.seconds)
-            }
-
-            console.log(newTime)
-            this.time = newTime
-        },
-        resetTimer() {
-            this.hours = 0
-            this.minutes = 0
-            this.seconds = 0
-            this.time = "0" + this.hours + ":" + "0" + this.minutes + ":" + "0" + this.seconds
-            clearInterval(this.timerInterval)
-            this.timerInterval = null
-        },
-        stopTimer() {
-            clearInterval(this.timerInterval)
-            this.timerInterval = null
-        }, 
-        resumeTimer() {
-            this.timerInterval = setInterval(() => {
-                this.updateTimer()
-            }, 1000)
-           
-        },
-
         resetAllActions() {
+            //reset the states of all buttons
             this.startSim = false
             this.stopSim = false
             this.rewindToStart = false
             this.rewindToEnd  = false
-            this.resetTimer()
+
+            
         }
     }
 })

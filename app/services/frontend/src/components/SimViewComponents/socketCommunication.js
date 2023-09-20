@@ -14,7 +14,6 @@ export function handleIncomingMsg(event) {
 }
 
 
-
 //-----------------------------------------------------------
 //Internal helper methods, used only in socketCommunication.js
 //-----------------------------------------------------------

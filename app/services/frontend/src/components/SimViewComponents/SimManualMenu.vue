@@ -1,14 +1,13 @@
 <script setup>
 import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore'
 
-
 const simulationStore = useSimulationStore()
 
 </script>
 
 <template>
     <div class="menu-container">
-        <p class="text">Enabled Transitions</p>
+        <p class="text">Fire Transition</p>
         <div v-for="transition in simulationStore.enabledTransitions" class="sim-container">
             <a  href="#"
                 class="a-container"
@@ -29,11 +28,4 @@ const simulationStore = useSimulationStore()
     text-decoration: none;
 }
 
-/*
-.tr-container {
-    width: 90%;
-    margin: 5%;
-    background-color: rgb(9, 147, 240);
-    border-radius: 5px;
-}*/
 </style>

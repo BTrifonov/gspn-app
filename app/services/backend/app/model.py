@@ -109,7 +109,9 @@ class Model:
                 output_places.append({'id': place_id, 'tokens': place_tokens})
                 
     
-        input_output_places = {'input_places': input_places, 'output_places': output_places, 'transition_id': [transition_id]}
+        delay = self.transition_delays[transition_index]
+        input_output_places = {'input_places': input_places, 'output_places': output_places, 'transition_id': [transition_id], 'delay': delay}
+        print(input_output_places)
         return input_output_places
    
     def get_enabled_transition_ids(self):

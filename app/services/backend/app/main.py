@@ -118,6 +118,7 @@ async def fire_transition(req_body: PlainJSON):
 
     result = model.fire_transition(transition_id)
     print(result)
+    print(result['delay'])
     return result
 
 #----------------------------------------------------------------
