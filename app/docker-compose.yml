@@ -9,7 +9,7 @@ services:
       ports:
         - 5173:5173
       volumes: 
-        - .:/services/frontend:/app
+        - ./services/frontend:/app
 
     backend:
       build:
@@ -18,4 +18,4 @@ services:
       ports:
         - 5000:5000
       volumes:
-        - .:/services/backend:/app
+        - ./services/backend:/app
