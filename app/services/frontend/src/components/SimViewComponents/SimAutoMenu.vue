@@ -7,7 +7,7 @@ const simSpeed = ref(0)
 
 
 onMounted(()=>{
-    simulationStore.resetAllActions()
+    simulationStore.resetAllButtons()
 })
 
 function handleStart() {

@@ -89,8 +89,6 @@ export const useSimulationStore = defineStore('simStore', {
             this.manualSimulation = false
             this.automaticSimulation = false
 
-
-
             return true  
         },
         unselectAllModels() {
@@ -125,14 +123,12 @@ export const useSimulationStore = defineStore('simStore', {
           //Should initiate finding new enabled transitions, so that is menu is updated accordingly
           this.findEnabledTransitions()
         },
-        resetAllActions() {
+        resetAllButtons() {
             //reset the states of all buttons
             this.startSim = false
             this.stopSim = false
             this.rewindToStart = false
             this.rewindToEnd  = false
-
-            
         }
     }
 })
