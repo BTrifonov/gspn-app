@@ -52,22 +52,8 @@ app.add_middleware(
 #Try to create and serve a websocket for the simulation of PNs
 @app.websocket("/ws/{socket_id}")
 async def websocket_endpoint(websocket: WebSocket, socket_id: int):
-    await websocket.accept()
-
-    try:
-        while True:
-            incoming_msg_json = await websocket.receive_text()
-            incoming_msg = json.loads(incoming_msg_json)
-            print(incoming_msg)
-    except WebSocketDisconnect as e:
-        if e.code == 1000:
-            print("WebSocket closed gracefully")
-        else:
-            print(f"WebSocket closed with code {e.code}")
-   
-        
-
-    #await handle_websocket_communication_alternate(websocket, socket_id)      
+    await websocket.accept()   
+    await handle_websocket_communication_alternate(websocket, socket_id)      
 
 #---------------------------------------------------------
 #API endpoints

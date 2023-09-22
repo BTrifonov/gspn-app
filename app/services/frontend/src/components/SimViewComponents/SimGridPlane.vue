@@ -8,7 +8,7 @@ import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationSt
 
 import {getModel, fireTransition, findEnabledTransitions} from '@/components/SimViewComponents/requests.js'
 import {transitionFiringAnimationAlternate, transitionFiringAnimation} from '@/components/SimViewComponents/simAnimation.js'
-import {createSocket, closeSocket, receiveMsg, sendMsg} from '@/components/SimViewComponents/socketCommunication.js'
+import {createSocket, closeSocket, isSocketOpen, receiveMsg, sendMsg} from '@/components/SimViewComponents/socketCommunication.js'
 
 import * as joint from 'jointjs'
 import axios from 'axios';
@@ -30,6 +30,7 @@ const modelStore = useModelStore()
 //Socket should be opened only in auto sim mode
 
 let socket = null
+
 
 //-----------------------------------------------
 
@@ -196,7 +197,8 @@ simulationStore.$onAction(({
 })
 
 //-------------------------------------------------------
-// Actions triggered in automatic simulation mode
+// Open or close socket connection, based on whether
+// automatic simulation has been chosen
 //-------------------------------------------------------
 watch(()=>simulationStore.automaticSimulation, (newVal, oldVal)=>{
     if(newVal) {
@@ -218,6 +220,37 @@ watch(()=>simulationStore.automaticSimulation, (newVal, oldVal)=>{
         }
     }
 })
+
+watch(()=>simulationStore.startSim, (newVal)=> {
+    if(newVal) {
+        if(isSocketOpen(socket)) {
+            //First the model should be created in the backend
+            sendMessage(socket, {action: 'create_model', status:'ok', data: graph.toJSON()})
+        } else {
+            console.error("Missing connection to socket, cannot start simulation")
+        }
+    }
+})
+
+watch(()=>simulationStore.continueSim, (newVal)=>{
+    if(newVal) {
+        if(isSocketOpen(socket)) {
+            const payload = {
+                sim_step: simulationStore.simStep, 
+                sim_time: simulationStore.simulationTime
+            }
+
+            //Execute a simulation iteration, based on the sim step and sim time
+            sendMessage(socket, {action: 'sim', status: 'ok', data: payload})
+            
+            //Will be triggered again, whenever the frontend receives a new message
+            simulationStore.continueSim = false
+        }
+    }
+})
+
+
+
 
 //---------------------------------------------------
 //Helper methods
@@ -275,16 +308,32 @@ async function sendMessage(socket, msg) {
     await sendMsg(socket, msg)
 }
 
+
 function handleIncomingMsg(event) {
     receiveMsg(event)
         .then((response)=>{
+            response = JSON.parse(response)
             console.log(response)
+            if(response.action == "model_created") {
+                simulationStore.continueSim = true
+            } else if(response.action=="visualize_fired_transition") {
+                simulationStore.simulationTime = simulationStore.getSimulationTime + simulationStore.simStep
+                console.log(response.delays)
+                transitionFiringAnimationAlternate(response.input_places, response.output_places, response.transition_id, graph, paper)
+                    .then(()=>{simulationStore.continueSim = true})
+    
+            } else if(response.action == "continue_sim") {
+                console.log(response.delays)
+                simulationStore.continueSim = true
+                
+            } else if(response.action == "end_sim") {
+                console.log("End of the simulation")
+            }
         })
         .catch((error)=>{
             console.log(error)
         })
 }
-
 
 </script>
 

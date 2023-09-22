@@ -10,65 +10,74 @@ from .exceptions.invalid_status_field import InvalidStatusField
 
 async def handle_websocket_communication_alternate(websocket: WebSocket, socket_id: int):
     try:
+        model = None
         while True:
             incoming_msg_json = await websocket.receive_text()
             incoming_msg = json.loads(incoming_msg_json)
 
-            if incoming_msg['action'] == "instantiate_model":
-                model = instantiateModel(incoming_msg['data'])
-
-            if incoming_msg['action'] == "unselect_model":
-                continue
-
-            if incoming_msg['action'] == "sim":
-                model = instantiateModel(incoming_msg['data'])
-                outgoing_msg = await fireTransition(model)
+            if incoming_msg['action'] == "create_model":
+                model = instantiate_model(incoming_msg['data'])
+                outgoing_msg = create_msg("backend", "frontend", "model_created", "ok", "")
                 outgoing_msg_json = json.dumps(outgoing_msg)
                 await websocket.send_text(outgoing_msg_json)
 
-    
-            #if incoming_msg['action'] == "continue_sim":
-            #        continue_allowed = check_flags(incoming_msg['flags'])
-            #
-            #        if continue_allowed:
-            #            outgoing_msg = await fireTransition(model)
-            #            outgoing_msg_json = json.dumps(outgoing_msg)
-            #            await websocket.send_text(outgoing_msg_json)
+
+            if incoming_msg['action'] == "sim":
+                data = incoming_msg['data']
+                #sim_time = data['sim_time']
+                sim_step = data['sim_step']
+
+                outgoing_msg = await simulate_model(model, sim_step)
+                outgoing_msg_json = json.dumps(outgoing_msg)
+                await websocket.send_text(outgoing_msg_json)
+             
+
+            if incoming_msg['action'] == "unselect_model":
+                continue
 
             if incoming_msg['action'] == "pause_sim":
                 continue
                     
                         
-    except WebSocketDisconnect:
-        print("Websocket disconnected")
+    except WebSocketDisconnect as e:
+        if e.code == 1000:
+            print("WebSocket closed gracefully")
+        else:
+            print(f"WebSocket closed with code {e.code}")
 
 #-----------------------------------------------------------
 #Actions, based on the sent/received msg
 #TODO:Move to another file later
 #-----------------------------------------------------------
-def instantiateModel(msg_payload):
+def instantiate_model(msg_payload):
     msg_payload = parse_model(msg_payload)
     model = Model(msg_payload)
     return model
 
-async def fireTransition(model: Model):
-    #result_fired_transition = await model.sim_fire_transition()
-    #result_fired_transition = model.sim_iteration()
-    result_fired_transition = model.sim_iteration_timed_net()
+async def simulate_model(model: Model, sim_step):
+    sim_result = model.simulation_with_sim_step(sim_step)
+    print(sim_result)
 
     response_msg = {
         'sender': 'backend', 
         'receiver': 'frontend',
-        'input_places': result_fired_transition['input_places'], 
-        'output_places': result_fired_transition['output_places'], 
-        'transition_id': result_fired_transition['transition_id'],
+        'input_places': sim_result['input_places'], 
+        'output_places': sim_result['output_places'], 
+        'transition_id': sim_result['transition_id'],
 
-        'delay': result_fired_transition['delay'],
+        #'delays': sim_result['delays'],
         'status': 'ok'
     }
 
-    if result_fired_transition['enabled_transitions']:
-        response_msg['action'] = "visualize_fired_transition"
+    if sim_result['continue_sim']:
+        response_msg['delays'] = sim_result['delays']
+        if response_msg['transition_id']:
+            #At least one transition has fired, should be visualized by the frontend
+            response_msg['action'] = "visualize_fired_transition"
+        else:
+            #No transition has fired, only update the sim time in the frontend
+            response_msg['action'] = "continue_sim"
+        
     else:
         response_msg['action'] = "end_sim"
 

@@ -1,12 +1,15 @@
 <script setup>
 import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore'
-import { watch, ref, onMounted } from 'vue';
+import { watch, ref, onMounted, onUnmounted } from 'vue';
 
 const simulationStore = useSimulationStore()
-const simSpeed = ref(0)
 
 
-onMounted(()=>{
+const simStep = ref(simulationStore.simStep)
+const simSpeed = ref(simulationStore.simSpeed)
+
+//Reset all buttons before unmounting the component
+onUnmounted(()=>{
     simulationStore.resetAllButtons()
 })
 
@@ -25,17 +28,20 @@ function handleRestart() {
 
 /*function handleRewindToStart() {
     simMenuStore.rewindToStart()
-}*/
-
-/*
-function handleRewindToEnd() {
-    simMenuStore.rewindToEnd()
 }
 
-watch(simSpeed, (newVal) => {
-    simMenuStore.setSimSpeed()
+function handleRewindToEnd() {
+    simMenuStore.rewindToEnd()
+}*/
+
+watch(simStep, (newVal) => {
+    simulationStore.simStep = newVal
 })
-*/
+
+watch(simSpeed, (newVal) => {
+    simulationStore.simSpeed = parseFloat(newVal)
+})
+
 </script>
 
 <template>
@@ -68,7 +74,7 @@ watch(simSpeed, (newVal) => {
         </div>
 
         <div class="sim-container">
-            <input type="number" placeholder="Simulation time step" class="input">
+            <input type="number" placeholder="Simulation time step" class="input" min="0" v-model="simStep">
             <p> Simulation time step </p>
         </div>
 

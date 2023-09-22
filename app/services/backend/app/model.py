@@ -3,8 +3,6 @@ import math
 
 from .model_analysis_utils import is_s_system, is_t_system
 
-#Use rather an abstract class for model
-#Simple PN model and GSPNs should be different subclasses
 class Model:
     def __init__(self, model):
         self.model = model
@@ -13,79 +11,153 @@ class Model:
 
         self.incidence_matrix = self.create_incidence_matrix()
 
-        self.transition_delays = self.determine_transitions_delays()
+        self.transition_delays = self.determine_delays_transitions()
         self.place_marking = self.create_place_marking()
 
-    def sim_iteration(self):
-        """
-        One iteration of the simulation, in which all enabled transitions are fired \n
-        In case of a conflict immediate transitions always have higher priority than timed \n
-        The choice between two immediate transitions is random
-        """
+
+    def simulation_with_sim_step(self, sim_step):
+        result =  self.sim_iteration_timed_net_with_sim_step(sim_step)
+        indices_fired_transitions = result['transition_indices']
+        continue_sim = result['continue_sim']
+        
+        
+        ids_fired_transitions = self.transition_indices_to_ids(indices_fired_transitions)
+
         sim_iteration_result = {
             'input_places': [], 
             'output_places': [],
             'transition_id': [],
-            'enabled_transitions': False
+            'continue_sim': True
         }
 
-        transitions_to_fire_ids = self.determine_transitions_to_fire()
+        if not continue_sim:
+            sim_iteration_result['continue_sim'] = False
+            return sim_iteration_result
 
-        #In a timed PN enabled transitions have certain delays, calculate them
-        #Currently assume that it is not possible to fire simultaneously timed and immediate transitions
-        
-        for transition_id in transitions_to_fire_ids:
-            firing_res = self.fire_transition(transition_id)
-            
-            sim_iteration_result['input_places'].extend(firing_res['input_places'])
-            sim_iteration_result['output_places'].extend(firing_res['output_places'])
+        sim_iteration_result['delays'] = result['delays']
+
+        for transition_id in ids_fired_transitions:
+            result_firing_transition = self.fire_transition(transition_id)
+
+            sim_iteration_result['input_places'].extend(result_firing_transition['input_places'])
+            sim_iteration_result['output_places'].extend(result_firing_transition['output_places'])
             sim_iteration_result['transition_id'].append(transition_id)
 
-            sim_iteration_result['enabled_transitions'] = True
 
-        print(sim_iteration_result)
-        return sim_iteration_result
-       
-    def sim_iteration_timed_net(self):
-        """
-        One iteration of the simulation, in which all enabled transitions are fired \n
-        In case of a conflict immediate transitions always have higher priority than timed \n
-        The choice between two immediate transitions is random
-        """
-        sim_iteration_result = {
-            'input_places': [], 
-            'output_places': [],
-            'transition_id': [],
-            'enabled_transitions': False
-        }
-
-        firing_transitions = self.determine_firing_transitions_timed_petri_net()
-    
-        firing_transitions_ids = firing_transitions['transition_ids']
-        
-        
-        firing_transitions_delay = firing_transitions['delay']
-
-
-        for transition_id in firing_transitions_ids:
-            firing_res = self.fire_transition(transition_id)
-            
-            sim_iteration_result['input_places'].extend(firing_res['input_places'])
-            sim_iteration_result['output_places'].extend(firing_res['output_places'])
-            sim_iteration_result['transition_id'].append(transition_id)
-
-        sim_iteration_result['enabled_transitions'] = True
-
-        #If only immediate transitions have been fired, delay is -1 by default
-        sim_iteration_result['delay'] = firing_transitions_delay
-            
         return sim_iteration_result
 
+    def sim_iteration_timed_net_with_sim_step(self, sim_step):
+        #First determine all enabled transitions
+        indices_enabled_transitions = self.determine_enabled_transitions()
+
+
+        if not indices_enabled_transitions:
+            return {'transition_indices': [], 'continue_sim': False}
+
+        #Based on the delay, determine if immediate or timed
+        #For immediate transitions, default delay value is -inf
+        indices_enabled_timed_transitions = []
+        indices_enabled_immediate_transitions = []
+
+        for transition_index in indices_enabled_transitions:
+            if self.transition_delays[transition_index] < 0:
+                indices_enabled_immediate_transitions.append(transition_index)
+            else:
+                indices_enabled_timed_transitions.append(transition_index)
+
+        incidence_matrix_dim = self.incidence_matrix.shape
+        rows = incidence_matrix_dim[0]
+        cols = incidence_matrix_dim[1]
+        
+        #For all timed transitions, recalculate the new delay based on the sim_step
+        remaining_delays_timed_transitions = self.calculate_remaining_transition_delays(indices_enabled_timed_transitions, sim_step)
+
+        #The delays should be updated
+        for transition in remaining_delays_timed_transitions:
+            self.transition_delays[transition['index']] = transition['remain_delay']
+
+
+        print("Remaining delays of transitions:")
+        print(remaining_delays_timed_transitions)
+        print("--------------------------------------------")
+
+        indices_timed_transitions_ready_to_fire = []
+
+        for transition in remaining_delays_timed_transitions:
+            if transition['remain_delay'] < 0:
+                #Only transitions for which the delay has passed can actually fire
+                indices_timed_transitions_ready_to_fire.append(transition['index'])
+
+        print("Indices transitions ready to fire")
+        print(indices_timed_transitions_ready_to_fire)
+        print("--------------------------------------------")
+
+        #All transitions, which should be fired in this iteration
+        firing_transitions = []
+
+        for place_index in range(0, rows):
+            indices_input_timed_transitions = []
+            indices_input_immediate_transitions = []
+
+            #Logic here is quite confusing...needs refactoring
+            for transition_index in indices_timed_transitions_ready_to_fire:
+                if self.incidence_matrix[place_index][transition_index] < 0:
+                    indices_input_timed_transitions.append(transition_index)
+
+            for transition_index in indices_enabled_immediate_transitions:
+                if self.incidence_matrix[place_index][transition_index] < 0:
+                    indices_input_immediate_transitions.append(transition_index)
+
+            #All input transitions found
+            if indices_input_timed_transitions:
+                #Choose the input time transition with the lowest delay, syntax sugar...
+                input_transitions_remain_delays = [transition for transition in remaining_delays_timed_transitions if transition['index'] in indices_input_timed_transitions]
+                min_delay = min(transition['remain_delay'] for transition in input_transitions_remain_delays)
+                
+                print("Current minimum delay:")
+                print(min_delay)
+                print("--------------------------------------------")
+                
+                
+                index_transition_min_delay = [transition['index'] for transition in input_transitions_remain_delays if transition['remain_delay'] == min_delay][0]
+
+
+                print("Indices of timed transitions ready to fire:")
+                print(indices_timed_transitions_ready_to_fire)
+                print("----------------------------------------------")
+                print("Index of input transition to fire:")
+                print(index_transition_min_delay)
+
+
+                #Remove from choice
+                indices_timed_transitions_ready_to_fire.remove(index_transition_min_delay)
+
+                #Calculate new delay for fired timed transition
+                transition_id = self.transition_indices_to_ids([index_transition_min_delay])[0]
+
+                transition_model = [transition for transition in self.model['transitions'] if transition['id'] == transition_id][0]
+                print("Transition for which delay should be updated:")
+                print(transition_model)
+                self.transition_delays[index_transition_min_delay] = self.calculate_delay_transition(transition_model)
+                
+                firing_transitions.append(index_transition_min_delay)
+
+            elif indices_input_immediate_transitions:
+                #Choose on random to fire one input immediate transition
+                random_input_immediate_transition = np.random.choice(indices_input_immediate_transitions)
+                
+                #Transition will be fired remove the list of available ones
+                indices_enabled_immediate_transitions.remove(random_input_immediate_transition)
+                
+                #Add transition for firing in this iteration
+                firing_transitions.append(random_input_immediate_transition)
+
+        return {'transition_indices':firing_transitions, 'delays': remaining_delays_timed_transitions, 'continue_sim': True}
 
     def fire_transition(self, transition_id):
         """
-        Fire a transition with 'transition_id' and
-        return the {id, tokens} of all input and output places
+        Fire a transition with 'transition_id'
+        Return the {id, tokens} of all input and output places and the delay
         """
         transition_index = self.transitions_id_to_index[transition_id] 
         input_places = []
@@ -109,9 +181,12 @@ class Model:
                 output_places.append({'id': place_id, 'tokens': place_tokens})
                 
     
-        delay = self.transition_delays[transition_index]
+        delay = 0
+
+        if not math.isinf(self.transition_delays[transition_index]):
+            delay = self.transition_delays[transition_index]
+        
         input_output_places = {'input_places': input_places, 'output_places': output_places, 'transition_id': [transition_id], 'delay': delay}
-        print(input_output_places)
         return input_output_places
    
     def get_enabled_transition_ids(self):
@@ -126,121 +201,6 @@ class Model:
 #---------------------------------------------------------
 # Helper methods
 #---------------------------------------------------------
-    def determine_transitions_to_fire(self):
-        indices_transitions_to_fire = []
-
-        incidence_matrix_dim = self.incidence_matrix.shape
-        rows = incidence_matrix_dim[0]
-        cols = incidence_matrix_dim[1]
-
-        indices_enabled_transitions = self.determine_enabled_transitions()
-
-        for place_index in range(0, rows):
-            input_transitions = []
-
-            for transition_index in indices_enabled_transitions:
-                matrix_entry = self.incidence_matrix[place_index][transition_index]
-                if matrix_entry < 0:
-                    #At this point we know that transition is enabled, however should check whether it is immediate or timed
-                    input_transitions.append(transition_index)
-
-            #If the input transition has already be chosen by another place, look for another one
-            random_chosen_transitions = []
-            while random_chosen_transitions != input_transitions:
-                random_input_transition = np.random.choice(input_transitions)
-                random_chosen_transitions.append(random_input_transition)
-
-                if random_input_transition not in indices_transitions_to_fire:
-                    indices_transitions_to_fire.append(random_input_transition)
-                    break
-
-        indices_transitions_without_input_place = self.determine_transitions_without_input_place() 
-        indices_transitions_to_fire.extend(indices_transitions_without_input_place)
-        
-        transitions_to_fire_ids = self.transition_indices_to_ids(indices_transitions_to_fire)
-        return transitions_to_fire_ids
-
-    def determine_firing_transitions_timed_petri_net(self):
-        indices_transitions_to_fire = []
-
-        incidence_matrix_dim = self.incidence_matrix.shape
-        rows = incidence_matrix_dim[0]
-
-        indices_enabled_transitions = self.determine_enabled_transitions()
-
-
-        print("Currently enabled transitions are: ")
-        print(indices_enabled_transitions)
-
-        min_delay = float('inf')
-        at_least_one_immediate_transition = False
-
-        for place_index in range(0, rows):
-            input_transitions_timed = []
-            input_transitions_immediate = []
-
-            for transition_index in indices_enabled_transitions:
-                matrix_entry = self.incidence_matrix[place_index][transition_index]
-                if matrix_entry < 0:
-                    #At this point we know that transition is enabled, however should check whether it is immediate or timed
-                    #Delay is -1 for immediate transitions
-                    if self.transition_delays[transition_index] == -1:
-                        input_transitions_immediate.append(transition_index)
-                    else:
-                        input_transitions_timed.append(transition_index)
-    
-
-            print("Input timed transitions are:")
-            print(input_transitions_timed)
-            print("Input immediate transitions are:")
-            print(input_transitions_immediate)
-
-
-            #There is at least one immediate transition, follow the previous logic
-            #Timed transitions are ignored
-            if len(input_transitions_immediate) > 0:
-                random_chosen_transitions = []
-                while random_chosen_transitions != input_transitions_immediate:
-                    random_input_transition = np.random.choice(input_transitions_immediate)
-                    random_chosen_transitions.append(random_input_transition)
-
-                    if random_input_transition not in indices_transitions_to_fire:
-                        indices_transitions_to_fire.append(random_input_transition)
-                        break
-                
-                at_least_one_immediate_transition = True
-                print("At least one immediate transition has been found")
-            elif not at_least_one_immediate_transition:
-                #No immediate transitions found \n
-                #Decision based on the calculated delays of the input transitions of the place
-                #Take the minimal delay and fire all timed transitions with this delay, -1 as delay is ignored
-                delay = self.calculate_min_transition_delay(input_transitions_timed)
-                if delay < min_delay:
-                    #Remove all transition_indices with the old min_delay
-                    transition_indices_to_remove = self.find_transitions_by_delay(min_delay, indices_enabled_transitions)
-                    for index in transition_indices_to_remove:
-                        if index in indices_transitions_to_fire:
-                            indices_transitions_to_fire.remove(index)
-
-
-                    #Add all transition_indices with the new delay
-                    transition_indices_to_add = self.find_transitions_by_delay(delay, indices_enabled_transitions)
-                    indices_transitions_to_fire.extend(transition_indices_to_add)
-
-                    min_delay = delay
-
-                
-        #Eliminate possible duplicates        
-        indices_transitions_to_fire = set(indices_transitions_to_fire)
-        ids_transitions_to_fire = self.transition_indices_to_ids(indices_transitions_to_fire)
-
-        if math.isinf(min_delay):
-            print({'transition_ids': ids_transitions_to_fire, 'delay': -1})
-            return {'transition_ids': ids_transitions_to_fire, 'delay': -1}
-        else:
-            print({'transition_ids': ids_transitions_to_fire, 'delay': min_delay})
-            return {'transition_ids': ids_transitions_to_fire, 'delay':min_delay} 
-    
     def determine_enabled_transitions(self):
         """
         Return the indices of all enabled transition of the current model
@@ -270,7 +230,6 @@ class Model:
                 indices_enabled_transitions.append(i)
 
         return indices_enabled_transitions
-
 #---------------------------------------------------------
 #Helper methods
 #---------------------------------------------------------
@@ -413,11 +372,11 @@ class Model:
         return indices_transitions_without_input_place
 
 #---------------------------------------------------------       
-    def determine_transitions_delays(self):
+    def determine_delays_transitions(self):
         """
         Calculate the delays of the transition with index inside the indices array \n
         Possible only for timed transitions \n
-        Default value of delay for immediate transition is -1
+        Default value of delay for immediate transition is -inf
         """
         transition_delays = []
 
@@ -426,11 +385,12 @@ class Model:
                 delay = self.calculate_delay_transition(transition)
                 transition_delays.append(delay)
             else: 
-                #For immediate transitions there is no delay, use def value of -1
-                transition_delays.append(-1)
+                #For immediate transitions there is no delay, use def value of -inf
+                transition_delays.append(float('-inf'))
 
         return transition_delays
 
+    #Should be possible to do this also by transition id or index
     def calculate_delay_transition(self, transition):
         if transition['distribution_type'] == 'exponential':
             if transition['rate'] == 0:
@@ -466,3 +426,27 @@ class Model:
 
     
         return indices_transitions
+    
+#---------------------------------------------------------
+
+    #This is just not working, do not use for now....
+    def calculate_remaining_transition_delays(self, indices_transitions, sim_step):
+        remaining_delays = []
+
+        for transition_index in indices_transitions:
+            delay = self.transition_delays[transition_index] - sim_step
+            remaining_delays.append({'index': transition_index, 'remain_delay': delay})
+
+        return remaining_delays
+
+    #Update the delays of timed transitions, by the sim_step
+    def update_transition_delays(self, indices_transitions, sim_step):
+        for transition_index in indices_transitions:
+            self.transition_delays[transition_index] = self.transition_delays[transition_index] - sim_step
+
+    def find_min_delay(self, transition_with_delays):
+        min_delay = min(transition['remain_delay'] for transition in transition_with_delays)
+
+        for transition in transition_with_delays:
+            if transition['remain_delay'] == min_delay:
+                return transition

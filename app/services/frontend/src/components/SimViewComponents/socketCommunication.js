@@ -43,7 +43,7 @@ export function closeSocket(socket) {
     })
 }
 
-function isSocketOpen(socket) {
+export function isSocketOpen(socket) {
     return socket.readyState === WebSocket.OPEN;
 }
 
@@ -51,15 +51,15 @@ export async function receiveMsg(event) {
     return event.data
 }
 
-export async function sendMsg(socket, data) {
-    const action = data.action
-    const status = data.status
-    const content = data.content
+export async function sendMsg(socket, payload) {
+    const action = payload.action
+    const status = payload.status
+    const data = payload.data
 
     const sender = 'frontend'
     const receiver = 'backend'
 
-    const msg = createMsg(sender, receiver, action, status, content)
+    const msg = createMsg(sender, receiver, action, status, data)
     await socket.send(msg)
 }
 

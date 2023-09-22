@@ -4,8 +4,6 @@ export async function getModel(params) {
     return axios.get('/model', {params})
                     .then((response) => {
                         return response.data
-                        //const msg = createMsg("frontend", "backend", "instantiate_model", "", graph.toJSON())
-                        //socket.send(msg)
                     })
                     .catch((error) => {
                         return err

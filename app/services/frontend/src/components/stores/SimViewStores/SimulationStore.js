@@ -11,17 +11,20 @@ export const useSimulationStore = defineStore('simStore', {
         manualSimulation: false, 
         automaticSimulation: false, 
 
-        startSim: false, 
+        simStep: 0,
+
+        startSim: false,
+        continueSim: false, 
         stopSim: false, 
         rewindToStart: false, 
         rewindToEnd: false, 
-        simSpeed: false,
+        
+        simSpeed: 1,
 
         simulationTime: 0,
 
         isPlaceSelected: false,
         selectedPlace: null,
-
         
         enabledTransitions: [], 
         tracebackTransitions: []
