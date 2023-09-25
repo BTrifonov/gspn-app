@@ -25,4 +25,8 @@ watch(() => simulationStore.getSimulationTime, (newVal) => {
 <style scoped>
 @import '@/assets/sidebar-submenu.css';
 
+p {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
 </style>

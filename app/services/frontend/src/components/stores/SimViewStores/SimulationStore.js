@@ -12,6 +12,9 @@ export const useSimulationStore = defineStore('simStore', {
         automaticSimulation: false, 
 
         simStep: 0,
+        enteredSimStep: false,
+        withTimeStep: false,
+        withoutTimeStep: false, 
 
         startSim: false,
         continueSim: false, 

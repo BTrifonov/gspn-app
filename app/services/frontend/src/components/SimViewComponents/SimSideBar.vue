@@ -24,7 +24,7 @@ const simulationStore = useSimulationStore()
         <div>
             <SimModeMenu/>
         </div>
-        <div v-if="simulationStore.automaticSimulation">
+        <div v-if="simulationStore.enteredSimStep || simulationStore.withoutTimeStep">
             <SimAutoMenu/>
         </div>
         <div v-if="simulationStore.manualSimulation">

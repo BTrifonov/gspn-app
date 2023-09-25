@@ -236,11 +236,11 @@ watch(()=>simulationStore.continueSim, (newVal)=>{
     if(newVal) {
         if(isSocketOpen(socket)) {
             const payload = {
-                sim_step: simulationStore.simStep, 
-                sim_time: simulationStore.simulationTime
+                sim_step: simulationStore.withTimeStep, 
+                //sim_time: simulationStore.simulationTime
             }
 
-            //Execute a simulation iteration, based on the sim step and sim time
+            //Execute a simulation iteration, based on whether there is a sim step or not
             sendMessage(socket, {action: 'sim', status: 'ok', data: payload})
             
             //Will be triggered again, whenever the frontend receives a new message
@@ -317,8 +317,17 @@ function handleIncomingMsg(event) {
             if(response.action == "model_created") {
                 simulationStore.continueSim = true
             } else if(response.action=="visualize_fired_transition") {
-                simulationStore.simulationTime = simulationStore.getSimulationTime + simulationStore.simStep
-                console.log(response.delays)
+                if(simulationStore.withTimeStep) {
+                    console.log("With sim step")
+                    simulationStore.simulationTime = simulationStore.getSimulationTime + simulationStore.simStep
+                }
+                else {
+                    console.log("Without sim step")
+                    console.log(response.delay)
+                    
+                    simulationStore.simulationTime = simulationStore.getSimulationTime + response.delay
+                }
+                
                 transitionFiringAnimationAlternate(response.input_places, response.output_places, response.transition_id, graph, paper)
                     .then(()=>{simulationStore.continueSim = true})
     

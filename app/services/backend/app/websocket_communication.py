@@ -24,10 +24,10 @@ async def handle_websocket_communication_alternate(websocket: WebSocket, socket_
 
             if incoming_msg['action'] == "sim":
                 data = incoming_msg['data']
-                #sim_time = data['sim_time']
                 sim_step = data['sim_step']
 
                 outgoing_msg = await simulate_model(model, sim_step)
+                
                 outgoing_msg_json = json.dumps(outgoing_msg)
                 await websocket.send_text(outgoing_msg_json)
              
@@ -55,8 +55,16 @@ def instantiate_model(msg_payload):
     return model
 
 async def simulate_model(model: Model, sim_step):
-    sim_result = model.simulation_with_sim_step(sim_step)
+    
+    
+    if sim_step:
+        sim_result = model.simulation_with_sim_step(sim_step)
+    else:
+        sim_result = model.simulation_without_sim_step()
+
     print(sim_result)
+
+
 
     response_msg = {
         'sender': 'backend', 
@@ -69,8 +77,12 @@ async def simulate_model(model: Model, sim_step):
         'status': 'ok'
     }
 
+    if not sim_step:
+        response_msg['delay']: sim_result['delay']
+    
+
     if sim_result['continue_sim']:
-        response_msg['delays'] = sim_result['delays']
+        #response_msg['delays'] = sim_result['delays']
         if response_msg['transition_id']:
             #At least one transition has fired, should be visualized by the frontend
             response_msg['action'] = "visualize_fired_transition"

@@ -5,7 +5,6 @@ import { watch, ref, onMounted, onUnmounted } from 'vue';
 const simulationStore = useSimulationStore()
 
 
-const simStep = ref(simulationStore.simStep)
 const simSpeed = ref(simulationStore.simSpeed)
 
 //Reset all buttons before unmounting the component
@@ -34,9 +33,7 @@ function handleRewindToEnd() {
     simMenuStore.rewindToEnd()
 }*/
 
-watch(simStep, (newVal) => {
-    simulationStore.simStep = newVal
-})
+
 
 watch(simSpeed, (newVal) => {
     simulationStore.simSpeed = parseFloat(newVal)
@@ -71,11 +68,6 @@ watch(simSpeed, (newVal) => {
             <button @click="handleRewindToEnd">
                 <img src="../../assets/SimButtons/skipToEndButton.svg">
             </button>
-        </div>
-
-        <div class="sim-container">
-            <input type="number" placeholder="Simulation time step" class="input" min="0" v-model="simStep">
-            <p> Simulation time step </p>
         </div>
 
         <div class="sim-container">

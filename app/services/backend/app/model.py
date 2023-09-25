@@ -14,6 +14,54 @@ class Model:
         self.transition_delays = self.determine_delays_transitions()
         self.place_marking = self.create_place_marking()
 
+    def simulation_without_sim_step(self):
+        sim_iteration_result = {
+            'input_places': [], 
+            'output_places': [],
+            'transition_id': [],
+            'delay': 0,
+            'continue_sim': True
+        }
+
+        indices_enabled_transitions = self.determine_enabled_transitions()
+
+        indices_timed_enabled_transitions = []
+
+        for transition_index in indices_enabled_transitions:
+            if not math.isinf(self.transition_delays[transition_index]):
+                indices_timed_enabled_transitions.append(transition_index)
+
+        min_delay = float('inf')
+        index_transition_with_min_delay = -1
+        
+        if indices_timed_enabled_transitions:
+            for transition_index in indices_enabled_transitions:
+                if self.transition_delays[transition_index] < min_delay:
+                    index_transition_with_min_delay = transition_index
+        else:
+            #For now ignore enabled immediate transitions
+            sim_iteration_result['continue_sim'] = False
+            return sim_iteration_result
+
+        if index_transition_with_min_delay != -1:
+            #Timed transition to fire has been chosem
+            transition_id = self.transition_indices_to_ids([index_transition_with_min_delay])[0]
+            firing_result = self.fire_transition(transition_id)
+
+            sim_iteration_result['input_places'].extend(firing_result['input_places'])
+            sim_iteration_result['output_places'].extend(firing_result['output_places'])
+            sim_iteration_result['transition_id'].append(transition_id)
+            sim_iteration_result['delay'] = self.transition_delays[index_transition_with_min_delay]
+
+            #Update the delay of the 
+            for transition in self.model['transitions']:
+                if transition['id'] == transition_id:
+                    if self.is_transition_enabled(index_transition_with_min_delay):
+                        #Recalculate the delay only if still enabled
+                        self.calculate_delay_transition(transition)
+            
+            return sim_iteration_result
+
 
     def simulation_with_sim_step(self, sim_step):
         result =  self.sim_iteration_timed_net_with_sim_step(sim_step)
@@ -450,3 +498,19 @@ class Model:
         for transition in transition_with_delays:
             if transition['remain_delay'] == min_delay:
                 return transition
+            
+    def is_transition_enabled(self, transition_index):
+        """
+        Determine if the transition with transition_index is enabled
+        """
+        dimensions_matrix = self.incidence_matrix.shape
+        rows = dimensions_matrix[0]
+        
+        for place_index in range(0, rows):
+            if self.incidence_matrix[place_index][transition_index] < 0:
+                if self.place_marking[place_index] <= 0:
+                    #Not enough tokens for a transition to fire
+                    return False
+                
+
+        return True
