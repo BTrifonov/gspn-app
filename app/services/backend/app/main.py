@@ -7,12 +7,15 @@ import urllib.parse
 #---------------------------------------------------
 import asyncio
 #---------------------------------------------------
-#Problems with the relative import
+#TODO Problems with the relative import
 from .file_utils import write_file, get_file, delete_file, file_exists, delete_all_files
 from .websocket_communication import handle_websocket_communication_alternate
 
 from .model_utils import parse_model
-from .model import Model
+#from .model import Model
+
+#from .model_alternativ import Model
+from .model_proxy import ModelProxy
 
 import json
 
@@ -70,7 +73,7 @@ async def main():
 async def get_model(name: str):
     """
     Retrieve the plain json model
-    Includes styling, required for rendering the model
+    Includes styling, required for rendering the model back in the frontend
     """
 
     plain_json_file = get_file(name)
@@ -82,14 +85,11 @@ async def get_enabled_transitions(req_body: PlainJSON):
     Return the id's of all enabled transitions
     """ 
     plain_json_file = req_body.data   
-    model_parsed = parse_model(plain_json_file['model'])
     
-    #Save the model, before working with it
-    #write_file(json.dumps(model_parsed, indent=4), name.removesuffix('.json') + "-parsed.json")
-
-    model = Model(model_parsed)
-    enabled_transitions = model.get_enabled_transition_ids()
-    return enabled_transitions
+    model = ModelProxy(plain_json_file['model'])
+    
+    result = model.find_enabled_transitions()
+    return result
 #----------------------------------------------------------------
 
 #POST methods
@@ -98,7 +98,7 @@ async def get_enabled_transitions(req_body: PlainJSON):
 async def save_model(req_body: PlainJSON):
     """
     Save the plain json model
-    Includes styling, required for rendering the model
+    Includes styling, required for rendering the model in the frontend at a later point in time
     """
     plain_json_file = json.dumps(req_body.data, indent=4)
     write_file(plain_json_file, req_body.params.name)
@@ -112,13 +112,10 @@ async def fire_transition(req_body: PlainJSON):
     transition_id = req_body.params.transition_id
 
     plain_json_file = req_body.data
-    model_parsed = parse_model(plain_json_file['model'])
 
-    model = Model(model_parsed)
-
+    model = ModelProxy(plain_json_file['model'])
     result = model.fire_transition(transition_id)
-    print(result)
-    print(result['delay'])
+    
     return result
 
 #----------------------------------------------------------------

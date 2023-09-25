@@ -4,19 +4,22 @@ import json
 from .model import Model
 from .model_utils import parse_model
 
+from .model_proxy import ModelProxy
+
 from .exceptions.invalid_sender_receiver_field import InvalidSenderReceiverField
 from .exceptions.invalid_action_field import InvalidActionField
 from .exceptions.invalid_status_field import InvalidStatusField
 
 async def handle_websocket_communication_alternate(websocket: WebSocket, socket_id: int):
     try:
-        model = None
+        model_proxy = None
         while True:
             incoming_msg_json = await websocket.receive_text()
             incoming_msg = json.loads(incoming_msg_json)
 
             if incoming_msg['action'] == "create_model":
-                model = instantiate_model(incoming_msg['data'])
+                #model = instantiate_model(incoming_msg['data'])
+                model_proxy = ModelProxy(incoming_msg['data'])
                 outgoing_msg = create_msg("backend", "frontend", "model_created", "ok", "")
                 outgoing_msg_json = json.dumps(outgoing_msg)
                 await websocket.send_text(outgoing_msg_json)
@@ -26,7 +29,10 @@ async def handle_websocket_communication_alternate(websocket: WebSocket, socket_
                 data = incoming_msg['data']
                 sim_step = data['sim_step']
 
-                outgoing_msg = await simulate_model(model, sim_step)
+                if not sim_step:
+                    outgoing_msg = simulation_request(model_proxy)
+                
+                #outgoing_msg = await simulate_model(model, sim_step)
                 
                 outgoing_msg_json = json.dumps(outgoing_msg)
                 await websocket.send_text(outgoing_msg_json)
@@ -54,17 +60,9 @@ def instantiate_model(msg_payload):
     model = Model(msg_payload)
     return model
 
-async def simulate_model(model: Model, sim_step):
+def simulation_request(model_proxy: ModelProxy):
     
-    
-    if sim_step:
-        sim_result = model.simulation_with_sim_step(sim_step)
-    else:
-        sim_result = model.simulation_without_sim_step()
-
-    print(sim_result)
-
-
+    sim_result = model_proxy.sim_iteration()
 
     response_msg = {
         'sender': 'backend', 
@@ -73,23 +71,12 @@ async def simulate_model(model: Model, sim_step):
         'output_places': sim_result['output_places'], 
         'transition_id': sim_result['transition_id'],
 
-        #'delays': sim_result['delays'],
+        'delay': sim_result['delay'],
         'status': 'ok'
     }
-
-    if not sim_step:
-        response_msg['delay']: sim_result['delay']
     
-
     if sim_result['continue_sim']:
-        #response_msg['delays'] = sim_result['delays']
-        if response_msg['transition_id']:
-            #At least one transition has fired, should be visualized by the frontend
-            response_msg['action'] = "visualize_fired_transition"
-        else:
-            #No transition has fired, only update the sim time in the frontend
-            response_msg['action'] = "continue_sim"
-        
+        response_msg['action'] = "visualize_fired_transition"
     else:
         response_msg['action'] = "end_sim"
 
@@ -106,19 +93,24 @@ def create_msg(sender_data, receiver_data, action_data, status_data, content_dat
 
     return msg
 
-def check_flags(flags):
-    for flag in flags:
-        for key, value in flag.items():
-            if key == "stop":
-                if value:
-                    print("Stop requested!")
-                    return False
-                elif not value:
-                    return True
+
+
 
 #-----------------------------------------------------------
 #Internal helper methods, used only in this file
 #-----------------------------------------------------------
+def create_msg(sender_data, receiver_data, action_data, status_data, content_data):
+    msg = {
+        'sender': sender_data,
+        'receiver': receiver_data,
+        'action': action_data, 
+        'status': status_data,
+        'data': content_data
+    }
+
+    return msg
+
+
 def perform_msg_checks(msg, incoming):
     if(incoming):
         check_sender_receiver_incoming_msg(msg['sender'], msg['receiver'])
