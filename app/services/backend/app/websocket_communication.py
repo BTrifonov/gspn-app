@@ -15,7 +15,6 @@ async def handle_websocket_communication_alternate(websocket: WebSocket, socket_
             incoming_msg = json.loads(incoming_msg_json)
 
             if incoming_msg['action'] == "create_model":
-                #model = instantiate_model(incoming_msg['data'])
                 model_proxy = ModelProxy(incoming_msg['data'])
                 outgoing_msg = create_msg("backend", "frontend", "model_created", "ok", "")
                 outgoing_msg_json = json.dumps(outgoing_msg)
@@ -28,8 +27,6 @@ async def handle_websocket_communication_alternate(websocket: WebSocket, socket_
 
                 if not sim_step:
                     outgoing_msg = simulation_request(model_proxy)
-                
-                #outgoing_msg = await simulate_model(model, sim_step)
                 
                 outgoing_msg_json = json.dumps(outgoing_msg)
                 await websocket.send_text(outgoing_msg_json)
@@ -51,11 +48,6 @@ async def handle_websocket_communication_alternate(websocket: WebSocket, socket_
 #-----------------------------------------------------------
 #Actions, based on the sent/received msg
 #-----------------------------------------------------------
-def instantiate_model(msg_payload):
-    msg_payload = parse_model(msg_payload)
-    model = Model(msg_payload)
-    return model
-
 def simulation_request(model_proxy: ModelProxy):
     
     sim_result = model_proxy.sim_iteration()
