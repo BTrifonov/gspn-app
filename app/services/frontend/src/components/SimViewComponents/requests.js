@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'modules/axios';
 
 export async function getModel(params) {
     return axios.get('/model', {params})
