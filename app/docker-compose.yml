@@ -8,8 +8,8 @@ services:
         dockerfile: Dockerfile
       ports:
         - 5173:5173
-      volumes: 
-        - ./services/frontend:/app
+#      volumes: 
+#        - ./services/frontend:/app
 
     backend:
       build:
@@ -17,5 +17,5 @@ services:
         dockerfile: Dockerfile
       ports:
         - 7000:7000
-      volumes:
-        - ./services/backend:/app
+#      volumes:
+#        - ./services/backend:/app
