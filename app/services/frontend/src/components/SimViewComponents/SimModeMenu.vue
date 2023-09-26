@@ -4,9 +4,6 @@ import {ref, watch} from 'vue'
 
 const simulationStore = useSimulationStore()
 const simStep = ref(simulationStore.simStep)
-
-const withTimeStep = ref(false)
-
 const simStepMenuEnabled = ref(true)
 
 function triggerManualSim() {
@@ -30,22 +27,6 @@ function handleSimStepInput() {
     //Now simulation can start, show to user the other buttons
     simulationStore.enteredSimStep = true
 }
-
-
-function handleWithoutTimeStep() {
-    simulationStore.withoutTimeStep = true
-    simulationStore.withTimeStep = false
-}
-
-function handleWithTimeStep() {
-    simulationStore.withTimeStep = true
-    simulationStore.withoutTimeStep = false
-}
-
-function handleTimeStepReq() {
-    simulationStore.timeStepReq = !simulationStore.timeStepReq
-}
-
 </script>
 
 <template>
@@ -73,11 +54,11 @@ function handleTimeStepReq() {
         </div>
 
         <div  v-if="simulationStore.automaticSimulation" class="btn-container">
-            <button @click="handleWithoutTimeStep" 
+            <button @click="simulationStore.handleWithoutTimeStepSim" 
                     :style="{'background-color': simulationStore.withoutTimeStep ? 'grey': 'silver'}"> 
                 Without user time step
             </button>
-            <button @click="handleWithTimeStep"
+            <button @click="simulationStore.handleWithTimeStepSim"
                     :style="{'background-color': simulationStore.withTimeStep ? 'grey' : 'silver'}">
                 With user time step
             </button>

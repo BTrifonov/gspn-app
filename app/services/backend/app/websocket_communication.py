@@ -7,7 +7,7 @@ from .exceptions.invalid_sender_receiver_field import InvalidSenderReceiverField
 from .exceptions.invalid_action_field import InvalidActionField
 from .exceptions.invalid_status_field import InvalidStatusField
 
-async def handle_websocket_communication_alternate(websocket: WebSocket, socket_id: int):
+async def handle_websocket_communication(websocket: WebSocket, socket_id: int):
     try:
         model_proxy = None
         while True:

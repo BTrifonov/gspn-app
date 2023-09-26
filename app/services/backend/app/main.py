@@ -9,7 +9,7 @@ import asyncio
 #---------------------------------------------------
 #TODO Problems with the relative import
 from .file_utils import write_file, get_file, delete_file, file_exists, delete_all_files
-from .websocket_communication import handle_websocket_communication_alternate
+from .websocket_communication import handle_websocket_communication
 
 
 #from .model_alternativ import Model
@@ -35,7 +35,8 @@ class PlainJSON(BaseModel):
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173"
+    "http://lehre.bpm.in.tum.de:5173",
+    "https://lehre.bpm.in.tum.de/ports/5173/"
 ]
 
 
@@ -54,7 +55,7 @@ app.add_middleware(
 @app.websocket("/ws/{socket_id}")
 async def websocket_endpoint(websocket: WebSocket, socket_id: int):
     await websocket.accept()   
-    await handle_websocket_communication_alternate(websocket, socket_id)      
+    await handle_websocket_communication(websocket, socket_id)      
 
 #---------------------------------------------------------
 #API endpoints
