@@ -11,8 +11,6 @@ import asyncio
 from .file_utils import write_file, get_file, delete_file, file_exists, delete_all_files
 from .websocket_communication import handle_websocket_communication_alternate
 
-from .model_utils import parse_model
-#from .model import Model
 
 #from .model_alternativ import Model
 from .model_proxy import ModelProxy

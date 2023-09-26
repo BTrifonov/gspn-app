@@ -76,12 +76,20 @@ class ModelProxy:
 
     def sim_iteration(self):
         """
-        Perform one simulation iteration
+        Perform one simulation iteration \n
+        Delegate the execution to the model object
 
         Returns
-        ----------
-        ....
+        --------------------
+        {\n
+            'input_places':[], \n
+            'output_places': [], \n
+            'transition_id': [], \n
+            'delay': Float, \n
+            'continue_sim': True | False \n
+        }
         """
+        
         result = {
             'input_places': [], 
             'output_places': [],

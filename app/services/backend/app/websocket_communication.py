@@ -1,9 +1,6 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 import json
 
-from .model import Model
-from .model_utils import parse_model
-
 from .model_proxy import ModelProxy
 
 from .exceptions.invalid_sender_receiver_field import InvalidSenderReceiverField
@@ -53,7 +50,6 @@ async def handle_websocket_communication_alternate(websocket: WebSocket, socket_
 
 #-----------------------------------------------------------
 #Actions, based on the sent/received msg
-#TODO:Move to another file later
 #-----------------------------------------------------------
 def instantiate_model(msg_payload):
     msg_payload = parse_model(msg_payload)
