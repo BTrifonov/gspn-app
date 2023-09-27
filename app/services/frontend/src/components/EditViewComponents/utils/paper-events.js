@@ -1,5 +1,5 @@
-import { createLinkToolView } from '@/components/utils/tool-generator';
-import { createElementToolView } from '@/components/utils/tool-generator';
+import { createLinkToolView } from '@/components/utils/tool-generator.js';
+import { createElementToolView } from '@/components/utils/tool-generator.js';
 
 
 //------------------------------------------

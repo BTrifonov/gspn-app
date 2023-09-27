@@ -18,8 +18,8 @@ import { drawTransition } from '@/components/utils/element-generator.js';
 import { drawImmediateTransition } from '@/components/utils/element-generator.js'
 import { drawArc } from '@/components/utils/element-generator.js'
 
-import { createLinkToolView } from '@/components/utils/tool-generator';
-import { createElementToolView } from '@/components/utils/tool-generator';
+//import { createLinkToolView } from '@/components/utils/tool-generator';
+//import { createElementToolView } from '@/components/utils/tool-generator';
 
 
 import {attachLinkToolsOnMouseEnter, detachLinkToolsOnMouseLeave} from '@/components/EditViewComponents/utils/paper-events.js'
