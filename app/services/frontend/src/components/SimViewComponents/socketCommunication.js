@@ -4,7 +4,7 @@
 
 export async function createSocket() {
     return new Promise((resolve, reject) => {
-        const socket = new WebSocket("ws://csl.bpm.in.tum.de/boris/ws/123")
+        const socket = new WebSocket("wss://csl.bpm.in.tum.de/boris/ws/123")
     
         //Log the socket creation
         socket.onopen = function(event)  {
