@@ -1,7 +1,7 @@
 <script setup>
-import {ref, onMounted, onUnmounted} from 'modules/vue';
-import {watch} from 'modules/vue';
-import axios from 'modules/axios';
+import {ref, onMounted, onUnmounted} from 'vue';
+import {watch} from 'vue';
+import axios from 'axios';
 
 import * as joint from 'modules/jointjs';
 

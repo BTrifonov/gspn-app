@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'modules/vue';
+import { ref } from 'vue';
 import {useModelStore} from '@/components/stores/ModelStore'
 
 const modelStore = useModelStore()

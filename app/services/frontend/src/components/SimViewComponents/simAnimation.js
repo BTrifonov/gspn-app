@@ -1,4 +1,4 @@
-import * as joint from 'modules/jointjs'
+import * as joint from 'jointjs'
 
 /**
  * Fire visually the transition on the graph, after the backend has returned the new markings

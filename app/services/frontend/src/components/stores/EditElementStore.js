@@ -1,4 +1,4 @@
-import {defineStore} from 'modules/pinia'
+import {defineStore} from 'pinia'
 
 /**
  * The user should be able to edit only one element at a time, thus 

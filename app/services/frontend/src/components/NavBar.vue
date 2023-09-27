@@ -1,5 +1,5 @@
 <script setup>
-import axios from 'modules/axios';
+import axios from 'axios';
 import { ref } from 'vue'
 
 //const displayedDropdown = ref(false)

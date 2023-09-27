@@ -1,4 +1,4 @@
-import {defineStore} from 'modules/pinia'
+import {defineStore} from 'pinia'
 
 /**
  * Store, responsible for transferring user input from the EditPlaneMenu to the GridPlane

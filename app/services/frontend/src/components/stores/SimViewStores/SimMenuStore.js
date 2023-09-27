@@ -1,4 +1,4 @@
-import {defineStore} from 'modules/pinia'
+import {defineStore} from 'pinia'
 
 /*
 *
