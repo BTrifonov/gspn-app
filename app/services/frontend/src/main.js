@@ -20,7 +20,7 @@ import EditView from '@/views/EditView.vue'
 const app = createApp(App);
 
 //Bind to the FastAPI backend
-axios.defaults.baseURL = 'http://localhost:7000/';
+axios.defaults.baseURL = 'https://csl.bpm.in.tum.de/boris/';
 
 //Router configuration
 //TODO: By moving it to external file the import does not work

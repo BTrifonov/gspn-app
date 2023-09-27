@@ -34,17 +34,16 @@ class PlainJSON(BaseModel):
 
 app = FastAPI()
 
-origins = [
-    "http://lehre.bpm.in.tum.de:5173",
-    "https://lehre.bpm.in.tum.de/ports/5173/",
-    "http://localhost:5173",
-]
+#Allow all origins for now
+#origins = [
+#    "https://csl.bpm.",
+#]
 
 
 # NEW
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=['*'],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
