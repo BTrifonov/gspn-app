@@ -6,17 +6,17 @@ import axios from 'axios';
 import * as joint from 'jointjs';
 
 
-import {useCreateElemStore} from '@/components/stores/EditViewStores/CreateElemStore'
-import {useModelStore} from '@/components/stores/ModelStore'
+import {useCreateElemStore} from '@/components/stores/EditViewStores/CreateElemStore.js'
+import {useModelStore} from '@/components/stores/ModelStore.js'
 
 
-import { useElementStore} from '@/components/stores/EditElementStore';
-import { usePlaneStore } from '@/components/stores/EditViewStores/EditPlaneStore';
+import { useElementStore} from '@/components/stores/EditElementStore.js';
+import { usePlaneStore } from '@/components/stores/EditViewStores/EditPlaneStore.js';
 
-import { drawPlace } from '@/components/utils/element-generator';
-import { drawTransition } from '@/components/utils/element-generator';
-import { drawImmediateTransition } from '@/components/utils/element-generator'
-import { drawArc } from '@/components/utils/element-generator'
+import { drawPlace } from '@/components/utils/element-generator.js';
+import { drawTransition } from '@/components/utils/element-generator.js';
+import { drawImmediateTransition } from '@/components/utils/element-generator.js'
+import { drawArc } from '@/components/utils/element-generator.js'
 
 import { createLinkToolView } from '@/components/utils/tool-generator';
 import { createElementToolView } from '@/components/utils/tool-generator';

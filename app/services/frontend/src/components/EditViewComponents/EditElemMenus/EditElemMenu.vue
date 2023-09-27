@@ -1,5 +1,5 @@
 <script setup>
-import {useElementStore} from '@/components/stores/EditElementStore'
+import {useElementStore} from '@/components/stores/EditElementStore.js'
 
 import EditPlaceMenu from '@/components/EditViewComponents/EditElemMenus/EditPlaceMenu.vue'
 import EditTransitionMenu from '@/components/EditViewComponents/EditElemMenus/EditTransitionMenu.vue'

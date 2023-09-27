@@ -1,5 +1,5 @@
 <script setup>
-import {usePlaneStore} from '@/components/stores/EditViewStores/EditPlaneStore';
+import {usePlaneStore} from '@/components/stores/EditViewStores/EditPlaneStore.js';
 
 const planeStore = usePlaneStore()
 

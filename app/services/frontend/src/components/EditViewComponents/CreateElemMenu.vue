@@ -1,5 +1,5 @@
 <script setup>
-import { useCreateElemStore } from '@/components/stores/EditViewStores/CreateElemStore';
+import { useCreateElemStore } from '@/components/stores/EditViewStores/CreateElemStore.js';
 
 const store = useCreateElemStore()
 

@@ -11,7 +11,7 @@ import SimModeMenu from '@/components/SimViewComponents/SimModeMenu.vue';
 import ChangeViewMenu from '@/components/ChangeViewMenu.vue';
 import SimElapsedTimeMenu from '@/components/SimViewComponents/SimElapsedTimeMenu.vue';
 
-import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore'
+import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore.js'
 
 const simulationStore = useSimulationStore()
 

@@ -1,5 +1,5 @@
 <script setup>
-import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore'
+import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore.js'
 
 const simulationStore = useSimulationStore()
 

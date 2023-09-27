@@ -2,8 +2,8 @@
 import {ref, onMounted, watch, onUnmounted} from 'vue'
 
 
-import {useModelStore} from '@/components/stores/ModelStore'
-import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore'
+import {useModelStore} from '@/components/stores/ModelStore.js'
+import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore.js'
 
 
 import {getModel, fireTransition, findEnabledTransitions} from '@/components/SimViewComponents/requests.js'

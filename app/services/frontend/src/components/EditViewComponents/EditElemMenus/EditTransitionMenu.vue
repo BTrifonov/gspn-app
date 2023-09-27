@@ -1,5 +1,5 @@
 <script setup>
-import { useElementStore } from '@/components/stores/EditElementStore';
+import { useElementStore } from '@/components/stores/EditElementStore.js';
 import { ref, watch } from 'vue';
 
 const editElementStore = useElementStore()
