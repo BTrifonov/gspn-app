@@ -26,9 +26,9 @@ axios.defaults.baseURL = 'https://csl.bpm.in.tum.de/boris/';
 //TODO: By moving it to external file the import does not work
 //------------------------------------
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory('/boris_frontend/'),
     routes: [
-        {path: '/', name: 'Home', component: HomeView},
+        {path:'/', name: 'Home', component: HomeView},
         {path: '/about', name: 'About', component: AboutView},
         {path: '/simulation-view', name: 'Simulation', component: SimulationView},
         {path: '/edit-view', name: 'Edit', component: EditView}
