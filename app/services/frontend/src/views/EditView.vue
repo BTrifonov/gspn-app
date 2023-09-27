@@ -1,7 +1,6 @@
 <script setup>
 import NavBar from '@/components/NavBar.vue'
 
-
 import EditSideBar from '@/components/EditViewComponents/EditSideBar.vue';
 
 import GridPlane from '@/components/EditViewComponents/GridPlane.vue';

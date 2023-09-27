@@ -1,7 +1,8 @@
-import {defineStore} from 'pinia'
+import {defineStore} from 'modules/pinia'
 
 /**
- *
+ * Store, responsible for transferring user input from the EditPlaneMenu to the GridPlane
+ * The paper in GridPlane should be adjusted to the user input
  */
 export const usePlaneStore = defineStore('plane', {
     state: () => ({

@@ -1,43 +1,75 @@
 <script setup>
 import { useElementStore } from '@/components/stores/EditElementStore';
-import { watch } from 'vue';
-import { ref } from 'vue';
+import { watch } from 'modules/vue';
+import { ref } from 'modules/vue';
 
 const editElementStore = useElementStore()
 
-//Initial values are taken from the element store
 const label = ref(editElementStore.getPlaceLabel)
-const tokens = ref(editElementStore.getPlaceTokens)
+const tokenNumber = ref(editElementStore.getPlaceTokens)
 
-function deletePlace() {
-    editElementStore.deletePlace()
-}
-
-//Update the values, if a new place is selected, before unselecting a previous one
+/**
+ * Update local variables, if the user selects a new place, before
+ * unselecting the previous one
+ */
 watch(() => editElementStore.selectedElement, (newVal)=>{
     if(newVal!=null){
         label.value = editElementStore.getPlaceLabel
-        tokens.value = editElementStore.getPlaceTokens
+        tokenNumber.value = editElementStore.getPlaceTokens
     }
 })
 
-watch(tokens, (newVal) => {
-    editElementStore.setPlaceTokenNumber(newVal)
-})
+/**
+ * Handle user request to enter place label
+ * 
+ */
+function handlePlaceLabelInput(event) {
+    //TODO: Here a simple input validation is required, e.g only letters and numbers should be allowed
+    editElementStore.setPlaceLabel(label.value)
+    event.target.blur()
+}
 
-watch(label, (newVal) => {
-    editElementStore.setPlaceLabel(newVal)
-})
+/**
+ * Handle user request to enter place tokens
+ */
+function handlePlaceTokenInput(event) {
+    const input = tokenNumber.value
+    const inputInteger = parseInt(input)
+
+    if(isNaN(inputInteger)) {
+        alert("Place token count should be an integer")
+        tokenNumber.value = editElementStore.getPlaceTokens
+        event.target.blur()
+        return
+    }
+
+    if(inputInteger < 0) {
+        alert("Place token count should be positive or zero")
+        tokenNumber.value = editElementStore.getPlaceTokens
+        event.target.blur()
+        return
+    }
+
+    editElementStore.setPlaceTokenNumber(tokenNumber.value)
+    event.target.blur()
+}
+
+/**
+ *  Handle user request to delete a place 
+ */
+function deletePlace() {
+    editElementStore.deletePlace()
+}
 </script>
 
 <template>
     <div>
         <div class="sim-container">
-            <input type="text" v-model="label" class="input">
+            <input type="text" v-model="label" class="input" @keydown.enter="handlePlaceLabelInput">
             <p>Change place label</p>
         </div>
         <div class="sim-container">
-            <input type="number" v-model="tokens" class="input">
+            <input type="number" v-model="tokenNumber" class="input" @keydown.enter="handlePlaceTokenInput">
             <p>Change place token number</p>
         </div>
         <div class="btn-container">

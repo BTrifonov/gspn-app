@@ -1,6 +1,5 @@
 <script setup>
 import NavBar from '@/components/NavBar.vue';
-
 import HomeSideBar from '@/components/HomeViewComponents/HomeSideBar.vue';
 import TutorialPlane from '@/components/HomeViewComponents/TutorialPlane.vue';
 </script>
@@ -30,5 +29,4 @@ import TutorialPlane from '@/components/HomeViewComponents/TutorialPlane.vue';
 .bottom-container {
     background-color: rgb(9, 147, 240);;
 }
-
 </style>

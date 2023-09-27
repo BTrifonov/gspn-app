@@ -1,5 +1,5 @@
 <script setup>
-import {usePlaneStore} from '@/components/stores/PlaneStore'
+import {usePlaneStore} from '@/components/stores/EditViewStores/EditPlaneStore';
 
 const planeStore = usePlaneStore()
 
@@ -11,7 +11,6 @@ const planeStore = usePlaneStore()
         <div v-if="planeStore.editPlaneEnabled">
             <div class="sim-container">
                 <select v-model="planeStore.paperGrid" class="input">
-                    <!--<option disabled value=""></option>-->
                     <option> None </option>
                     <option> Dot </option>
                     <option> Mesh </option>
@@ -21,12 +20,12 @@ const planeStore = usePlaneStore()
             </div>
 
             <div class="sim-container">
-                <input type="range" min="1" max="10" step = "0.1" class="input" v-model="planeStore.paperGridSize">
+                <input type="range" min="1" max="10" step = "0.01" class="input" v-model="planeStore.paperGridSize">
                 <p>Grid size</p>
             </div>
 
             <div class="sim-container">
-                <input type="range" min="0.5" max="2" step="0.1" class="input" v-model="planeStore.paperScale">
+                <input type="range" min="0.5" max="2" step="0.01" class="input" v-model="planeStore.paperScale">
                 <p>Plane Scale</p>
             </div>
         </div>

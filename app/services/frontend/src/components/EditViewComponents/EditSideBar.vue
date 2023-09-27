@@ -6,8 +6,6 @@ import EditPlaneMenu from '@/components/EditViewComponents/EditPlaneMenu.vue';
 
 import ChangeViewMenu from '@/components/ChangeViewMenu.vue';
 import StoreModelMenu from '@/components/EditViewComponents/StoreModelMenu.vue';
-
-
 </script>
 
 <template>

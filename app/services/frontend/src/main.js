@@ -4,8 +4,6 @@ import '../node_modules/jointjs/dist/joint.css';
 import { createApp } from 'modules/vue';
 import axios from 'modules/axios';
 
-
-
 import { createPinia } from 'modules/pinia';
 
 import App from './App.vue';

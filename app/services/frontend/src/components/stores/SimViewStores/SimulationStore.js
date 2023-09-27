@@ -1,4 +1,4 @@
-import {defineStore} from 'pinia'
+import {defineStore} from 'modules/pinia'
 
 export const useSimulationStore = defineStore('simStore', {
     state: () => ({

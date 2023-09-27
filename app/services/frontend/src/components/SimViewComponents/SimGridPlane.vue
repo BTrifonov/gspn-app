@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted, watch, onUnmounted} from 'vue'
+import {ref, onMounted, watch, onUnmounted} from 'modules/vue'
 
 
 import {useModelStore} from '@/components/stores/ModelStore'

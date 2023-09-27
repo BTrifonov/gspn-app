@@ -1,6 +1,6 @@
 <script setup>
 import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore'
-import {ref, watch} from 'vue'
+import {ref, watch} from 'modules/vue'
 
 const simulationStore = useSimulationStore()
 const simStep = ref(simulationStore.simStep)

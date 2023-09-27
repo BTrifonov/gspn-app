@@ -1,5 +1,5 @@
-import {defineStore} from 'pinia'
-import axios from 'axios'
+import {defineStore} from 'modules/pinia'
+import axios from 'modules/axios'
 /**
  * TODO: All stores should provide functions for state manipulations
  */

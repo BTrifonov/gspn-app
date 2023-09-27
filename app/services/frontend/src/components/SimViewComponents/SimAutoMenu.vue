@@ -1,6 +1,6 @@
 <script setup>
 import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore'
-import { watch, ref, onMounted, onUnmounted } from 'vue';
+import { watch, ref, onUnmounted } from 'modules/vue';
 
 const simulationStore = useSimulationStore()
 

@@ -1,9 +1,9 @@
 <script setup>
-import {ref, onMounted, onUnmounted} from 'vue';
-import {watch} from 'vue';
-import axios from 'axios';
+import {ref, onMounted, onUnmounted} from 'modules/vue';
+import {watch} from 'modules/vue';
+import axios from 'modules/axios';
 
-import * as joint from 'jointjs';
+import * as joint from 'modules/jointjs';
 
 
 import {useCreateElemStore} from '@/components/stores/EditViewStores/CreateElemStore'
@@ -11,7 +11,7 @@ import {useModelStore} from '@/components/stores/ModelStore'
 
 
 import { useElementStore} from '@/components/stores/EditElementStore';
-import { usePlaneStore } from '@/components/stores/PlaneStore';
+import { usePlaneStore } from '@/components/stores/EditViewStores/EditPlaneStore';
 
 import { drawPlace } from '@/components/utils/element-generator';
 import { drawTransition } from '@/components/utils/element-generator';
@@ -21,28 +21,37 @@ import { drawArc } from '@/components/utils/element-generator'
 import { createLinkToolView } from '@/components/utils/tool-generator';
 import { createElementToolView } from '@/components/utils/tool-generator';
 
+
+import {attachLinkToolsOnMouseEnter, detachLinkToolsOnMouseLeave} from '@/components/EditViewComponents/utils/paper-events.js'
+import {selectElement, showLinkPorts, hideLinkPorts} from '@/components/EditViewComponents/utils/paper-events.js'
+
+import {unselectAllElements, selectPaper, resizePaper} from '@/components/EditViewComponents/utils/paper-events.js'
+
 //import { Arc } from '@/components/utils/CustomElements/arc';
 //import { validateArc } from './utils/connection-validator';
 
-
-//TODO: Probably won't be needed, delete later
+//------------------------------------------
+//Ref attributes, binded to HTML DOMs
+//------------------------------------------
 const container = ref(null)
-
 const plane = ref(null)
 
+//------------------------------------------
+//Store instantiations
+//------------------------------------------
 const createElemStore = useCreateElemStore()
 const modelStore = useModelStore()
 
 const editElementStore = useElementStore()
 const planeStore = usePlaneStore()
 
-
-/*----------------------------*/
+//------------------------------------------
+//Attributes for the paper creation
+//------------------------------------------
 const namespace = joint.shapes
 const graph = new joint.dia.Graph({}, {cellNamespace:namespace})
-
 let paper = null
-let editElementBuf = null
+
 onMounted(()=> {
     paper = new joint.dia.Paper({
         el: plane.value, 
@@ -60,126 +69,25 @@ onMounted(()=> {
         linkPinning: false
     })
    
-    //Attach and remove element and link tools
-    //----------------------------------------------------------
-    const linkToolView = createLinkToolView()
-    const elementToolView = createElementToolView()
-
-    paper.on('link:mouseenter', function(linkView) {
-        linkView.addTools(linkToolView)
-    })
-
-    paper.on('link:mouseleave', function(linkView) {
-        linkView.removeTools()
-    })
+    //------------------------------------------
+    //Link events
+    //------------------------------------------
+    paper.on('link:mouseenter', (linkView) => attachLinkToolsOnMouseEnter(linkView))
+    paper.on('link:mouseleave', (linkView) => detachLinkToolsOnMouseLeave(linkView))
     
+    //------------------------------------------
+    //Element events
+    //------------------------------------------
+    paper.on('element:pointerclick', (elementView) => selectElement(paper, editElementStore, elementView))
+    paper.on('element:mouseenter', (elementView) => showLinkPorts(elementView))
+    paper.on('element:mouseleave', (elementView) => hideLinkPorts(elementView))
 
-    paper.on('element:pointerclick', function(elementView) {
-        const element = elementView.model
-        const modelId = element.id
-
-        const prevSelectedElement = editElementStore.selectedElement
-        let prevElementNotUnselected = false
-
-        if(prevSelectedElement != null) {
-            const prevSelectedElementId = prevSelectedElement.id
-            const prevSelectedElementView = paper.findViewByModel(prevSelectedElement)
-
-            prevSelectedElementView.removeTools()
-            editElementStore.unselectAll()
-
-            //Previous element has not been unselected, however user selects new element
-            if(modelId != prevSelectedElementId) 
-                prevElementNotUnselected = true
-        }
-
-        //There has been no selected element or
-        //Previous selected element is not the sa
-        if(prevSelectedElement == null || prevElementNotUnselected) {
-            elementView.addTools(elementToolView)
-
-            if(element.attributes.type === 'custom.Place') {
-                editElementStore.selectPlace(element)
-            } else if(element.attributes.type === 'custom.Transition') {
-                editElementStore.selectTransition(element)
-            }
-        }
-    })
-
-    
-    paper.on('blank:pointerclick', function() {
-        paper.removeTools()
-
-        editElementStore.unselectAll()
-        editElementStore.selectedElement = null
-    })
-
-    paper.on('blank:pointerdblclick', function() {
-        planeStore.editPlaneEnabled = !planeStore.editPlaneEnabled
-    })
-    
-    paper.on('element:mouseenter', function(elementView) {
-        const element = elementView.model
-        const ports = element.getPorts()
-
-        for(const port of ports) {
-            const portId = port.id
-            element.portProp(portId, 'attrs/body/visibility', 'visible')
-        }
-    })
-
-    paper.on('element:mouseleave', function(elementView) {
-        const element = elementView.model
-        const ports = element.getPorts()
-
-        for(const port of ports) {
-            const portId = port.id
-            element.portProp(portId, 'attrs/body/visibility', 'hidden')
-        }
-    })
-    
-    /**Change paper size whenever element is outside the paper*/
-    paper.on('element:pointerup', function(elementView) {
-        const elementSize = elementView.getBBox()
-        const paperSize = paper.getComputedSize()
-        
-        /*Increase paper width and translate right, when element dragged to the left outside the paper*/
-        if(elementSize.x < 0) {
-            const dx = Math.abs(elementSize.x)
-
-            paper.setDimensions(paperSize.width + dx, paperSize.height)
-            paper.translate(dx + paper.options.origin.x, 0)
-        }
-
-        /*Increase paper width and translate left, element dragged to the right outside the paper*/
-        if(elementSize.x + elementSize.width > paperSize.width) {
-            const dx = (elementSize.x + elementSize.width) - paperSize.width
-
-            paper.setDimensions(paperSize.width + dx, paperSize.height)
-            paper.translate(- dx + paper.options.origin.x, 0)
-        }
-
-
-        /**TODO: Functionality for vertical paper increase does not work, probably CSS issue */
-        
-        /*Increase paper height and translate downwards, element dragged to the top outside the paper*/
-        if(elementSize.y < 0) {
-            const dy = Math.abs(elementSize.y)
-            console.log("dist:" + dy)
-
-            paper.setDimensions(paperSize.width, paperSize.height + dy)
-            paper.translate(0, dy + paper.options.origin.y)
-        }
-
-        /*Increase paper height and translate upwards, element dragged to the bottom outside the paper*/
-        if(elementSize.y + elementSize.height > paperSize.height) {
-            const dy = (elementSize.y + elementSize.height) - paperSize.height
-            console.log("dist: " + dy)
-
-            paper.setDimensions(paperSize.width, paperSize.height + dy)
-            paper.translate(0, - dy + paper.options.origin.y)
-        }
-    })
+    //------------------------------------------
+    //Blank paper and resizing events
+    //------------------------------------------
+    paper.on('blank:pointerclick', () => unselectAllElements(paper, editElementStore))
+    paper.on('blank:pointerdblclick', () => selectPaper(planeStore))
+    paper.on('element:pointerup', (elementView) => resizePaper(paper, elementView))
 })
 
 
