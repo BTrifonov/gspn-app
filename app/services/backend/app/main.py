@@ -52,10 +52,10 @@ app.add_middleware(
 
 #---------------------------------------------------------
 #Try to create and serve a websocket for the simulation of PNs
-@app.websocket("/ws/{socket_id}")
-async def websocket_endpoint(websocket: WebSocket, socket_id: int):
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()   
-    await handle_websocket_communication(websocket, socket_id)      
+    await handle_websocket_communication(websocket)      
 
 #---------------------------------------------------------
 #API endpoints
