@@ -1,14 +1,14 @@
 import './style.css'
 import '../node_modules/jointjs/dist/joint.css';
 
-import { createApp } from 'modules/vue';
-import axios from 'modules/axios';
+import { createApp } from 'vue';
+import axios from 'axios';
 
-import { createPinia } from 'modules/pinia';
+import { createPinia } from 'pinia';
 
 import App from './App.vue';
 
-import {createRouter, createWebHistory} from 'modules/vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 
 import HomeView from '@/views/HomeView.vue'
 import AboutView from '@/views/AboutView.vue'

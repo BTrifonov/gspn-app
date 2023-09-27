@@ -10,7 +10,7 @@ export default defineConfig({
   resolve: { 
     alias: {
        '@': './src',
-       'modules':'./node_modules' 
+       //'modules':'./node_modules' 
       } 
   },
   server: {
