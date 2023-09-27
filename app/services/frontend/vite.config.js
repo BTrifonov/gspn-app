@@ -7,6 +7,7 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   base: "/boris_frontend/",
+  publicDir: "public",
   resolve: { 
     alias: {
        '@': './src',
