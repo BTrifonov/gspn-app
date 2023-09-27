@@ -11,17 +11,17 @@ RUN npm i
 
 COPY ./ .
 
-RUN npm run build
+RUN npm run dev
 
-FROM nginx as production-stage
+#FROM nginx as production-stage
 
 #Here the path should be relative
-RUN mkdir app
+#RUN mkdir app
 
-COPY --from=build-stage /app/dist app
+#COPY --from=build-stage /app/dist app
 
-COPY nginx.conf /etc/nginx/nginx.conf
+#COPY nginx.conf /etc/nginx/nginx.conf
 
 
-EXPOSE 5173
-CMD ["nginx", "-g", "daemon off;"]
+#EXPOSE 5173
+#CMD ["nginx", "-g", "daemon off;"]
