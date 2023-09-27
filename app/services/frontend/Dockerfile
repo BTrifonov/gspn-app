@@ -15,9 +15,10 @@ RUN npm run build
 
 FROM nginx as production-stage
 
-RUN mkdir /app
+#Here the path should be relative
+RUN mkdir app
 
-COPY --from=build-stage /app/dist /app
+COPY --from=build-stage /app/dist app
 
 COPY nginx.conf /etc/nginx/nginx.conf
 

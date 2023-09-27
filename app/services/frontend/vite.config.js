@@ -9,8 +9,8 @@ export default defineConfig({
   base: "/boris_frontend/",
   resolve: { 
     alias: {
-       '@': '/src',
-       'modules':'/node_modules' 
+       '@': './src',
+       'modules':'./node_modules' 
       } 
   },
   server: {
