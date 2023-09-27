@@ -6,7 +6,7 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   plugins: [vue()],
-  base: "https://csl.bpm.in.tum.de/boris_frontend/",
+  base: "",
   resolve: { 
     alias: {
        '@': '/src',
