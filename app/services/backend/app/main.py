@@ -32,7 +32,7 @@ class PlainJSON(BaseModel):
     params: Param | None = None
 
 
-app = FastAPI()
+app = FastAPI(root_path="/boris")
 
 #Allow all origins for now
 #origins = [
