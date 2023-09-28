@@ -2,6 +2,14 @@
 version: '3.8'
 
 services:
+    nginx:
+      build:
+        context: ./services/nginx
+        dockerfile: Dockerfile
+      ports:
+        - 7000:7000
+
+
     frontend: 
       build: 
         context: ./services/frontend
@@ -15,7 +23,9 @@ services:
       build:
         context: ./services/backend
         dockerfile: Dockerfile
-      ports:
-        - 7000:7000
+#      ports:
+#        - 7000:7000
 #      volumes:
 #        - ./services/backend:/app
+
+    
