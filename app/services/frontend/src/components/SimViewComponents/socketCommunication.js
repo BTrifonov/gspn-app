@@ -2,6 +2,10 @@
 //Functions for working with sockets
 //------------------------------------------
 
+/**
+ * Create a websocket connection to the backend
+ * @returns 
+ */
 export async function createSocket() {
     return new Promise((resolve, reject) => {
         //Create a websocket to the backend, remote server config
@@ -24,7 +28,12 @@ export async function createSocket() {
     })
 }
 
-export function closeSocket(socket) {
+/**
+ * Close the socket connection to the backend
+ * @param {*} socket 
+ * @returns 
+ */
+export async function closeSocket(socket) {
     return new Promise((resolve, reject)=>{
         //Log the socket closure
         socket.onclose = function(event) {
@@ -47,14 +56,29 @@ export function closeSocket(socket) {
     })
 }
 
+/**
+ * Check if the socket is still open
+ * @param {*} socket 
+ * @returns 
+ */
 export function isSocketOpen(socket) {
     return socket.readyState === WebSocket.OPEN;
 }
 
+/**
+ * 
+ * @param {*} event 
+ * @returns 
+ */
 export async function receiveMsg(event) {
     return event.data
 }
 
+/**
+ * Send a msg via the socket, passed in the parameter
+ * @param {*} socket The socker via which the message is sent
+ * @param {*} payload The msg to be sent
+ */
 export async function sendMsg(socket, payload) {
     const action = payload.action
     const status = payload.status
@@ -72,6 +96,15 @@ export async function sendMsg(socket, payload) {
 //Internal helper methods, used only in socketCommunication.js
 //-----------------------------------------------------------
 
+/**
+ * Create a message and parse it with JSON.stringify()
+ * @param {*} senderData 
+ * @param {*} receiverData 
+ * @param {*} actionData 
+ * @param {*} statusData 
+ * @param {*} contentData 
+ * @returns 
+ */
 function createMsg(senderData, receiverData, actionData, statusData, contentData) {
     const msg = JSON.stringify({
         sender: senderData, 

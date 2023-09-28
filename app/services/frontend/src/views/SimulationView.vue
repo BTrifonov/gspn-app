@@ -24,5 +24,20 @@
 </template>
 
 <style scoped>
-    @import '@/assets/main-structure.css'
+@import '@/assets/main-structure.css';
+
+/**The ratio should be adjusted side bar should be wider */
+.side-bar-container {
+    width: 18%;
+    
+    border-right: 4px solid blue;
+    background-color: rgb(9, 147, 240);
+
+}
+  
+.grid-plane-container {
+    width: 82%;
+}
+
+
 </style>

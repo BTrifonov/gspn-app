@@ -66,7 +66,7 @@ class Model:
         """
         if not self.is_transition_enabled(transition_index):
             print("Transition cannot fire, because it is not enabled!")
-            return {'input_places':[], 'output_places':[], 'delay':0}
+            return None
         
         dimensions_matrix = self.incidence_matrix.shape
         rows = dimensions_matrix[0]
@@ -132,6 +132,10 @@ class Model:
         firing_transition = self.enabled_transitions[0]
         
         new_marking = self.fire_transition(firing_transition['index'], firing_transition['firing_time'])
+
+        if new_marking == None:
+            print("No more enabled transitions sorry")
+            return None
 
         #Remove the fired transition from the list of enabled transitions
         self.enabled_transitions.pop(0)

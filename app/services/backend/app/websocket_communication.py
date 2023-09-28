@@ -82,8 +82,6 @@ def create_msg(sender_data, receiver_data, action_data, status_data, content_dat
     return msg
 
 
-
-
 #-----------------------------------------------------------
 #Internal helper methods, used only in this file
 #-----------------------------------------------------------

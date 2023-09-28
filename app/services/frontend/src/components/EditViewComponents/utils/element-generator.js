@@ -93,6 +93,7 @@ export function drawArc(arcIndex) {
     const arc = new joint.shapes.standard.Link()
 
     arc.prop('arcWeight', 1)
+    //TODO: Create a seperate class extending the joint.standard.shapes.Link
     arc.labels([{
         attrs: {
             text: {

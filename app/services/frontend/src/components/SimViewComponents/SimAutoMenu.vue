@@ -25,15 +25,10 @@ function handleRestart() {
     simulationStore.rewindToStart = !simulationStore.rewindToStart
 }
 
-/*function handleRewindToStart() {
-    simMenuStore.rewindToStart()
-}
 
 function handleRewindToEnd() {
     simMenuStore.rewindToEnd()
-}*/
-
-
+}
 
 watch(simSpeed, (newVal) => {
     simulationStore.simSpeed = parseFloat(newVal)
@@ -60,10 +55,6 @@ watch(simSpeed, (newVal) => {
             <button @click="handleRestart">
                 <img src="../../assets/SimButtons/restartButton.svg">
             </button>
-
-            <!--<button @click="handleRewindToStart">
-                <img src="../../assets/SimButtons/skipToStartButton.svg">
-            </button>-->
 
             <button @click="handleRewindToEnd">
                 <img src="../../assets/SimButtons/skipToEndButton.svg">

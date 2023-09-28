@@ -27,7 +27,9 @@ export const useSimulationStore = defineStore('simStore', {
         selectedPlace: null,
         
         enabledTransitions: [], 
-        tracebackTransitions: []
+        tracebackTransitions: [],
+
+        traceback: []
     }), 
     getters: {
         getModels: (state) => state.models,
@@ -59,7 +61,9 @@ export const useSimulationStore = defineStore('simStore', {
                 return state.selectedPlace.prop('avgTokens')
         },
 
-        getSimulationTime: (state) => state.simulationTime
+        getSimulationTime: (state) => state.simulationTime,
+
+        getTraceback: (state) => state.traceback
     }, 
     actions: {
         //-----------------------------------------------
@@ -93,6 +97,9 @@ export const useSimulationStore = defineStore('simStore', {
             //reset the time
             this.simulationTime = 0
 
+            //reset the traceback
+            this.traceback = []
+
             //change flag of model to true
             model.selected = true            
         },
@@ -104,6 +111,9 @@ export const useSimulationStore = defineStore('simStore', {
          */
         unselectModel(model) {
             model.selected = false
+
+            //reset the traceback
+            this.traceback = []
     
             this.hideSimulationMenus()
         },
@@ -115,6 +125,9 @@ export const useSimulationStore = defineStore('simStore', {
             for(const iterModel of this.models) {
                 iterModel.selected = false
             }
+
+            //reset the traceback
+            this.traceback = []
 
             this.hideSimulationMenus()
         },
@@ -180,6 +193,14 @@ export const useSimulationStore = defineStore('simStore', {
             this.withTimeStep = false
             this.withoutTimeStep = false
             this.enteredSimStep = false
+        },
+
+        //-----------------------------------------------
+        // Actions related to the SimTracebackMenu.vue
+        //-----------------------------------------------
+        updateTraceback(transition, places) {
+            console.log(places)
+            this.traceback.push({transition_label: transition.label, time: this.simulationTime, places: places})
         }
     }
 })

@@ -278,8 +278,10 @@ class ModelProxy:
             current_transition_information = {}
             
             current_transition_information['timed'] = transition['timed']
-            current_transition_information['distribution_type'] = transition['distribution_type']
-            current_transition_information['rate'] = transition['rate']
+
+            if current_transition_information['timed']:
+                current_transition_information['distribution_type'] = transition['distribution_type']
+                current_transition_information['rate'] = transition['rate']
 
             transition_index = self.transitions_id_to_index[transition['id']]
 

@@ -112,13 +112,12 @@ simulationStore.$onAction(({
                     const modelJSON = JSON.parse(response)
 
                     graph.fromJSON(modelJSON.model)
-                    simulationStore.findEnabledTransitions()
+
+                    //Find enabled transitions should be triggered when manual simulation is chosen
+                    //simulationStore.findEnabledTransitions()
                 })
-                .catch((error) => {
-                    console.error(error)
-                })
-                .finally(()=> {
-                    //always executed
+                .catch((error)=>{
+                    console.error("The following error occured, while fetching model: " + error)
                 })
         } else if(name === "unselectModel") {
             simulationStore.resetAllButtons()
@@ -130,8 +129,16 @@ simulationStore.$onAction(({
 })
 
 //-------------------------------------------------------
-// Actions triggered in manual simulation mode
+// Event handling in manual simulation mode
 //-------------------------------------------------------
+watch(()=>simulationStore.manualSimulation, (newVal, oldVal)=>{
+    if(newVal) {
+        //user request for a manual simulation
+        //update the list of enabled transitions
+        simulationStore.findEnabledTransitions()
+    }
+})
+
 simulationStore.$onAction(({
     name, 
     store, 
@@ -140,13 +147,14 @@ simulationStore.$onAction(({
 })=> {
     after((res)=>{
         if(name === "fireTransition") {
+            const transition = args[0]
             const data = {
                 model: graph.toJSON()
             }
 
             const params = {
                 name: simulationStore.getSelectedModelName, 
-                transition_id: args[0].id
+                transition_id: transition.id
             }
 
             fireTransition(params, data)
@@ -163,8 +171,13 @@ simulationStore.$onAction(({
                             if(delay > -1) 
                                 simulationStore.setSimulationTime(simulationStore.getSimulationTime + delay)
 
-                            simulationStore.findEnabledTransitions()
 
+                            //update the traceback
+                            const placeMarking = findPlaceMarking()
+                            simulationStore.updateTraceback(transition, placeMarking)
+                            
+                            //update the enabled transitions
+                            simulationStore.findEnabledTransitions()
                         })
                         .catch((error)=>{
                             console.error(error)
@@ -197,8 +210,7 @@ simulationStore.$onAction(({
 })
 
 //-------------------------------------------------------
-// Open or close socket connection, based on whether
-// automatic simulation has been chosen
+// Events handling in case of automatic simulation
 //-------------------------------------------------------
 watch(()=>simulationStore.automaticSimulation, (newVal, oldVal)=>{
     if(newVal) {
@@ -232,6 +244,9 @@ watch(()=>simulationStore.startSim, (newVal)=> {
     }
 })
 
+/**
+ * Continue the simulation
+ */
 watch(()=>simulationStore.continueSim, (newVal)=>{
     if(newVal) {
         if(isSocketOpen(socket)) {
@@ -250,6 +265,39 @@ watch(()=>simulationStore.continueSim, (newVal)=>{
 })
 
 
+/**
+ * Handle user request to pause the simulation
+ * @param {*} cell 
+ */
+watch(()=> simulationStore.stopSim, (newVal, oldVal)=>{
+    if(oldVal && !newVal) {
+        simulationStore.continueSim = true
+        simulationStore.stopSim = false
+    }
+})
+
+/**
+ * Handle user request to restart simulation
+ */
+watch(()=>simulationStore.rewindToStart, (newVal)=>{
+    if(newVal) {
+        //Fetch the model from the backend
+        const modelName = simulationStore.getSelectedModelName
+        getModel({name: modelName})
+                .then((response) => {
+                    simulationStore.resetAllButtons()
+                    const modelJSON = JSON.parse(response)
+
+
+                    simulationStore.setSimulationTime(0)
+                    simulationStore.traceback = []
+                    graph.fromJSON(modelJSON.model)
+                })
+                .catch((error)=>{
+                    console.error("The following error occured, while fetching model: " + error)
+                })
+    }
+})
 
 
 //---------------------------------------------------
@@ -287,6 +335,21 @@ function findLabelsEnabledTransitions(idTransitions) {
     return enabledTransitions
 }
 
+function findPlaceMarking() {
+    const placeMarking = []
+     
+    for(const cell of graph.getCells()) {
+        if(cell.attributes.type === 'custom.Place') {
+            const label = cell.attributes.attrs.label.text
+            const tokens = cell.attributes.attrs.tokenNumber.text
+            placeMarking.push({label: label, tokenCount: tokens})
+        }
+    }
+
+    console.log(placeMarking)
+    return placeMarking
+}
+
 //---------------------------------------------------
 //Helper methods, websocket communication
 //---------------------------------------------------
@@ -297,6 +360,7 @@ async function startCommunication() {
         console.error(error)
     }
 }
+
 async function stopCommunication() {
     try {
         await closeSocket(socket)
@@ -329,12 +393,17 @@ function handleIncomingMsg(event) {
                 }
                 
                 transitionFiringAnimationAlternate(response.input_places, response.output_places, response.transition_id, graph, paper)
-                    .then(()=>{simulationStore.continueSim = true})
+                    .then(()=>{
+                        const placeMarking = findPlaceMarking()
+
+                        const transition = findLabelsEnabledTransitions(response.transition_id)[0]
+                        simulationStore.updateTraceback(transition, placeMarking)
+                        
+                        if(!simulationStore.stopSim && !simulationStore.rewindToStart)
+                            simulationStore.continueSim = true
+                        
+                    })
     
-            } else if(response.action == "continue_sim") {
-                console.log(response.delays)
-                simulationStore.continueSim = true
-                
             } else if(response.action == "end_sim") {
                 console.log("End of the simulation")
             }
@@ -343,7 +412,6 @@ function handleIncomingMsg(event) {
             console.log(error)
         })
 }
-
 </script>
 
 
