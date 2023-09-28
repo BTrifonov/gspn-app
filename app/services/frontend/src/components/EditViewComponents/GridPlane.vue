@@ -1,34 +1,22 @@
 <script setup>
 import {ref, onMounted, onUnmounted} from 'vue';
 import {watch} from 'vue';
-import axios from 'axios';
 
 import * as joint from 'jointjs';
-
 
 import {useCreateElemStore} from '@/components/stores/EditViewStores/CreateElemStore.js'
 import {useModelStore} from '@/components/stores/ModelStore.js'
 
-
 import { useElementStore} from '@/components/stores/EditElementStore.js';
 import { usePlaneStore } from '@/components/stores/EditViewStores/EditPlaneStore.js';
 
-import { drawPlace } from '@/components/utils/element-generator.js';
-import { drawTransition } from '@/components/utils/element-generator.js';
-import { drawImmediateTransition } from '@/components/utils/element-generator.js'
-import { drawArc } from '@/components/utils/element-generator.js'
+import { drawPlace, drawTransition, drawImmediateTransition, drawArc } from '@/components/EditViewComponents/utils/element-generator.js';
 
-//import { createLinkToolView } from '@/components/utils/tool-generator';
-//import { createElementToolView } from '@/components/utils/tool-generator';
-
-
-import {attachLinkToolsOnMouseEnter, detachLinkToolsOnMouseLeave} from '@/components/EditViewComponents/utils/paper-events.js'
-import {selectElement, showLinkPorts, hideLinkPorts} from '@/components/EditViewComponents/utils/paper-events.js'
+import {validateConnection, selectCell, attachLinkTools, showLinkPorts, hideLinkPorts} from '@/components/EditViewComponents/utils/paper-events.js'
 
 import {unselectAllElements, selectPaper, resizePaper} from '@/components/EditViewComponents/utils/paper-events.js'
 
-//import { Arc } from '@/components/utils/CustomElements/arc';
-//import { validateArc } from './utils/connection-validator';
+import {saveModel, updateModel, deleteModel, selectModel} from '@/components/EditViewComponents/utils/requests.js'
 
 //------------------------------------------
 //Ref attributes, binded to HTML DOMs
@@ -45,13 +33,19 @@ const modelStore = useModelStore()
 const editElementStore = useElementStore()
 const planeStore = usePlaneStore()
 
-//------------------------------------------
-//Attributes for the paper creation
-//------------------------------------------
+//--------------------------------------------------------
+//Attributes for the paper creation and element numeration
+//--------------------------------------------------------
 const namespace = joint.shapes
 const graph = new joint.dia.Graph({}, {cellNamespace:namespace})
 let paper = null
 
+let transitionIndex = 0
+let placeIndex = 0
+let arcIndex = 0
+//------------------------------------------
+// Lifecycle hook methods and event handlers
+//------------------------------------------
 onMounted(()=> {
     paper = new joint.dia.Paper({
         el: plane.value, 
@@ -61,24 +55,25 @@ onMounted(()=> {
         drawGrid: 'mesh',
         gridSize: 5,
         cellViewNamespace: namespace,
-        defaultLink: () => new joint.shapes.standard.Link(),
-        /**TODO: Validation does not work, use the connection-validator */
-        //validateConnection: 
+        defaultLink: () => drawArc(arcIndex++),
+        validateConnection: (cellViewS, magnetS, cellViewT, magnetT, end, linkView) => validateConnection(cellViewS, magnetS, cellViewT, magnetT, end, linkView),
         markAvailable: true,
-        //By setting this it is not able to use the create arc option
         linkPinning: false
     })
    
     //------------------------------------------
+    //Cell events (Element or link)
+    //------------------------------------------
+    paper.on('cell:pointerclick', (cellView) => selectCell(paper, editElementStore, cellView))
+
+    //------------------------------------------
     //Link events
     //------------------------------------------
-    paper.on('link:mouseenter', (linkView) => attachLinkToolsOnMouseEnter(linkView))
-    paper.on('link:mouseleave', (linkView) => detachLinkToolsOnMouseLeave(linkView))
-    
+    paper.on('link:pointerdblclick', (linkView)=> attachLinkTools(linkView))
+
     //------------------------------------------
     //Element events
     //------------------------------------------
-    paper.on('element:pointerclick', (elementView) => selectElement(paper, editElementStore, elementView))
     paper.on('element:mouseenter', (elementView) => showLinkPorts(elementView))
     paper.on('element:mouseleave', (elementView) => hideLinkPorts(elementView))
 
@@ -90,40 +85,14 @@ onMounted(()=> {
     paper.on('element:pointerup', (elementView) => resizePaper(paper, elementView))
 })
 
-
 //onUnmounted unselect all Models
 onUnmounted(()=>{
     modelStore.unselectAllModels()
 })
 
-//Create a PN place, transition or arc
-function createPlace() {
-    const place = drawPlace()   
-    
-    place.addTo(graph)
-}
-
-function createTransition() {    
-    const rect = drawTransition()
-    
-    rect.addTo(graph)
-}
-
-function createImmediateTransition() {
-    const rect = drawImmediateTransition()
-    rect.addTo(graph)
-}
-
-function createArc() {
-    const arc = drawArc()
-    arc.addTo(graph)
-}
-
-//----------------------------------------------------------
-//
 //----------------------------------------------------------
 //User interaction with the CreateElemMenu
-
+//----------------------------------------------------------
 createElemStore.$onAction(({
     name, 
     store, 
@@ -137,23 +106,21 @@ createElemStore.$onAction(({
         after((res)=> {
             switch(name) {
                 case "setPlaceButton": {
-                    createPlace()
+                    const place = drawPlace(placeIndex++)   
+                    place.addTo(graph)
                     store.setPlaceButton(false)
                     break
                 }
                 case "setTransitionButton": {
-                    createTransition()
+                    const rect = drawTransition(transitionIndex++)
+                    rect.addTo(graph)
                     store.setTransitionButton(false)
                     break
                 }
                 case "setImmediateTransitionButton": {
-                    createImmediateTransition()
+                    const rect = drawImmediateTransition(transitionIndex++)
+                    rect.addTo(graph)
                     store.setImmediateTransitionButton(false)
-                    break
-                }
-                case "setArcButton": {
-                    createArc()
-                    store.setArcButton(false)
                     break
                 }
                 default: {
@@ -164,9 +131,8 @@ createElemStore.$onAction(({
 })
 
 //---------------------------------------------------------
-//
+//Event handlers by user interaction with the StoreModelMenu
 //---------------------------------------------------------
-//User interaction with the StoreModelMenu
 modelStore.$onAction(({
     name, 
     store, 
@@ -174,122 +140,84 @@ modelStore.$onAction(({
     after, 
     onError
 }) => {
-    /**TODO: All the requests should be executed here!!!! */
-    /*Executed after modification of the store*/
+    /*Executed user request transmitted by the modelStore*/
     after((result)=> {
         if(name === "saveModel") {
             const modelName = args[0]
             const modelJSON = graph.toJSON()
 
-            const data = {
-                model: modelJSON
-            }
-
-            const params = {
-                name: modelName
-            }
-
-            axios.post('/model', { data, params })
-                    .then(function(response) {
-                        console.log("Saved successfully model: " + modelName)
-                        return true
-                    })
-                    .catch(function (err) {
-                        console.log("The following error occured:" + err)
-                        return false
-                    })  
-                    .finally(function() {
-                        
-                    })
+            saveModel(modelName, modelJSON)
+                .then((response)=>{
+                    console.log(response)
+                })
+            
+            modelStore.updateModelElementCount(modelName, transitionIndex, placeIndex, arcIndex)
+            transitionIndex = 0
+            placeIndex = 0
+            arcIndex = 0
 
             graph.clear()
         } else if(name === "updateModel") {
-            const model = args[0]
-            const modelName = model.name
+            const modelName = args[0].name
             const modelJSON = graph.toJSON()
 
-            const data = {
-                model: modelJSON
-            }
+            updateModel(modelName, modelJSON)
+                .then((response)=>{
+                    console.log(response)
+                })
 
-            const params = {
-                name: modelName
-            }
+            modelStore.updateModelElementCount(modelName, transitionIndex, placeIndex, arcIndex)
+            transitionIndex = 0
+            placeIndex = 0
+            arcIndex = 0
 
-            axios.put('/model', {data, params})
-                .then(function(response) {
-                    console.log("Updated successfully model: " + modelName)
-                    return true
-                })
-                .catch(function(err) {
-                    console.log("Following error occured, while updating model " + modelName + ": " + err)
-                })
-                .finally(function() {
-                    //
-                })
+            //unselect model
+            modelStore.unselectModel(args[0])
         } else if(name === "deleteModel") {
-            const model = args[0]
-            const modelName = model.name
+            const modelName = args[0].name
 
-            const params = {
-                name:modelName
-            }
-
-            axios.delete('/model', {params})
-                .then(function(response) {
-                    console.log("Deleted successfully model: " + modelName)
-
-                    graph.clear()
+            deleteModel(modelName)
+                .then((response)=>{
+                    console.log(response)
                 })
-                .catch(function(err) {
-                    console.log("Following error occured, while deleting model " + modelName + ": " + err)
-                })
-                .finally(function() {
-                    //
-                })
-
+            
+            graph.clear()
         } else if(name === "selectModel") {
             if(!result) 
                 throw Error("Result missing")
             
-            const model = args[0]
+            const modelName = args[0].name
+            
+            transitionIndex = args[0].transitionCount
+            placeIndex = args[0].placeCount
+            arcIndex = args[0].arcCount
 
-            const params = {
-                name: model.name
-            }
-
-            axios.get('/model', {params})
-                    .then(function(response) {test(model, response)})
-            .catch(function(err) {
-                console.log("An error occured" + err)
-            })
-            .finally(function() {
-                //
-            })
+            selectModel(modelName)
+                .then((response)=>{
+                    graph.fromJSON(response.model)
+                })
+                .catch((err)=>{
+                    alert("An error occured, while selecting model " + modelName + ":" + err)
+                })
         } else if(name === "unselectModel") {
             if(!result)
                 throw Error("Result missing")
+        
 
+            transitionIndex = 0
+            placeIndex = 0
+            arcIndex = 0
+
+            //no need for axios request, just clear the plane
             graph.clear()
         } 
     })
 })
 
-function test(model, response) {
-                        console.log("Fetch the model with name: " + model.name)
-                   
-                        const modelJSON = JSON.parse(response.data)
-                
-                        graph.fromJSON(modelJSON.model)
-                    }
-
-
 //---------------------------------------------------------
-//TODO: Should be made as the CreateElemMenu instead of watchers
+// Event handlers by user interaction with the EditPlaneMenu
 //---------------------------------------------------------
-// Watchers for user interaction with the edit plane menu
 watch(()=> planeStore.paperGrid, (newValue) => {
-    //TODO: This functionality could be delegated to a function, however paper should be passed as argument
     if(newValue === 'None') {
         paper.setGrid('false')
     } else if(newValue === 'Dot') {
@@ -326,31 +254,6 @@ watch(()=> planeStore.paperGridSize, (newValue) => {
 watch(()=> planeStore.paperScale, (newValue)=> {
     paper.scale(newValue)
 })
-
-watch(()=> planeStore.triggerDelete, (newValue)=> {
-    if(newValue) {
-        //Delete the graph from the plane
-        graph.clear()
-
-        //Delete the locally saved file in the backend
-        axios.delete('/model')
-                .then(function(response) {
-                    console.log("Deleted successfully the model!")
-                })
-                .catch(function(err) {
-                    console.log("Error occured while deleting the model")
-                })
-                .finally(function() {
-                    //
-                })
-        
-        
-        
-        planeStore.triggerDelete = false
-    }
-})
-//---------------------------------------------------------
-
 </script>
 
 <template>

@@ -1,1 +1,0 @@
-//TODO: Create a resize button, enabling the resizing of places and transitions

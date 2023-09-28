@@ -8,6 +8,8 @@ const label = ref(editElementStore.getTransitionLabel)
 const distribution = ref(editElementStore.getTransitionDistribution)
 const rate = ref(editElementStore.getTransitionDistributionRate)
 
+const isImmediateTransition = ref(editElementStore.getTransitionIsTimed)
+
 /**
  * Update local variables, if the user selects a new transition, before
  * unselecting the previous one
@@ -80,7 +82,7 @@ function handleTransitionRateInput(event) {
         </div>
 
         <div class="sim-container">
-            <select v-model="distribution" class="input" @change="handleTransitionDistributionInput">
+            <select v-model="distribution" class="input" @change="handleTransitionDistributionInput" :disabled="!isImmediateTransition">
                 <option>Exponential</option>
                 <option>General</option>
             </select>
@@ -93,7 +95,7 @@ function handleTransitionRateInput(event) {
                     &lambda; =
                 </div>
                 
-                <input type="number" v-model="rate" class="input" @keydown.enter="handleTransitionRateInput">
+                <input type="number" v-model="rate" class="input" @keydown.enter="handleTransitionRateInput" :disabled="!isImmediateTransition">
             </div>
             <div>
                 <p> Change transition firing rate</p>

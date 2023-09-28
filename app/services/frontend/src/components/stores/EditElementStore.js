@@ -38,12 +38,20 @@ export const useElementStore = defineStore('selectElements', {
             if(state.selectedTransition)
                 return state.selectedElement.prop('rate')
         },
+        getTransitionIsTimed: (state) => {
+            if(state.selectedTransition)
+                return state.selectedElement.prop('timed')
+        },
         //----------------------------------------
         //Arc getters
         //----------------------------------------
         getArcLabel: (state) => {
             if(state.selectedArc)
                 return state.selectedElement.attr('label/text')
+        },
+        getArcWeight: (state) => {
+            if(state.selectedArc) 
+                return state.selectedElement.prop('arcWeight')
         }
     },
     actions: {
@@ -137,6 +145,7 @@ export const useElementStore = defineStore('selectElements', {
         setTransitionRate(rate) {
             if(this.selectedTransition) {
                 this.selectedElement.prop('rate', rate)
+                this.selectedElement.attr('lambda/text', 'λ=' + rate)
             } else {
                 console.error("Cannot set transition rate, if a transition has not been selected")
             }
@@ -169,6 +178,33 @@ export const useElementStore = defineStore('selectElements', {
                 this.selectedElement = null
             } else {
                 console.error("Cannot unselect an arc, if an arc has not been selected")
+            }
+        },
+        setArcWeight(weight) {
+            if(this.selectedArc) {
+                this.selectedElement.prop('arcWeight', weight)
+                
+                this.selectedElement.labels([{
+                    attrs: {
+                        text: {
+                            text: "" + weight
+                        }
+                    }
+                }]);
+
+                this.selectedElement.prop('attrs/label/text', '' + weight);
+            } else {
+                console.error("Cannot set arc weight if arc has not been selected")
+            }
+        },
+        deleteArc() {
+            if(this.selectedArc) {
+                this.selectedElement.remove()
+
+                this.selectedArc = false
+                this.selectedElement = null
+            } else {
+                console.error("Cannot delete an arc, if an arc has not been selected")
             }
         }
     }

@@ -23,9 +23,9 @@ const store = useCreateElemStore()
                 <img src="../../assets/BasicElements/immediateTransition.svg">
             </button>
         
-            <button @click="store.setArcButton(true)">
+            <!--<button @click="store.setArcButton(true)">
                 <img src="../../assets/MenuIcons/arrow-right.png">
-            </button> 
+            </button>--> 
         </div>
     </div>
 </template>

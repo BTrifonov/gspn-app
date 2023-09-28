@@ -1,7 +1,90 @@
+import * as joint from 'jointjs'
 
-/**TODO: Could be implemented with less code, see jointjs doc about port.layout */
+/**
+ * Visual representation of a transition
+ */
+export class Transition extends joint.shapes.standard.Rectangle {
+    defaults() {
+        return {
+            ...super.defaults,
+            type: 'custom.Transition',
+            /*tokenDistribution: 'exponential', 
+            rate: 7,*/
+            position: {
+                x: 200, 
+                y: 200
+            },
+            size: {
+                width: 30, 
+                height: 70
+            },
+            attrs: {
+                root: {
+                    magnet: false
+                },
+                body: {
+                   height: 'calc(h-10)', 
+                   width: 'calc(w)', 
+                   strokeWidth: 2, 
+                   stroke: 'black', 
+                   fill: 'grey'
+                }, 
+                label: {
+                    textVerticalAnchor: 'middle', 
+                    textAnchor: 'middle', 
+                    x: 'calc(w/2)', 
+                    y: 'calc(h)',
+                    fontSize: 12, 
+                    fill: 'black'
+                },
+                lambda: {
+                    textVerticalAnchor: 'middle', 
+                    textAnchor: 'middle',
+                    x: 'calc(w/2)', 
+                    y: '-5',
+                    fontSize: 12, 
+                    fill: 'black'
+                }  
+            },
+            markup: [{
+                tagName: 'rect',
+                selector: 'body',
+            }, {
+                tagName: 'text',
+                selector: 'label'
+            },{
+                tagName: 'text', 
+                selector: 'lambda'
+            }],
+            ports: {
+                groups: {
+                    'leftPort': leftPort,
+                    'rightPort': rightPort,
+                    'topPort': topPort,
+                    'bottomPort': bottomPort,
 
-export const leftPort = {
+                    'leftUpperCornerPort': leftUpperCornerPort,
+                    'leftBottomCornerPort': leftBottomCornerPort,
+
+                    'rightUpperCornerPort': rightUpperCornerPort,
+                    'rightBottomCornerPort': rightBottomCornerPort
+                }
+            }
+        }
+    }
+    
+    /* Serialize and deserialize the style inside attrs as well, so that we can reconstruct the model with the styling later */
+    toJSON() {
+        const json = super.toJSON()
+
+        // Include the attrs.body in the JSON object
+        json.attrs = this.get('attrs')
+        
+        return json
+    }
+}
+
+const leftPort = {
     position: {
         name: 'left',
         args: {
@@ -26,7 +109,7 @@ export const leftPort = {
     }]
 }
 
-export const rightPort = {
+const rightPort = {
     position: {
         name: 'right',
         args: {
@@ -52,7 +135,7 @@ export const rightPort = {
     }]
 }
 
-export const topPort = {
+const topPort = {
     position: {
         name: 'top', 
         args: {}
@@ -73,7 +156,7 @@ export const topPort = {
     }]
 }
 
-export const bottomPort = {
+const bottomPort = {
     position: {
         name: 'bottom',
         args: {
@@ -101,7 +184,7 @@ export const bottomPort = {
     }]
 }
 
-export const leftUpperCornerPort = {
+const leftUpperCornerPort = {
     position: {
         name: 'absolute',
         args: {
@@ -125,7 +208,7 @@ export const leftUpperCornerPort = {
     }]
 }
 
-export const leftBottomCornerPort = {
+const leftBottomCornerPort = {
     position: {
         name: 'absolute',
         args: {
@@ -149,7 +232,7 @@ export const leftBottomCornerPort = {
     }]
 }
 
-export const rightUpperCornerPort = {
+const rightUpperCornerPort = {
     position: {
         name: 'absolute',
         args: {
@@ -173,7 +256,7 @@ export const rightUpperCornerPort = {
     }]
 }
 
-export const rightBottomCornerPort = {
+const rightBottomCornerPort = {
     position: {
         name: 'absolute',
         args: {

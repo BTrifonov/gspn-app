@@ -16,9 +16,9 @@ const editElementStore = useElementStore()
         <div v-if="editElementStore.selectedPlace">
             <EditPlaceMenu/>
         </div>
-        <!--<div v-if="editElementStore.selectedArc">
+        <div v-if="editElementStore.selectedArc">
             <EditArcMenu/>
-        </div>-->
+        </div>
         <div v-if="editElementStore.selectedTransition">
             <EditTransitionMenu/>
         </div>

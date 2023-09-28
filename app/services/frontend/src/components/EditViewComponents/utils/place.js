@@ -1,8 +1,9 @@
 import * as joint from 'jointjs'
-import { placePort } from '../Ports/placePort'
 
-/**TODO: Add more attributes as needed */
-/**TODO: Improve label positioning */
+
+/**
+ * Visual representation of a place
+ */
 export class Place extends joint.shapes.standard.Circle {
     defaults() {
         return {
@@ -15,9 +16,9 @@ export class Place extends joint.shapes.standard.Circle {
                     magnet: false
                 },
                 body: {
-                    cx: 25, 
-                    cy: 25,
-                    r: 25,
+                    cx: 30, 
+                    cy: 30,
+                    r: 30,
                     strokeWidth: 2, 
                     stroke: 'black', 
                     fill: 'grey'
@@ -25,8 +26,8 @@ export class Place extends joint.shapes.standard.Circle {
                 label: {
                     textVerticalAnchor: 'middle', 
                     textAnchor: 'middle',
-                    x: 25, 
-                    y: 60,
+                    x: 30, 
+                    y: 70,
                     fontSize: 10, 
                     fill: 'black'
                 }, 
@@ -68,9 +69,29 @@ export class Place extends joint.shapes.standard.Circle {
 
         return json
     }
+}
 
-    /*Currenty not used */
-//    fromJSON() {
-//
-//    }
+const placePort = {
+    position: {
+        name: 'ellipseSpread',
+    args: {
+        angle: 0,
+        step: 45,
+        compensateRotation: false
+    },
+    }, 
+    attrs: {
+        body: {
+            magnet: true, 
+            r: 7,
+            fill: 'lightblue',
+            stroke: 'blue',
+            visibility: 'hidden',
+            opacity: 0.6
+        }
+    },
+    markup: [{
+        tagName: 'circle', 
+        selector: 'body'
+    }]
 }

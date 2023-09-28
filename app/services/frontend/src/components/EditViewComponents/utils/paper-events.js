@@ -1,49 +1,37 @@
-import { createLinkToolView } from '@/components/utils/tool-generator.js';
-import { createElementToolView } from '@/components/utils/tool-generator.js';
-
+import { createLinkToolView, createLinkToolViewEdit, createElementToolView } from '@/components/EditViewComponents/utils/tool-generator.js';
 
 //------------------------------------------
-//Link events
+// Validate link connection event
+// TODO: Here could be placed more restrictions
+// For now we prohibit connection place<->place
+// or transition<->transition
 //------------------------------------------
+export function validateConnection(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+    const cellSource = cellViewS.model
+    const cellTarget = cellViewT.model
 
-/**
- * Attach link tools to the link view
- * Tools enable user actions on the link, e.g moving and setting anchor points
- * @param {*} linkView Visual representation of a link
- */
-export function attachLinkToolsOnMouseEnter(linkView) {
-    const linkToolView = createLinkToolView()
-    linkView.addTools(linkToolView)   
-}
+    //Allow connection Place->Transition
+    if(cellSource.attributes.type === "custom.Place" && cellTarget.attributes.type === "custom.Transition") return true
+    
+    //Allow connection Transition->Place
+    if(cellSource.attributes.type === "custom.Transition" && cellTarget.attributes.type === "custom.Place") return true
 
-/**
- * Detach all link tools from the link view
- * @param {*} linkView Visual representation of a link
- */
-export function detachLinkToolsOnMouseLeave(linkView) {
-    linkView.removeTools()
+    //Everything else by default is forbidden, whitelisting approach
+    return false
 }
 
 //------------------------------------------
-//Element events
+// Cell events (Element and Link)
 //------------------------------------------
 /**
- * Select an element from the paper, which includes:
- *      1. Attaching element tools to the element
- *      2. Storing the selected element in the editElementStore
- *         2.1 Used for user manipulation of element attributes in EditElemMenu.vue
- * 
- * Method is used also for unselecting element, which includes:
- *      1. Detaching element tools
- *      2. Removing the selected element from the editElementStore
- * 
+ * Select an element or a link, enables the user to change attributes of the element/link
  * @param {*} paper Visual representation of the model
  * @param {*} editElementStore Store responsible for element data transfer between GridPlane and EditElemMenu
- * @param {*} elementView Visual representation of the element
+ * @param {*} cellView Visual representation of the element/link
  */
-export function selectElement(paper, editElementStore, elementView) {
-    const element = elementView.model
-    const modelId = element.id
+export function selectCell(paper, editElementStore, cellView) {
+    const cell = cellView.model
+    const modelId = cell.id
 
     const prevSelectedElement = editElementStore.selectedElement
     let prevElementNotUnselected = false
@@ -64,17 +52,39 @@ export function selectElement(paper, editElementStore, elementView) {
     //There has been no selected element or
     //Previous selected element is not the same
     if(prevSelectedElement == null || prevElementNotUnselected) {
-        const elementToolView = createElementToolView()
-        elementView.addTools(elementToolView)
-
-        if(element.attributes.type === 'custom.Place') {
-            editElementStore.selectPlace(element)
-        } else if(element.attributes.type === 'custom.Transition') {
-            editElementStore.selectTransition(element)
+        if(cell.attributes.type === 'custom.Place') {
+            cellView.addTools(createElementToolView())
+            editElementStore.selectPlace(cell)
+        } else if(cell.attributes.type === 'custom.Transition') {
+            cellView.addTools(createElementToolView())
+            editElementStore.selectTransition(cell)
+        } else if(cell.attributes.type === 'standard.Link') {
+            cellView.addTools(createLinkToolView())
+            editElementStore.selectArc(cell)
         }
     }
 }
 
+//------------------------------------------
+//Link events
+//------------------------------------------
+/**
+ * Attach link tools to the link view
+ * Tools enable user actions on the link, e.g moving and setting anchor points
+ * @param {*} linkView 
+ */
+export function attachLinkTools(linkView) {
+    if(!linkView.hasTools()) {
+        const linkToolView = createLinkToolViewEdit()
+        linkView.addTools(linkToolView) 
+    } else {
+        linkView.removeTools()
+    }
+}
+
+//------------------------------------------
+//Element events
+//------------------------------------------
 /**
  * Show the linking ports of an element on element mouseenter event
  * @param {*} elementView Visual representation of the element

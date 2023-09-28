@@ -3,7 +3,6 @@ import CreateElemMenu from '@/components/EditViewComponents/CreateElemMenu.vue';
 import EditElemMenu from '@/components/EditViewComponents/EditElemMenus/EditElemMenu.vue';
 import EditPlaneMenu from '@/components/EditViewComponents/EditPlaneMenu.vue';
 
-
 import ChangeViewMenu from '@/components/ChangeViewMenu.vue';
 import StoreModelMenu from '@/components/EditViewComponents/StoreModelMenu.vue';
 </script>

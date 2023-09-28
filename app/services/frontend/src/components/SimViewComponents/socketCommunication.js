@@ -4,8 +4,12 @@
 
 export async function createSocket() {
     return new Promise((resolve, reject) => {
+        //Create a websocket to the backend, remote server config
         const socket = new WebSocket("wss://csl.bpm.in.tum.de/boris/ws")
     
+        //Create a websocket to the backend, local development
+        //const socket = new WebSocket("ws://localhost:7000/ws")
+
         //Log the socket creation
         socket.onopen = function(event)  {
             console.log(event)

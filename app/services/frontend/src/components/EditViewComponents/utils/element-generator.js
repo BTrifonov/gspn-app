@@ -1,20 +1,14 @@
 import * as joint from 'jointjs'
 
-import { Place } from './CustomElements/place'
-import { Transition } from './CustomElements/transition'
-
-let placeIndex = 0
-let transitionIndex = 0
-//const arcIndex = 0
+import { Place } from '@/components/EditViewComponents/utils/place.js'
+import {Transition} from '@/components/EditViewComponents/utils/transition.js'
 
 /**
  * Create a visual representation of a PN place
  * @returns custom.Place
  */
-export function drawPlace() {
+export function drawPlace(placeIndex) {
     const place = new Place({
-        position: { x: 100, y: 100 },
-        size: { width: 50, height: 50 },
         attrs: {
             label: { 
                 text: 'P' + placeIndex 
@@ -30,8 +24,6 @@ export function drawPlace() {
         place.addPort({group: 'radialPort'})
     }
     
-    placeIndex+=1
-
     return place
 }
 
@@ -39,11 +31,14 @@ export function drawPlace() {
  * Create a visual representation of a PN timed transition
  * @returns custom.Transition
  */
-export function drawTransition() {
+export function drawTransition(transitionIndex) {
     const transition = new Transition({
         attrs: {
             label: {
                 text: 'T' + transitionIndex
+            }, 
+            lambda: {
+                text: 'λ=7'
             }
         }
     })
@@ -57,22 +52,7 @@ export function drawTransition() {
 
 
     addPorts(transition)
-    //Add ports to the transition
-    /*transition.addPort({group: 'bottomPort'})
-    transition.addPort({group: 'topPort'})
-
-    transition.addPort({group: 'leftPort'})
-    transition.addPort({group: 'rightPort'})
-
-    transition.addPort({group: 'leftBottomCornerPort'})
-    transition.addPort({group: 'leftUpperCornerPort'})
-
-    transition.addPort({group: 'rightBottomCornerPort'})
-    transition.addPort({group: 'rightUpperCornerPort'})
-    */
     
-    transitionIndex+=1
-
     return transition
 }
 
@@ -80,11 +60,14 @@ export function drawTransition() {
  * Create a visual representation of a PN immediate transition
  * @returns custom.Transition
  */
-export function drawImmediateTransition() {
+export function drawImmediateTransition(transitionIndex) {
     const transition = new Transition({
-        attrs: {
+       attrs: {
             label: {
                 text: 'T' + transitionIndex
+            }, 
+            lambda: {
+                text: 'λ=0'
             }
         }
     })
@@ -96,23 +79,9 @@ export function drawImmediateTransition() {
 
     transition.prop('attrs/body/fill', 'black')
 
-
     //Add ports to the transition
     addPorts(transition)
-    /*transition.addPort({group: 'bottomPort'})
-    transition.addPort({group: 'topPort'})
-
-    transition.addPort({group: 'leftPort'})
-    transition.addPort({group: 'rightPort'})
-
-    transition.addPort({group: 'leftBottomCornerPort'})
-    transition.addPort({group: 'leftUpperCornerPort'})
-
-    transition.addPort({group: 'rightBottomCornerPort'})
-    transition.addPort({group: 'rightUpperCornerPort'})*/
-
-    transitionIndex+=1
-
+    
     return transition
 }
 
@@ -120,8 +89,18 @@ export function drawImmediateTransition() {
  * Create a visual representation of a PN arc
  * @returns Link
  */
-export function drawArc() {
+export function drawArc(arcIndex) {
     const arc = new joint.shapes.standard.Link()
+
+    arc.prop('arcWeight', 1)
+    arc.labels([{
+        attrs: {
+            text: {
+                text: "1" 
+            }
+        }
+    }]);
+
     arc.source(new joint.g.Point(50, 50));
     arc.target(new joint.g.Point(100, 100));
     return arc

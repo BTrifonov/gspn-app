@@ -5,7 +5,7 @@ import axios from 'axios'
  */
 export const useModelStore = defineStore('modelStore', {
     state: () => ({
-        models: [{name: 'sample-model.json', selected: false}],
+        models: [{name: 'sample-model.json', selected: false, transitionCount: 0, placeCount: 0, arcCount: 0}],
         selectedModelJSON: null
     }),
     getters: {
@@ -65,6 +65,15 @@ export const useModelStore = defineStore('modelStore', {
         unselectAllModels() {
             for(const iterModel of this.models) {
                 iterModel.selected = false
+            }
+        },
+        updateModelElementCount(modelName, transitionCount, placeCount, arcCount) {
+            for (const iterModel of this.models) {
+                if(iterModel.name === modelName) {
+                    iterModel.transitionCount = transitionCount
+                    iterModel.placeCount = placeCount
+                    iterModel.arcCount = arcCount
+                }
             }
         }
     }
