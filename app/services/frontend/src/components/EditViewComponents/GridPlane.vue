@@ -16,6 +16,9 @@ import {validateConnection, selectCell, attachLinkTools, showLinkPorts, hideLink
 
 import {unselectAllElements, selectPaper, resizePaper} from '@/components/EditViewComponents/utils/paper-events.js'
 
+import {translatePaper} from '@/components/EditViewComponents/utils/paper-events.js'
+
+
 import {saveModel, updateModel, deleteModel, selectModel} from '@/components/EditViewComponents/utils/requests.js'
 
 //------------------------------------------
@@ -61,6 +64,14 @@ onMounted(()=> {
         linkPinning: false
     })
    
+    //-----------------------------------------
+    //Set the origin of the paper to the middle of the plane
+    //-----------------------------------------
+    const paperHeight = paper.options.height; // Height in pixels
+    const paperWidth = paper.options.width;
+    paper.translate(paperWidth / 2, paperHeight / 2)
+
+
     //------------------------------------------
     //Cell events (Element or link)
     //------------------------------------------
@@ -83,6 +94,7 @@ onMounted(()=> {
     paper.on('blank:pointerclick', () => unselectAllElements(paper, editElementStore))
     paper.on('blank:pointerdblclick', () => selectPaper(planeStore))
     paper.on('element:pointerup', (elementView) => resizePaper(paper, elementView))
+    paper.on('blank:pointermove', (evt, x, y)=> translatePaper(evt, x, y, paper))
 })
 
 //onUnmounted unselect all Models

@@ -8,6 +8,7 @@ export const useSimulationStore = defineStore('simStore', {
         manualSimulation: false, 
         automaticSimulation: false, 
 
+        //TODO: All sim step related functionality should be removed, check SimGridPlane as well
         simStep: 0,
         enteredSimStep: false,
         withTimeStep: false,

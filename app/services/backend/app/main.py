@@ -50,6 +50,11 @@ app.add_middleware(
 )
 
 
+#--------------------------------------------------------
+# pyreverse -o png ./app -> creates the module structure
+#--------------------------------------------------------
+
+
 #---------------------------------------------------------
 #Try to create and serve a websocket for the simulation of PNs
 @app.websocket("/ws")
@@ -139,10 +144,10 @@ async def update_model(req_body: PlainJSON):
 #----------------------------------------------------------------
 
 #DELETE methods
-
-@app.delete("/models")
-async def delete_all_models():
-    delete_all_files()
+#TODO: Is this API endpoint used in the frontend at all?
+#@app.delete("/models")
+#async def delete_all_models():
+#    delete_all_files()
 
 
 @app.delete("/model")

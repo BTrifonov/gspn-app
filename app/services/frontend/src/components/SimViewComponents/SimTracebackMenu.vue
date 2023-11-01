@@ -67,7 +67,7 @@ function constructMarkingArray(trace) {
     flex-direction: row;
     width: auto;
 
-    overflow: scroll;
+    overflow: auto;
     justify-content: space-between;
 
     border-radius: 5px;
@@ -86,6 +86,8 @@ function constructMarkingArray(trace) {
     width: 60%;
     background-color:  rgb(9, 147, 240);
     border-radius: 5px;
+    white-space:nowrap;
+    overflow:auto;
 }
 
 .fired-transition-container {

@@ -4,10 +4,10 @@ import {ref, onMounted, watch, onUnmounted} from 'vue'
 
 import {useModelStore} from '@/components/stores/ModelStore.js'
 import {useSimulationStore} from '@/components/stores/SimViewStores/SimulationStore.js'
+import { usePlaneStore } from '@/components/stores/EditViewStores/EditPlaneStore.js';
 
-
-import {getModel, fireTransition, findEnabledTransitions} from '@/components/SimViewComponents/requests.js'
-import {transitionFiringAnimationAlternate, transitionFiringAnimation} from '@/components/SimViewComponents/simAnimation.js'
+import {getModel, fireTransition, findEnabledTransitions} from '@/components/SimViewComponents/utils/requests.js'
+import {transitionFiringAnimationAlternate, transitionFiringAnimation} from '@/components/SimViewComponents/utils/simAnimation.js'
 import {createSocket, closeSocket, isSocketOpen, receiveMsg, sendMsg} from '@/components/SimViewComponents/socketCommunication.js'
 
 import * as joint from 'jointjs'
@@ -20,6 +20,8 @@ import axios from 'axios';
 
 const simulationStore = useSimulationStore()
 const modelStore = useModelStore()
+
+const planeStore = usePlaneStore()
 
 //-----------------------------------------------
 
@@ -59,6 +61,9 @@ onMounted(()=> {
     //Transfer the names of all models from the model store in the edit view to sim view
     modelStore.unselectAllModels()
     simulationStore.setModels(modelStore.getModels)
+
+    //Set the paper grid and scale with the values from the plane store
+    paper.scale(planeStore.paperScale)
 
     //-------------------------------------------------
     const boundaryTool = new joint.elementTools.Boundary()
@@ -164,7 +169,7 @@ simulationStore.$onAction(({
                     const transitions = response.transition_id
                     const delay = response.delay
 
-                    transitionFiringAnimation(inputPlaces, outputPlaces, transitions, graph, paper)
+                    transitionFiringAnimation(inputPlaces, outputPlaces, transitions, graph, paper, simulationStore.simSpeed)
                         .then((response)=>{
                             console.log("Successful animation")
 
@@ -392,7 +397,7 @@ function handleIncomingMsg(event) {
                     simulationStore.simulationTime = simulationStore.getSimulationTime + response.delay
                 }
                 
-                transitionFiringAnimationAlternate(response.input_places, response.output_places, response.transition_id, graph, paper)
+                transitionFiringAnimation(response.input_places, response.output_places, response.transition_id, graph, paper, simulationStore.simSpeed)
                     .then(()=>{
                         const placeMarking = findPlaceMarking()
 

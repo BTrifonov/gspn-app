@@ -7,7 +7,7 @@ import * as joint from 'jointjs'
  * @param {*} outputPlaces {id, tokens} of all output places after the transition firing
  * @param {*} transitionId Id of the transition, which has fired
  */
-export async function transitionFiringAnimation(inputPlaces, outputPlaces, transitionId, graph, paper) {
+export async function transitionFiringAnimation(inputPlaces, outputPlaces, transitionId, graph, paper, speedFactor) {
     const inputPlacesViews = []
     inputPlaces.forEach((inputPlace)=>{
         const cell = graph.getCell(inputPlace.id)
@@ -21,7 +21,7 @@ export async function transitionFiringAnimation(inputPlaces, outputPlaces, trans
         cell.prop('inputPlaceCounter', oldInputPlaceCounter+1)
     })
 
-    await sleep(500)
+    await sleep(500 / speedFactor)
     inputPlacesViews.forEach((view) => view.unhighlight())
 
   
@@ -31,7 +31,7 @@ export async function transitionFiringAnimation(inputPlaces, outputPlaces, trans
         cellView.highlight()
     })
     
-    await sleep(500)
+    await sleep(500 / speedFactor)
     
     transitionId.forEach((transition)=>{
         const cell = graph.getCell(transition)
@@ -53,7 +53,7 @@ export async function transitionFiringAnimation(inputPlaces, outputPlaces, trans
         cell.prop('outputPlaceCounter', oldOutputPlaceCounter+1)
     })
   
-    await sleep(500)
+    await sleep(500 / speedFactor)
     outputPlacesViews.forEach((view) => view.unhighlight())
 }
 

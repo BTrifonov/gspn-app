@@ -1,12 +1,17 @@
 <script setup>
 import { useElementStore } from '@/components/stores/EditElementStore.js';
-import { watch } from 'vue';
+import { onMounted, watch } from 'vue';
 import { ref } from 'vue';
+
+
+
 
 const editElementStore = useElementStore()
 
 const label = ref(editElementStore.getPlaceLabel)
 const tokenNumber = ref(editElementStore.getPlaceTokens)
+
+
 
 /**
  * Update local variables, if the user selects a new place, before
@@ -63,6 +68,7 @@ function deletePlace() {
 </script>
 
 <template>
+    <!--TODO: Find a way to incorporate keyboard shortcuts in the workflow-->
     <div>
         <div class="sim-container">
             <input type="text" v-model="label" class="input" @keydown.enter="handlePlaceLabelInput">

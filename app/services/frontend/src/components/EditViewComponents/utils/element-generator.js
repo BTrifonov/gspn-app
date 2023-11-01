@@ -14,7 +14,7 @@ export function drawPlace(placeIndex) {
                 text: 'P' + placeIndex 
             },
             tokenNumber: { 
-                text: '5' 
+                text: '0' 
             },
         },
     });

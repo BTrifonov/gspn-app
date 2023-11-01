@@ -180,3 +180,19 @@ export function resizePaper(paper, elementView) {
         paper.translate(0, - dy + paper.options.origin.y)
     }
 }
+
+/**
+ * Translate the plane on user request
+ * @param {*} evt 
+ * @param {*} x 
+ * @param {*} y 
+ * @param {*} paper 
+ */
+export function translatePaper(evt, x, y, paper) {
+    //TODO: The problem is that initially the paper origin is at the top left corner, however should be
+    //at the {x: width/2, y: height/2} of the grid plane
+    console.log(paper.translate())
+    const oldCenterCoord = paper.translate()
+
+    paper.translate(oldCenterCoord.tx + x, oldCenterCoord.ty + y)
+}

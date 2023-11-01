@@ -123,6 +123,9 @@ class Model:
                     #Ignore silently immediate transitions
                     transition_delay = self.calculate_transition_delay(transition_index)
                     self.enabled_transitions.append({'index': transition_index, 'firing_time': transition_delay})
+                else:
+                    #If transition is immediate, the firing time should be 0
+                    self.enabled_transitions.append({'index': transition_index, 'firing_time': 0})
         
         self.enabled_transitions = sorted(self.enabled_transitions, key=lambda x: x['firing_time'])
         
