@@ -24,12 +24,12 @@ const simulationStore = useSimulationStore()
         <div>
             <SimModeMenu/>
         </div>
-        <div v-if="simulationStore.enteredSimStep || simulationStore.withoutTimeStep">
+        <!--<div v-if="simulationStore.enteredSimStep || simulationStore.withoutTimeStep">
             <AutoSimMenu/>
         </div>
         <div v-if="simulationStore.manualSimulation">
             <ManualSimMenu/>
-        </div>
+        </div>-->
         <div>
             <SimElapsedTimeMenu/>
         </div>
