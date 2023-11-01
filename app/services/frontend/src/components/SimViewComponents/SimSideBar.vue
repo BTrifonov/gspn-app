@@ -33,9 +33,9 @@ const simulationStore = useSimulationStore()
         <div>
             <SimElapsedTimeMenu/>
         </div>
-        <div>
+        <!--<div>
             <SimPlaceStatMenu/>
-        </div>
+        </div>-->
         <div>
             <SimTracebackMenu/>
         </div>

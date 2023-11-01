@@ -25,20 +25,19 @@ watch(()=> simulationStore.isPlaceSelected, (newVal)=>{
 </script>
 
 
-
 <template>
     <div class="menu-container">
         <p class="text">See place stats</p>
 
         <div v-if="isPlaceSelected">
-            <div class="sim-container">
+            <!--<div class="sim-container">
                 <p> {{ inputPlaceCounter }}</p>
                 <p> Times as input place</p>
             </div>
             <div class="sim-container">
                 <p> {{ outputPlaceCounter }}</p>
                 <p> Times as output place</p>
-            </div>
+            </div>-->
             <div class="sim-container">
                 <p> {{ avgTokens }}</p>
                 <p> Average token number</p>

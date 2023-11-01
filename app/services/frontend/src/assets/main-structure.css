@@ -9,7 +9,7 @@
 .top-container {
     height: 5%;
     background-color: blue;
-
+    
 }
   
 .bottom-container {
@@ -32,6 +32,10 @@
   
 .grid-plane-container {
     width: 85%;
+
+    /*Added to solve tutorial plane issue*/
+    display:flex;
+   
 }
   
 
