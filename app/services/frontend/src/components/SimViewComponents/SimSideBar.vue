@@ -1,9 +1,9 @@
 <script setup>
-import SimAutoMenu from '@/components/SimViewComponents/SimAutoMenu.vue';
-import SimManualMenu from '@/components/SimViewComponents/SimManualMenu.vue';
+import AutoSimMenu from '@/components/SimViewComponents/AutoSimMenu.vue';
+import ManualSimMenu from '@/components/SimViewComponents/ManualSimMenu.vue';
 
 import SimTracebackMenu from '@/components/SimViewComponents/SimTracebackMenu.vue';
-import SimModelMenu from '@/components/SimViewComponents/SimModelMenu.vue';
+import ModelMenu from '@/components/SimViewComponents/ModelMenu.vue';
 import SimPlaceStatMenu from '@/components/SimViewComponents/SimPlaceStatMenu.vue';
 
 import SimModeMenu from '@/components/SimViewComponents/SimModeMenu.vue';
@@ -19,16 +19,16 @@ const simulationStore = useSimulationStore()
 <template>
     <div class="container">
         <div>
-            <SimModelMenu/>
+            <ModelMenu/>
         </div>
         <div>
             <SimModeMenu/>
         </div>
         <div v-if="simulationStore.enteredSimStep || simulationStore.withoutTimeStep">
-            <SimAutoMenu/>
+            <AutoSimMenu/>
         </div>
         <div v-if="simulationStore.manualSimulation">
-            <SimManualMenu/>
+            <ManualSimMenu/>
         </div>
         <div>
             <SimElapsedTimeMenu/>
