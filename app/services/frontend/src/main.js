@@ -29,7 +29,8 @@ axios.defaults.baseURL = 'http://localhost:7000'
 //TODO: By moving it to external file the import does not work
 //------------------------------------
 const router = createRouter({
-    history: createWebHistory('/boris_frontend/'),
+    history: createWebHistory('/gspn-app/'),
+    baseURL: '/gspn-app',
     routes: [
         {path:'/', name: 'Home', component: HomeView},
         {path: '/about', name: 'About', component: AboutView},

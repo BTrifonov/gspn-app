@@ -3,10 +3,9 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 
-
 export default defineConfig({
   plugins: [vue()],
-  base: "/gspn-app/boris_frontend/",
+  base: "/gspn-app/",
   publicDir: "public", 
   resolve: { 
     alias: {
